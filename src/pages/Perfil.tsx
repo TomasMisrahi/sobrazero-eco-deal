@@ -1,20 +1,53 @@
-import { User, Mail, Phone, MapPin, Heart, Settings, LogOut } from "lucide-react";
+import { User, Mail, Phone, MapPin, Settings, LogOut, Bell, HelpCircle, ChevronRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import BottomNavigation from "@/components/BottomNavigation";
 import { toast } from "sonner";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { useNavigate } from "react-router-dom";
+
+const profileSchema = z.object({
+  name: z.string().trim().min(1, "El nombre es requerido").max(100, "Máximo 100 caracteres"),
+  email: z.string().trim().email("Email inválido").max(255, "Máximo 255 caracteres"),
+  phone: z.string().trim().min(1, "El teléfono es requerido").max(20, "Máximo 20 caracteres"),
+  address: z.string().trim().min(1, "La dirección es requerida").max(200, "Máximo 200 caracteres"),
+});
+
+type ProfileFormData = z.infer<typeof profileSchema>;
 
 const Perfil = () => {
+  const navigate = useNavigate();
+  
   // Mock data - en producción vendría de una API
   const user = {
     name: "María González",
     email: "maria.gonzalez@email.com",
     phone: "+54 9 11 1234-5678",
     address: "Balvanera, CABA",
-    savedStores: 8,
     completedOrders: 23,
+  };
+
+  const form = useForm<ProfileFormData>({
+    resolver: zodResolver(profileSchema),
+    defaultValues: {
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      address: user.address,
+    },
+  });
+
+  const onSubmit = (data: ProfileFormData) => {
+    // En producción, aquí se haría la llamada a la API
+    console.log("Profile updated:", data);
+    toast.success("Perfil actualizado correctamente");
   };
 
   const handleLogout = () => {
@@ -23,13 +56,19 @@ const Perfil = () => {
 
   const menuItems = [
     {
-      icon: Heart,
-      label: "Comercios favoritos",
-      value: user.savedStores,
-    },
-    {
       icon: Settings,
       label: "Configuración",
+      path: "/perfil/configuracion",
+    },
+    {
+      icon: Bell,
+      label: "Notificaciones",
+      path: "/perfil/notificaciones",
+    },
+    {
+      icon: HelpCircle,
+      label: "Centro de ayuda",
+      path: "/perfil/centro-ayuda",
     },
   ];
 
@@ -63,20 +102,81 @@ const Perfil = () => {
 
           <Separator className="my-4" />
 
-          <div className="space-y-3">
-            <div className="flex items-center gap-3 text-sm">
-              <Mail className="w-4 h-4 text-muted-foreground" />
-              <span>{user.email}</span>
-            </div>
-            <div className="flex items-center gap-3 text-sm">
-              <Phone className="w-4 h-4 text-muted-foreground" />
-              <span>{user.phone}</span>
-            </div>
-            <div className="flex items-center gap-3 text-sm">
-              <MapPin className="w-4 h-4 text-muted-foreground" />
-              <span>{user.address}</span>
-            </div>
-          </div>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2 text-sm">
+                      <User className="w-4 h-4 text-muted-foreground" />
+                      Nombre completo
+                    </FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2 text-sm">
+                      <Mail className="w-4 h-4 text-muted-foreground" />
+                      Email
+                    </FormLabel>
+                    <FormControl>
+                      <Input {...field} type="email" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2 text-sm">
+                      <Phone className="w-4 h-4 text-muted-foreground" />
+                      Teléfono
+                    </FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="address"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2 text-sm">
+                      <MapPin className="w-4 h-4 text-muted-foreground" />
+                      Dirección
+                    </FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <Button type="submit" className="w-full">
+                Guardar cambios
+              </Button>
+            </form>
+          </Form>
         </Card>
 
         {/* Stats Card */}
@@ -98,17 +198,14 @@ const Perfil = () => {
             return (
               <button
                 key={index}
+                onClick={() => navigate(item.path)}
                 className="w-full flex items-center justify-between p-4 hover:bg-muted/50 transition-colors"
               >
                 <div className="flex items-center gap-3">
                   <Icon className="w-5 h-5 text-muted-foreground" />
                   <span className="font-medium">{item.label}</span>
                 </div>
-                {item.value && (
-                  <span className="text-sm text-muted-foreground">
-                    {item.value}
-                  </span>
-                )}
+                <ChevronRight className="w-5 h-5 text-muted-foreground" />
               </button>
             );
           })}

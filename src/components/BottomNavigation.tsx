@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { Home, ShoppingBag, User } from "lucide-react";
+import { Home, ShoppingBag, Heart, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const BottomNavigation = () => {
@@ -9,7 +9,8 @@ const BottomNavigation = () => {
   const navItems = [
     { path: "/", label: "Home", icon: Home },
     { path: "/pedidos", label: "Pedidos", icon: ShoppingBag },
-    { path: "/perfil", label: "Mi Perfil", icon: User },
+    { path: "/favoritos", label: "Favoritos", icon: Heart },
+    { path: "/perfil", label: "Perfil", icon: User },
   ];
 
   return (

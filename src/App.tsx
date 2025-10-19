@@ -7,6 +7,10 @@ import Index from "./pages/Index";
 import StoreDetail from "./pages/StoreDetail";
 import Pedidos from "./pages/Pedidos";
 import Perfil from "./pages/Perfil";
+import Favoritos from "./pages/Favoritos";
+import Configuracion from "./pages/Configuracion";
+import Notificaciones from "./pages/Notificaciones";
+import CentroAyuda from "./pages/CentroAyuda";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -21,7 +25,11 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/store/:id" element={<StoreDetail />} />
           <Route path="/pedidos" element={<Pedidos />} />
+          <Route path="/favoritos" element={<Favoritos />} />
           <Route path="/perfil" element={<Perfil />} />
+          <Route path="/perfil/configuracion" element={<Configuracion />} />
+          <Route path="/perfil/notificaciones" element={<Notificaciones />} />
+          <Route path="/perfil/centro-ayuda" element={<CentroAyuda />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
