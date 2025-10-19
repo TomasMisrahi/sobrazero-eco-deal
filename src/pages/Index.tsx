@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import MapView from "@/components/MapView";
 import StoreFilters from "@/components/StoreFilters";
 import StoreCard from "@/components/StoreCard";
+import BottomNavigation from "@/components/BottomNavigation";
 import logo from "@/assets/logo.png";
 
 const Index = () => {
@@ -88,7 +89,7 @@ const Index = () => {
   });
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20">
       {/* Header */}
       <header className="sticky top-0 z-10 bg-background border-b border-border shadow-sm">
         <div className="px-4 py-3">
@@ -144,6 +145,8 @@ const Index = () => {
           </div>
         </div>
       </main>
+
+      <BottomNavigation />
     </div>
   );
 };

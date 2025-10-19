@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import ReviewSection from "@/components/ReviewSection";
+import BottomNavigation from "@/components/BottomNavigation";
 import { toast } from "sonner";
 
 const StoreDetail = () => {
@@ -170,6 +171,8 @@ const StoreDetail = () => {
           />
         </Card>
       </div>
+
+      <BottomNavigation />
     </div>
   );
 };
