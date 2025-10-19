@@ -65,18 +65,18 @@ const StoreDetail = () => {
     <div className="min-h-screen bg-background pb-20">
       {/* Header con imagen */}
       <div className="relative h-48 bg-gradient-to-br from-primary/20 to-accent/20">
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <ShoppingBag className="w-20 h-20 text-primary/40" />
+        </div>
+        
         <Button
           variant="ghost"
           size="icon"
-          className="absolute top-4 left-4 bg-background/80 backdrop-blur-sm hover:bg-background"
+          className="absolute top-4 left-4 z-10 bg-background/80 backdrop-blur-sm hover:bg-background"
           onClick={() => navigate("/")}
         >
           <ArrowLeft className="w-5 h-5" />
         </Button>
-        
-        <div className="absolute inset-0 flex items-center justify-center">
-          <ShoppingBag className="w-20 h-20 text-primary/40" />
-        </div>
       </div>
 
       <div className="px-4 -mt-6">
