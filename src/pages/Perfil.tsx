@@ -79,6 +79,18 @@ const Perfil = () => {
           </div>
         </Card>
 
+        {/* Stats Card */}
+        <Card className="p-4 bg-primary/5 border-primary/20">
+          <div className="text-center">
+            <p className="text-2xl font-bold text-primary mb-1">
+              {user.completedOrders * 850}kg
+            </p>
+            <p className="text-xs text-muted-foreground">
+              de comida salvada del desperdicio
+            </p>
+          </div>
+        </Card>
+
         {/* Menu Items */}
         <Card className="divide-y divide-border">
           {menuItems.map((item, index) => {
@@ -111,18 +123,6 @@ const Perfil = () => {
           <LogOut className="w-4 h-4 mr-2" />
           Cerrar sesión
         </Button>
-
-        {/* Stats Card */}
-        <Card className="p-4 bg-primary/5 border-primary/20">
-          <div className="text-center">
-            <p className="text-2xl font-bold text-primary mb-1">
-              {user.completedOrders * 850}kg
-            </p>
-            <p className="text-xs text-muted-foreground">
-              de comida salvada del desperdicio
-            </p>
-          </div>
-        </Card>
       </main>
 
       <BottomNavigation />
