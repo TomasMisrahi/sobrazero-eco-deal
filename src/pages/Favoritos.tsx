@@ -1,4 +1,4 @@
-import { Heart, MapPin, Clock, Euro } from "lucide-react";
+import { Heart, MapPin, Clock } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import BottomNavigation from "@/components/BottomNavigation";
@@ -16,8 +16,8 @@ const Favoritos = () => {
       category: "Panadería",
       distance: "0.3 km",
       discount: "50%",
-      price: "€3.99",
-      originalPrice: "€7.99",
+      price: "$1200",
+      originalPrice: "$2400",
       available: 3,
       closesAt: "21:00",
       image: "🥖",
@@ -28,8 +28,8 @@ const Favoritos = () => {
       category: "Verdulería",
       distance: "0.5 km",
       discount: "40%",
-      price: "€2.99",
-      originalPrice: "€4.99",
+      price: "$900",
+      originalPrice: "$1500",
       available: 5,
       closesAt: "20:00",
       image: "🍎",
@@ -40,8 +40,8 @@ const Favoritos = () => {
       category: "Restaurante",
       distance: "0.8 km",
       discount: "60%",
-      price: "€5.99",
-      originalPrice: "€14.99",
+      price: "$1800",
+      originalPrice: "$4500",
       available: 2,
       closesAt: "22:30",
       image: "🍱",
@@ -113,7 +113,7 @@ const Favoritos = () => {
                     </div>
                     <div className="flex items-center gap-1">
                       <Clock className="w-3 h-3" />
-                      <span>Hasta {store.closesAt}</span>
+                      <span>Hasta las {store.closesAt} hs</span>
                     </div>
                   </div>
 
@@ -125,7 +125,7 @@ const Favoritos = () => {
                       </span>
                     </div>
                     <Badge variant="secondary" className="text-xs">
-                      {store.available} disponibles
+                      {store.available} ofertas disponibles
                     </Badge>
                   </div>
                 </div>

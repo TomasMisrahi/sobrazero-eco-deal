@@ -110,7 +110,7 @@ const Index = () => {
         {/* Location */}
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <MapPin className="w-4 h-4 text-primary" />
-          <span>Balvanera, CABA</span>
+          <span>Villa Crespo, CABA</span>
         </div>
 
         {/* Map */}

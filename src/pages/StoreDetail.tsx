@@ -56,9 +56,34 @@ const StoreDetail = () => {
   ];
 
   const handleReserve = () => {
+    // Crear el nuevo pedido
+    const newOrder = {
+      id: Date.now().toString(),
+      storeName: store.name,
+      status: "pending",
+      pickupTime: store.pickupTime,
+      address: store.address,
+      total: store.discountedPrice * quantity,
+      items: quantity,
+      date: "Hoy",
+    };
+
+    // Obtener pedidos existentes del localStorage
+    const existingOrders = localStorage.getItem("orders");
+    const orders = existingOrders ? JSON.parse(existingOrders) : [];
+    
+    // Agregar el nuevo pedido
+    orders.unshift(newOrder);
+    
+    // Guardar en localStorage
+    localStorage.setItem("orders", JSON.stringify(orders));
+
     toast.success("Reserva confirmada!", {
       description: `Retirá tu pedido hoy entre ${store.pickupTime}`,
     });
+
+    // Resetear cantidad
+    setQuantity(1);
   };
 
   return (

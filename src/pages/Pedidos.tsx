@@ -2,31 +2,32 @@ import { Clock, MapPin, Package } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import BottomNavigation from "@/components/BottomNavigation";
+import { useState, useEffect } from "react";
 
 const Pedidos = () => {
-  // Mock data - en producción vendría de una API
-  const orders = [
-    {
-      id: "1",
-      storeName: "Panadería Don Juan",
-      status: "pending",
-      pickupTime: "18:00 - 20:00",
-      address: "Av. Corrientes 1234, Balvanera",
-      total: 1000,
-      items: 2,
-      date: "Hoy",
-    },
-    {
-      id: "2",
-      storeName: "Restaurante La Estancia",
-      status: "completed",
-      pickupTime: "20:00 - 21:30",
-      address: "Av. Rivadavia 5678, Caballito",
-      total: 1500,
-      items: 1,
-      date: "Ayer",
-    },
-  ];
+  // Leer pedidos del localStorage
+  const [orders, setOrders] = useState(() => {
+    const savedOrders = localStorage.getItem("orders");
+    return savedOrders ? JSON.parse(savedOrders) : [];
+  });
+
+  // Actualizar cuando cambien los pedidos
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const savedOrders = localStorage.getItem("orders");
+      setOrders(savedOrders ? JSON.parse(savedOrders) : []);
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    
+    // Intervalo para verificar cambios locales
+    const interval = setInterval(handleStorageChange, 500);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      clearInterval(interval);
+    };
+  }, []);
 
   const getStatusLabel = (status: string) => {
     return status === "pending" ? "Pendiente" : "Completado";
