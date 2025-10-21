@@ -12,6 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 const profileSchema = z.object({
   name: z.string().trim().min(1, "El nombre es requerido").max(100, "Máximo 100 caracteres"),
@@ -25,14 +26,14 @@ type ProfileFormData = z.infer<typeof profileSchema>;
 const Perfil = () => {
   const navigate = useNavigate();
   
-  // Mock data - en producción vendría de una API
-  const user = {
+  // Estado local para datos del usuario
+  const [user, setUser] = useState({
     name: "María González",
     email: "maria.gonzalez@email.com",
     phone: "+54 9 11 1234-5678",
     address: "Balvanera, CABA",
-    completedOrders: 23,
-  };
+    completedOrders: 12,
+  });
 
   const form = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
@@ -45,8 +46,14 @@ const Perfil = () => {
   });
 
   const onSubmit = (data: ProfileFormData) => {
-    // En producción, aquí se haría la llamada a la API
-    console.log("Profile updated:", data);
+    // Actualizar estado local
+    setUser({
+      ...user,
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+      address: data.address,
+    });
     toast.success("Perfil actualizado correctamente");
   };
 
@@ -179,17 +186,30 @@ const Perfil = () => {
           </Form>
         </Card>
 
-        {/* Stats Card */}
-        <Card className="p-4 bg-primary/5 border-primary/20">
-          <div className="text-center">
-            <p className="text-2xl font-bold text-primary mb-1">
-              {user.completedOrders * 850}kg
-            </p>
-            <p className="text-xs text-muted-foreground">
-              de comida salvada del desperdicio
-            </p>
-          </div>
-        </Card>
+        {/* Stats Cards */}
+        <div className="grid grid-cols-2 gap-3">
+          <Card className="p-4 bg-primary/5 border-primary/20">
+            <div className="text-center">
+              <p className="text-2xl font-bold text-primary mb-1">
+                {user.completedOrders * 2.5}kg
+              </p>
+              <p className="text-xs text-muted-foreground">
+                de comida salvada
+              </p>
+            </div>
+          </Card>
+
+          <Card className="p-4 bg-accent/5 border-accent/20">
+            <div className="text-center">
+              <p className="text-2xl font-bold text-accent mb-1">
+                ${(user.completedOrders * 450).toLocaleString()}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                ahorrados en total
+              </p>
+            </div>
+          </Card>
+        </div>
 
         {/* Menu Items */}
         <Card className="divide-y divide-border">

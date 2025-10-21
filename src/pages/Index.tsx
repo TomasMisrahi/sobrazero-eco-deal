@@ -92,18 +92,14 @@ const Index = () => {
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
       <header className="sticky top-0 z-10 bg-background border-b border-border shadow-sm">
-        <div className="px-4 py-3">
-          <div className="flex items-center gap-3 mb-3">
-            <img src={logo} alt="SobraZero" className="h-10 w-auto" />
-          </div>
-          
+        <div className="px-4 py-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
               placeholder="Buscar comercios..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
+              className="pl-10 bg-white dark:bg-card"
             />
           </div>
         </div>

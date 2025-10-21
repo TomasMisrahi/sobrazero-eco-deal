@@ -3,12 +3,13 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import BottomNavigation from "@/components/BottomNavigation";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 const Favoritos = () => {
   const navigate = useNavigate();
 
   // Mock data - en producción vendría de una API
-  const favoriteStores = [
+  const [favoriteStores, setFavoriteStores] = useState([
     {
       id: 1,
       name: "Panadería Don José",
@@ -45,7 +46,12 @@ const Favoritos = () => {
       closesAt: "22:30",
       image: "🍱",
     },
-  ];
+  ]);
+
+  const handleRemoveFavorite = (storeId: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setFavoriteStores(favoriteStores.filter(store => store.id !== storeId));
+  };
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -88,7 +94,12 @@ const Favoritos = () => {
                     <h3 className="font-semibold text-sm leading-tight">
                       {store.name}
                     </h3>
-                    <Heart className="w-5 h-5 fill-primary text-primary flex-shrink-0" />
+                    <button
+                      onClick={(e) => handleRemoveFavorite(store.id, e)}
+                      className="flex-shrink-0 hover:scale-110 transition-transform"
+                    >
+                      <Heart className="w-6 h-6 fill-primary text-primary" />
+                    </button>
                   </div>
 
                   <p className="text-xs text-muted-foreground mb-2">

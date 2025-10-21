@@ -6,13 +6,34 @@ import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const Configuracion = () => {
   const navigate = useNavigate();
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => {
+    return document.documentElement.classList.contains('dark');
+  });
   const [notifications, setNotifications] = useState(true);
   const [emailNotifications, setEmailNotifications] = useState(true);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [darkMode]);
 
   const handleDarkModeToggle = (checked: boolean) => {
     setDarkMode(checked);
@@ -25,7 +46,8 @@ const Configuracion = () => {
   };
 
   const handleDeleteAccount = () => {
-    toast.error("Esta acción requiere confirmación");
+    toast.success("Cuenta eliminada correctamente");
+    setShowDeleteDialog(false);
   };
 
   return (
@@ -165,7 +187,7 @@ const Configuracion = () => {
           <Button
             variant="destructive"
             className="w-full"
-            onClick={handleDeleteAccount}
+            onClick={() => setShowDeleteDialog(true)}
           >
             Eliminar cuenta
           </Button>
@@ -174,6 +196,24 @@ const Configuracion = () => {
           </p>
         </Card>
       </main>
+
+      {/* Delete Account Dialog */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Estás seguro que desea eliminar la cuenta?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta acción no se podrá deshacer. Se perderán todos tus datos, pedidos y estadísticas de forma permanente.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteAccount} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Confirmar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
