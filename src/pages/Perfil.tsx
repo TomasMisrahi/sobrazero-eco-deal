@@ -13,6 +13,16 @@ import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const profileSchema = z.object({
   name: z.string().trim().min(1, "El nombre es requerido").max(100, "Máximo 100 caracteres"),
@@ -25,6 +35,7 @@ type ProfileFormData = z.infer<typeof profileSchema>;
 
 const Perfil = () => {
   const navigate = useNavigate();
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   
   // Estado local para datos del usuario
   const [user, setUser] = useState({
@@ -59,6 +70,7 @@ const Perfil = () => {
 
   const handleLogout = () => {
     toast.success("Sesión cerrada correctamente");
+    setShowLogoutDialog(false);
   };
 
   const menuItems = [
@@ -235,12 +247,30 @@ const Perfil = () => {
         <Button
           variant="outline"
           className="w-full"
-          onClick={handleLogout}
+          onClick={() => setShowLogoutDialog(true)}
         >
           <LogOut className="w-4 h-4 mr-2" />
           Cerrar sesión
         </Button>
       </main>
+
+      {/* Logout Dialog */}
+      <AlertDialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Estás seguro que desea cerrar sesión?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Deberás volver a iniciar sesión para acceder a tu cuenta.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={handleLogout}>
+              Confirmar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <BottomNavigation />
     </div>
