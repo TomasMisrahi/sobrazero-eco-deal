@@ -14,46 +14,176 @@ const StoreDetail = () => {
   const [quantity, setQuantity] = useState(1);
 
   // Mock data - en producción vendría de una API
-  const store = {
-    id: id || "1",
-    name: "Panadería Don Juan",
-    category: "panadería",
-    address: "Av. Corrientes 1234, Balvanera",
-    distance: "0.8 km",
-    rating: 4.5,
-    reviewCount: 127,
-    discount: 60,
-    originalPrice: 2500,
-    discountedPrice: 1000,
-    pickupTime: "18:00 - 20:00",
-    available: 5,
-    description: "Bolsa sorpresa con productos de panadería frescos del día: pan, facturas, medialunas y más. Todos los productos están en perfecto estado.",
-    imageUrl: "",
+  const allStores = {
+    "1": {
+      id: "1",
+      name: "Panadería Don Juan",
+      category: "panadería",
+      address: "Av. Corrientes 1234, Villa Crespo",
+      distance: "0.8 km",
+      rating: 4.5,
+      reviewCount: 127,
+      discount: 60,
+      originalPrice: 2500,
+      discountedPrice: 1000,
+      pickupTime: "18:00 - 20:00",
+      available: 5,
+      description: "Bolsa sorpresa con productos de panadería frescos del día: pan, facturas, medialunas y más. Todos los productos están en perfecto estado.",
+      imageUrl: "",
+    },
+    "2": {
+      id: "2",
+      name: "Supermercado Express",
+      category: "supermercado",
+      address: "Av. Warnes 2456, Villa Crespo",
+      distance: "1.2 km",
+      rating: 4.2,
+      reviewCount: 89,
+      discount: 50,
+      originalPrice: 3000,
+      discountedPrice: 1500,
+      pickupTime: "19:00 - 21:00",
+      available: 8,
+      description: "Bolsa sorpresa con variedad de productos: verduras, frutas, lácteos y otros productos frescos. Perfecto para abastecer tu hogar.",
+      imageUrl: "",
+    },
+    "3": {
+      id: "3",
+      name: "Verdulería Los Andes",
+      category: "verdulería",
+      address: "Av. Córdoba 3789, Villa Crespo",
+      distance: "1.5 km",
+      rating: 4.7,
+      reviewCount: 156,
+      discount: 55,
+      originalPrice: 2000,
+      discountedPrice: 900,
+      pickupTime: "17:00 - 19:00",
+      available: 3,
+      description: "Bolsa sorpresa con frutas y verduras frescas de estación. Productos de excelente calidad directos de la quinta.",
+      imageUrl: "",
+    },
+    "4": {
+      id: "4",
+      name: "Restaurante La Estancia",
+      category: "restaurante",
+      address: "Av. Rivadavia 5678, Caballito",
+      distance: "0.5 km",
+      rating: 4.8,
+      reviewCount: 203,
+      discount: 70,
+      originalPrice: 5000,
+      discountedPrice: 1500,
+      pickupTime: "20:00 - 21:30",
+      available: 4,
+      description: "Bolsa sorpresa con platos de restaurante preparados del día: minutas, guarniciones y postres. Comida casera de alta calidad.",
+      imageUrl: "",
+    },
+    "5": {
+      id: "5",
+      name: "Panadería Artesanal",
+      category: "panadería",
+      address: "Av. Scalabrini Ortiz 1234, Villa Crespo",
+      distance: "2.1 km",
+      rating: 4.6,
+      reviewCount: 94,
+      discount: 65,
+      originalPrice: 2800,
+      discountedPrice: 980,
+      pickupTime: "18:30 - 20:00",
+      available: 6,
+      description: "Bolsa sorpresa con pan artesanal, masas dulces y productos de pastelería. Todo elaborado con masa madre y productos naturales.",
+      imageUrl: "",
+    },
   };
 
-  const reviews = [
-    {
-      id: "1",
-      userName: "María González",
-      rating: 5,
-      comment: "Excelente calidad y variedad. Las medialunas estaban perfectas!",
-      date: "Hace 2 días",
-    },
-    {
-      id: "2",
-      userName: "Carlos Pérez",
-      rating: 4,
-      comment: "Muy buena relación precio-calidad. Repetiré seguro.",
-      date: "Hace 5 días",
-    },
-    {
-      id: "3",
-      userName: "Ana Martínez",
-      rating: 5,
-      comment: "Perfecto! Evité el desperdicio y ahorré dinero.",
-      date: "Hace 1 semana",
-    },
-  ];
+  const store = allStores[id as keyof typeof allStores] || allStores["1"];
+
+  // Reviews personalizadas según el store
+  const allReviews: Record<string, any[]> = {
+    "1": [
+      {
+        id: "1",
+        userName: "María González",
+        rating: 5,
+        comment: "Excelente calidad y variedad. Las medialunas estaban perfectas!",
+        date: "Hace 2 días",
+      },
+      {
+        id: "2",
+        userName: "Carlos Pérez",
+        rating: 4,
+        comment: "Muy buena relación precio-calidad. Repetiré seguro.",
+        date: "Hace 5 días",
+      },
+    ],
+    "2": [
+      {
+        id: "1",
+        userName: "Laura Martínez",
+        rating: 4,
+        comment: "Buena variedad de productos frescos. El precio es excelente.",
+        date: "Hace 1 día",
+      },
+      {
+        id: "2",
+        userName: "Diego Rodríguez",
+        rating: 5,
+        comment: "Siempre encuentro productos de calidad. Muy recomendable.",
+        date: "Hace 3 días",
+      },
+    ],
+    "3": [
+      {
+        id: "1",
+        userName: "Ana López",
+        rating: 5,
+        comment: "Las frutas y verduras están súper frescas. Volveré!",
+        date: "Hace 1 día",
+      },
+      {
+        id: "2",
+        userName: "Roberto Sánchez",
+        rating: 5,
+        comment: "Productos de primera calidad a excelente precio.",
+        date: "Hace 4 días",
+      },
+    ],
+    "4": [
+      {
+        id: "1",
+        userName: "Silvia Fernández",
+        rating: 5,
+        comment: "La comida es deliciosa! Como si fuera casera.",
+        date: "Hace 2 días",
+      },
+      {
+        id: "2",
+        userName: "Pablo Torres",
+        rating: 4,
+        comment: "Muy buenas porciones y sabor excelente.",
+        date: "Hace 1 semana",
+      },
+    ],
+    "5": [
+      {
+        id: "1",
+        userName: "Gabriela Ruiz",
+        rating: 5,
+        comment: "El mejor pan artesanal del barrio. Vale la pena!",
+        date: "Hace 1 día",
+      },
+      {
+        id: "2",
+        userName: "Martín Castro",
+        rating: 5,
+        comment: "La masa madre es espectacular. Todo súper fresco.",
+        date: "Hace 5 días",
+      },
+    ],
+  };
+
+  const reviews = allReviews[id as string] || allReviews["1"];
 
   const handleReserve = () => {
     // Crear el nuevo pedido
