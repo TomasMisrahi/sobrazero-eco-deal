@@ -1,15 +1,21 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, MapPin, Bell } from "lucide-react";
+import { Search, MapPin, Bell, Package, CheckCircle2, Clock } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { Card } from "@/components/ui/card";
 import StoreFilters from "@/components/StoreFilters";
 import StoreCard from "@/components/StoreCard";
 import BottomNavigation from "@/components/BottomNavigation";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import logo from "@/assets/logo.png";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -18,6 +24,46 @@ const Index = () => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const [unreadNotifications, setUnreadNotifications] = useState(3);
+  const [showNotifications, setShowNotifications] = useState(false);
+
+  const notifications = [
+    {
+      id: "1",
+      type: "order",
+      title: "Pedido confirmado",
+      description: "Tu pedido de Panadería Don Juan está listo para retirar",
+      time: "Hace 10 min",
+      icon: CheckCircle2,
+      unread: true,
+    },
+    {
+      id: "2",
+      type: "promo",
+      title: "Nueva oferta cerca",
+      description: "Verdulería Los Andes tiene 60% de descuento",
+      time: "Hace 1 hora",
+      icon: Package,
+      unread: true,
+    },
+    {
+      id: "3",
+      type: "reminder",
+      title: "Recordatorio de retiro",
+      description: "No olvides retirar tu pedido antes de las 20:00",
+      time: "Hace 2 horas",
+      icon: Clock,
+      unread: true,
+    },
+    {
+      id: "4",
+      type: "order",
+      title: "Pedido completado",
+      description: "Gracias por usar SobraZero!",
+      time: "Ayer",
+      icon: CheckCircle2,
+      unread: false,
+    },
+  ];
 
   // Mock data - en producción vendría de una API
   const stores = [
@@ -151,7 +197,7 @@ const Index = () => {
               variant="ghost"
               size="icon"
               className="relative flex-shrink-0"
-              onClick={() => navigate("/perfil/notificaciones")}
+              onClick={() => setShowNotifications(true)}
             >
               <Bell className="w-5 h-5" />
               {unreadNotifications > 0 && (
@@ -205,6 +251,55 @@ const Index = () => {
       </main>
 
       <BottomNavigation />
+
+      {/* Sheet de Notificaciones */}
+      <Sheet open={showNotifications} onOpenChange={setShowNotifications}>
+        <SheetContent side="right" className="w-full sm:max-w-md">
+          <SheetHeader>
+            <SheetTitle>Notificaciones</SheetTitle>
+          </SheetHeader>
+          
+          <div className="mt-6 space-y-3">
+            {notifications.map((notification) => {
+              const Icon = notification.icon;
+              return (
+                <Card
+                  key={notification.id}
+                  className={`p-4 transition-colors ${
+                    notification.unread ? "bg-primary/5 border-primary/20" : ""
+                  }`}
+                >
+                  <div className="flex gap-3">
+                    <div
+                      className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
+                        notification.unread ? "bg-primary/10" : "bg-muted"
+                      }`}
+                    >
+                      <Icon
+                        className={`w-5 h-5 ${
+                          notification.unread ? "text-primary" : "text-muted-foreground"
+                        }`}
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2 mb-1">
+                        <h3 className="font-semibold text-sm">{notification.title}</h3>
+                        {notification.unread && (
+                          <div className="w-2 h-2 rounded-full bg-primary flex-shrink-0 mt-1" />
+                        )}
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-1">
+                        {notification.description}
+                      </p>
+                      <p className="text-xs text-muted-foreground">{notification.time}</p>
+                    </div>
+                  </div>
+                </Card>
+              );
+            })}
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 };

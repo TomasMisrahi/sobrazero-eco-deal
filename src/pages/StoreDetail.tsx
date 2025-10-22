@@ -228,7 +228,7 @@ const StoreDetail = () => {
           variant="ghost"
           size="icon"
           className="absolute top-4 left-4 z-10 bg-background/80 backdrop-blur-sm hover:bg-background"
-          onClick={() => navigate("/")}
+          onClick={() => navigate(-1)}
         >
           <ArrowLeft className="w-5 h-5" />
         </Button>
