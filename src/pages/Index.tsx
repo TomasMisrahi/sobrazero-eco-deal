@@ -11,6 +11,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { Card } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 import StoreFilters from "@/components/StoreFilters";
 import StoreCard from "@/components/StoreCard";
 import BottomNavigation from "@/components/BottomNavigation";
@@ -25,6 +26,7 @@ const Index = () => {
   const map = useRef<mapboxgl.Map | null>(null);
   const [unreadNotifications, setUnreadNotifications] = useState(3);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [mapboxToken, setMapboxToken] = useState("");
 
   const notifications = [
     {
@@ -142,9 +144,9 @@ const Index = () => {
 
   // Inicializar Mapbox
   useEffect(() => {
-    if (!mapContainer.current || map.current) return;
+    if (!mapContainer.current || map.current || !mapboxToken) return;
 
-    mapboxgl.accessToken = "pk.eyJ1IjoibG92YWJsZSIsImEiOiJjbTR0NWNiZmEwaGl2MnFzYmMwenB6azRjIn0.NOnCXYNlYk-_VXWVJn2KpQ";
+    mapboxgl.accessToken = mapboxToken;
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
@@ -176,7 +178,7 @@ const Index = () => {
     return () => {
       map.current?.remove();
     };
-  }, [filteredStores]);
+  }, [mapboxToken, filteredStores]);
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -222,7 +224,34 @@ const Index = () => {
         </div>
 
         {/* Map */}
-        <div ref={mapContainer} className="w-full h-[400px] rounded-xl overflow-hidden shadow-card" />
+        {!mapboxToken ? (
+          <Card className="p-4 space-y-3">
+            <Label htmlFor="mapbox-token">Token de Mapbox (requerido para el mapa)</Label>
+            <div className="flex gap-2">
+              <Input
+                id="mapbox-token"
+                type="text"
+                placeholder="pk.eyJ1..."
+                value={mapboxToken}
+                onChange={(e) => setMapboxToken(e.target.value)}
+                className="flex-1"
+              />
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Obtén tu token gratuito en{" "}
+              <a
+                href="https://mapbox.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary underline"
+              >
+                mapbox.com
+              </a>
+            </p>
+          </Card>
+        ) : (
+          <div ref={mapContainer} className="w-full h-[400px] rounded-xl overflow-hidden shadow-card" />
+        )}
 
         {/* Filters */}
         <div>

@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Mail, Lock, User, ArrowLeft } from "lucide-react";
+import logo from "@/assets/logo.png";
 import { toast } from "sonner";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -77,7 +78,7 @@ const Auth = () => {
 
         <Card className="p-6">
           <div className="text-center mb-6">
-            <h1 className="text-3xl font-bold text-primary mb-2">SobraZero</h1>
+            <img src={logo} alt="SobraZero" className="w-32 h-32 mx-auto mb-2" />
             <p className="text-sm text-muted-foreground">
               Salvá comida, ahorrá dinero
             </p>
