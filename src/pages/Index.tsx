@@ -1,17 +1,23 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, MapPin } from "lucide-react";
+import { Search, MapPin, Bell } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import MapView from "@/components/MapView";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import StoreFilters from "@/components/StoreFilters";
 import StoreCard from "@/components/StoreCard";
 import BottomNavigation from "@/components/BottomNavigation";
+import mapboxgl from "mapbox-gl";
+import "mapbox-gl/dist/mapbox-gl.css";
 import logo from "@/assets/logo.png";
 
 const Index = () => {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const mapContainer = useRef<HTMLDivElement>(null);
+  const map = useRef<mapboxgl.Map | null>(null);
+  const [unreadNotifications, setUnreadNotifications] = useState(3);
 
   // Mock data - en producción vendría de una API
   const stores = [
@@ -88,19 +94,75 @@ const Index = () => {
     return matchesCategory && matchesSearch;
   });
 
+  // Inicializar Mapbox
+  useEffect(() => {
+    if (!mapContainer.current || map.current) return;
+
+    mapboxgl.accessToken = "pk.eyJ1IjoibG92YWJsZSIsImEiOiJjbTR0NWNiZmEwaGl2MnFzYmMwenB6azRjIn0.NOnCXYNlYk-_VXWVJn2KpQ";
+
+    map.current = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: "mapbox://styles/mapbox/streets-v12",
+      center: [-58.381592, -34.603722], // Centro de Capital Federal
+      zoom: 13,
+    });
+
+    // Agregar controles de navegación
+    map.current.addControl(new mapboxgl.NavigationControl(), "top-right");
+
+    // Agregar marcadores para cada comercio
+    filteredStores.forEach((store) => {
+      if (map.current) {
+        new mapboxgl.Marker({ color: "#407b41" })
+          .setLngLat([store.lng, store.lat])
+          .setPopup(
+            new mapboxgl.Popup({ offset: 25 }).setHTML(
+              `<div style="padding: 8px;">
+                <h3 style="font-weight: bold; margin-bottom: 4px;">${store.name}</h3>
+                <p style="font-size: 12px; color: #666;">${store.discount}% descuento</p>
+              </div>`
+            )
+          )
+          .addTo(map.current);
+      }
+    });
+
+    return () => {
+      map.current?.remove();
+    };
+  }, [filteredStores]);
+
   return (
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
       <header className="sticky top-0 z-10 bg-background border-b border-border shadow-sm">
         <div className="px-4 py-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input
-              placeholder="Buscar comercios..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-white dark:bg-card"
-            />
+          <div className="flex items-center gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                placeholder="Buscar comercios..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 bg-white dark:bg-card"
+              />
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="relative flex-shrink-0"
+              onClick={() => navigate("/perfil/notificaciones")}
+            >
+              <Bell className="w-5 h-5" />
+              {unreadNotifications > 0 && (
+                <Badge
+                  variant="destructive"
+                  className="absolute -top-1 -right-1 w-5 h-5 p-0 flex items-center justify-center text-xs"
+                >
+                  {unreadNotifications}
+                </Badge>
+              )}
+            </Button>
           </div>
         </div>
       </header>
@@ -114,7 +176,7 @@ const Index = () => {
         </div>
 
         {/* Map */}
-        <MapView stores={filteredStores} onStoreClick={(id) => navigate(`/store/${id}`)} />
+        <div ref={mapContainer} className="w-full h-[400px] rounded-xl overflow-hidden shadow-card" />
 
         {/* Filters */}
         <div>

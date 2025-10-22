@@ -2,12 +2,35 @@ import { ArrowLeft, HelpCircle, MessageCircle, Mail, Phone, BookOpen, Search } f
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useState } from "react";
+import { z } from "zod";
+
+const feedbackSchema = z.object({
+  feedback: z.string().trim().min(10, "El comentario debe tener al menos 10 caracteres").max(1000, "Máximo 1000 caracteres"),
+});
 
 const CentroAyuda = () => {
   const navigate = useNavigate();
+  const [feedback, setFeedback] = useState("");
+  const [feedbackError, setFeedbackError] = useState("");
+
+  const handleSubmitFeedback = () => {
+    try {
+      feedbackSchema.parse({ feedback });
+      toast.success("¡Gracias por tus comentarios!");
+      setFeedback("");
+      setFeedbackError("");
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        setFeedbackError(error.errors[0].message);
+      }
+    }
+  };
 
   const faqItems = [
     {
@@ -167,14 +190,32 @@ const CentroAyuda = () => {
         </Card>
 
         {/* Feedback */}
-        <Card className="p-4 text-center">
-          <h3 className="font-semibold mb-2">¿No encontraste lo que buscabas?</h3>
-          <p className="text-sm text-muted-foreground mb-4">
+        <Card className="p-4">
+          <h3 className="font-semibold mb-2 text-center">¿No encontraste lo que buscabas?</h3>
+          <p className="text-sm text-muted-foreground mb-4 text-center">
             Ayúdanos a mejorar nuestro centro de ayuda
           </p>
-          <Button variant="outline" className="w-full">
-            Enviar comentarios
-          </Button>
+          <div className="space-y-3">
+            <div>
+              <Label htmlFor="feedback">Tu comentario</Label>
+              <Textarea
+                id="feedback"
+                placeholder="Cuéntanos qué podemos mejorar..."
+                value={feedback}
+                onChange={(e) => {
+                  setFeedback(e.target.value);
+                  setFeedbackError("");
+                }}
+                className="mt-1 min-h-[100px]"
+              />
+              {feedbackError && (
+                <p className="text-sm text-destructive mt-1">{feedbackError}</p>
+              )}
+            </div>
+            <Button onClick={handleSubmitFeedback} className="w-full">
+              Enviar comentarios
+            </Button>
+          </div>
         </Card>
       </main>
     </div>

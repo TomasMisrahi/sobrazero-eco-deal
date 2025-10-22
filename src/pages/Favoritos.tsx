@@ -1,6 +1,6 @@
-import { Heart, MapPin, Clock } from "lucide-react";
+import { Heart } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import StoreCard from "@/components/StoreCard";
 import BottomNavigation from "@/components/BottomNavigation";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -8,47 +8,44 @@ import { useState } from "react";
 const Favoritos = () => {
   const navigate = useNavigate();
 
-  // Mock data - en producción vendría de una API
+  // Mismos comercios que en Index - en producción vendría de una API
   const [favoriteStores, setFavoriteStores] = useState([
     {
-      id: 1,
-      name: "Panadería Don José",
-      category: "Panadería",
-      distance: "0.3 km",
-      discount: "50%",
-      price: "$1200",
-      originalPrice: "$2400",
-      available: 3,
-      closesAt: "21:00",
-      image: "🥖",
-    },
-    {
-      id: 2,
-      name: "Frutas del Huerto",
-      category: "Verdulería",
-      distance: "0.5 km",
-      discount: "40%",
-      price: "$900",
-      originalPrice: "$1500",
-      available: 5,
-      closesAt: "20:00",
-      image: "🍎",
-    },
-    {
-      id: 3,
-      name: "Sushi Express",
-      category: "Restaurante",
+      id: "1",
+      name: "Panadería Don Juan",
+      category: "panaderia",
       distance: "0.8 km",
-      discount: "60%",
-      price: "$1800",
-      originalPrice: "$4500",
-      available: 2,
-      closesAt: "22:30",
-      image: "🍱",
+      rating: 4.5,
+      reviewCount: 127,
+      discount: 60,
+      pickupTime: "18:00 - 20:00",
+      available: 5,
+    },
+    {
+      id: "3",
+      name: "Verdulería Los Andes",
+      category: "verduleria",
+      distance: "1.5 km",
+      rating: 4.7,
+      reviewCount: 156,
+      discount: 55,
+      pickupTime: "17:00 - 19:00",
+      available: 3,
+    },
+    {
+      id: "4",
+      name: "Restaurante La Estancia",
+      category: "restaurant",
+      distance: "0.5 km",
+      rating: 4.8,
+      reviewCount: 203,
+      discount: 70,
+      pickupTime: "20:00 - 21:30",
+      available: 4,
     },
   ]);
 
-  const handleRemoveFavorite = (storeId: number, e: React.MouseEvent) => {
+  const handleRemoveFavorite = (storeId: string, e: React.MouseEvent) => {
     e.stopPropagation();
     setFavoriteStores(favoriteStores.filter(store => store.id !== storeId));
   };
@@ -77,60 +74,11 @@ const Favoritos = () => {
           </Card>
         ) : (
           favoriteStores.map((store) => (
-            <Card
+            <StoreCard
               key={store.id}
-              className="overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
+              {...store}
               onClick={() => navigate(`/store/${store.id}`)}
-            >
-              <div className="flex gap-3 p-3">
-                {/* Store Image */}
-                <div className="w-20 h-20 rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center text-3xl flex-shrink-0">
-                  {store.image}
-                </div>
-
-                {/* Store Info */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between gap-2 mb-1">
-                    <h3 className="font-semibold text-sm leading-tight">
-                      {store.name}
-                    </h3>
-                    <button
-                      onClick={(e) => handleRemoveFavorite(store.id, e)}
-                      className="flex-shrink-0 hover:scale-110 transition-transform"
-                    >
-                      <Heart className="w-6 h-6 fill-primary text-primary" />
-                    </button>
-                  </div>
-
-                  <p className="text-xs text-muted-foreground mb-2">
-                    {store.category}
-                  </p>
-
-                  <div className="flex items-center gap-3 text-xs text-muted-foreground mb-2">
-                    <div className="flex items-center gap-1">
-                      <MapPin className="w-3 h-3" />
-                      <span>{store.distance}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Clock className="w-3 h-3" />
-                      <span>Hasta las {store.closesAt} hs</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold text-primary">{store.price}</span>
-                      <span className="text-xs text-muted-foreground line-through">
-                        {store.originalPrice}
-                      </span>
-                    </div>
-                    <Badge variant="secondary" className="text-xs">
-                      {store.available} ofertas disponibles
-                    </Badge>
-                  </div>
-                </div>
-              </div>
-            </Card>
+            />
           ))
         )}
       </main>
