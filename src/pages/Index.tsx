@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, MapPin, Bell, Package, CheckCircle2, Clock } from "lucide-react";
+import { Search, MapPin, Bell, Package, CheckCircle2, Clock, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -24,11 +24,9 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
-  const [unreadNotifications, setUnreadNotifications] = useState(3);
   const [showNotifications, setShowNotifications] = useState(false);
-  const [mapboxToken] = useState("pk.eyJ1IjoidG9tYXNtaXNyYWhpIiwiYSI6ImNtaDJwdDE5MjBlczEybG9ma3htY2RmY2gifQ.-GK5Opm8KST4APdPp_XAjg");
-
-  const notifications = [
+  const [mapboxToken] = useState("pk.eyJ1IjoidG9tYXNtaXNyYWhpIiwiYSI6ImNtaDJwdDE5MjBlczEybG9ma3htY2RmY2cifQ.-GK5Opm8KST4APdPp_XAjg");
+  const [notifications, setNotifications] = useState([
     {
       id: "1",
       type: "order",
@@ -65,7 +63,17 @@ const Index = () => {
       icon: CheckCircle2,
       unread: false,
     },
-  ];
+  ]);
+
+  const unreadNotifications = notifications.filter(n => n.unread).length;
+
+  const handleDeleteNotification = (notificationId: string) => {
+    setNotifications(prev => prev.filter(n => n.id !== notificationId));
+  };
+
+  const handleDeleteAllNotifications = () => {
+    setNotifications([]);
+  };
 
   // Mock data - en producción vendría de una API
   const stores = [
@@ -297,43 +305,67 @@ const Index = () => {
           </SheetHeader>
           
           <div className="mt-6 space-y-3">
-            {notifications.map((notification) => {
-              const Icon = notification.icon;
-              return (
-                <Card
-                  key={notification.id}
-                  className={`p-4 transition-colors ${
-                    notification.unread ? "bg-primary/5 border-primary/20" : ""
-                  }`}
-                >
-                  <div className="flex gap-3">
-                    <div
-                      className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
-                        notification.unread ? "bg-primary/10" : "bg-muted"
+            {notifications.length === 0 ? (
+              <div className="text-center py-12">
+                <Bell className="w-12 h-12 text-muted-foreground/50 mx-auto mb-3" />
+                <p className="text-muted-foreground">No hay notificaciones</p>
+              </div>
+            ) : (
+              <>
+                {notifications.map((notification) => {
+                  const Icon = notification.icon;
+                  return (
+                    <Card
+                      key={notification.id}
+                      className={`p-4 transition-colors relative ${
+                        notification.unread ? "bg-primary/5 border-primary/20" : ""
                       }`}
                     >
-                      <Icon
-                        className={`w-5 h-5 ${
-                          notification.unread ? "text-primary" : "text-muted-foreground"
-                        }`}
-                      />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-2 mb-1">
-                        <h3 className="font-semibold text-sm">{notification.title}</h3>
-                        {notification.unread && (
-                          <div className="w-2 h-2 rounded-full bg-primary flex-shrink-0 mt-1" />
-                        )}
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute top-2 right-2 h-6 w-6"
+                        onClick={() => handleDeleteNotification(notification.id)}
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                      <div className="flex gap-3">
+                        <div
+                          className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
+                            notification.unread ? "bg-primary/10" : "bg-muted"
+                          }`}
+                        >
+                          <Icon
+                            className={`w-5 h-5 ${
+                              notification.unread ? "text-primary" : "text-muted-foreground"
+                            }`}
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0 pr-6">
+                          <div className="flex items-start justify-between gap-2 mb-1">
+                            <h3 className="font-semibold text-sm">{notification.title}</h3>
+                            {notification.unread && (
+                              <div className="w-2 h-2 rounded-full bg-primary flex-shrink-0 mt-1" />
+                            )}
+                          </div>
+                          <p className="text-sm text-muted-foreground mb-1">
+                            {notification.description}
+                          </p>
+                          <p className="text-xs text-muted-foreground">{notification.time}</p>
+                        </div>
                       </div>
-                      <p className="text-sm text-muted-foreground mb-1">
-                        {notification.description}
-                      </p>
-                      <p className="text-xs text-muted-foreground">{notification.time}</p>
-                    </div>
-                  </div>
-                </Card>
-              );
-            })}
+                    </Card>
+                  );
+                })}
+                <Button
+                  variant="outline"
+                  className="w-full mt-4"
+                  onClick={handleDeleteAllNotifications}
+                >
+                  Eliminar todas las notificaciones
+                </Button>
+              </>
+            )}
           </div>
         </SheetContent>
       </Sheet>
