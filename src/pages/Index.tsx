@@ -154,7 +154,7 @@ const Index = () => {
   useEffect(() => {
     if (!mapContainer.current || map.current) return;
 
-    mapboxgl.accessToken = "pk.eyJ1IjoidG9tYXNtaXNyYWhpIiwiYSI6ImNtaDJwdDE5MjBlczEybG9ma3htY2RmY2cifQ.-GK5Opm8KST4APdPp_XAjg";
+    mapboxgl.accessToken = mapboxToken;
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
@@ -166,57 +166,76 @@ const Index = () => {
     // Agregar controles de navegación
     map.current.addControl(new mapboxgl.NavigationControl(), "top-right");
 
-    // Cleanup function para marcadores
-    const markers: mapboxgl.Marker[] = [];
+    // Esperar a que el mapa se cargue antes de agregar marcadores
+    map.current.on('load', () => {
+      const markers: mapboxgl.Marker[] = [];
 
-    // Agregar marcadores para cada comercio
-    stores.forEach((store) => {
-      if (map.current) {
-        const marker = new mapboxgl.Marker({ color: "#407b41" })
-          .setLngLat([store.lng, store.lat])
-          .setPopup(
-            new mapboxgl.Popup({ 
-              offset: 25,
-              closeButton: false,
-              className: 'mapbox-popup-custom'
-            }).setHTML(
-              `<div style="padding: 12px; min-width: 200px; cursor: pointer;" data-store-id="${store.id}">
-                <h3 style="font-weight: 600; margin-bottom: 8px; font-size: 14px; color: #1a1a1a;">${store.name}</h3>
-                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                  <span style="background: #407b41; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;">
-                    ${store.discount}% OFF
-                  </span>
-                  <span style="font-size: 12px; color: #666;">⭐ ${store.rating}</span>
-                </div>
-                <p style="font-size: 12px; color: #666; margin-bottom: 4px;">📍 ${store.distance}</p>
-                <p style="font-size: 12px; color: #666;">🕐 ${store.pickupTime}</p>
-                <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #e0e0e0;">
-                  <span style="font-size: 12px; color: #407b41; font-weight: 500;">👉 Click para ver detalles</span>
-                </div>
-              </div>`
-            )
-          )
-          .addTo(map.current);
+      // Agregar marcadores para cada comercio
+      stores.forEach((store) => {
+        if (map.current) {
+          // Obtener el nombre de la categoría en español
+          const categoryNames: { [key: string]: string } = {
+            panaderia: "Panadería",
+            supermercado: "Supermercado",
+            verduleria: "Verdulería",
+            restaurant: "Restaurante",
+          };
 
-        markers.push(marker);
+          const popup = new mapboxgl.Popup({ 
+            offset: 25,
+            closeButton: false,
+            className: 'mapbox-popup-custom'
+          }).setHTML(
+            `<div style="padding: 12px; min-width: 220px; cursor: pointer;" class="store-popup" data-store-id="${store.id}">
+              <h3 style="font-weight: 600; margin-bottom: 4px; font-size: 14px; color: #1a1a1a;">${store.name}</h3>
+              <p style="font-size: 12px; color: #666; margin-bottom: 8px;">${categoryNames[store.category]}</p>
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                <span style="background: #407b41; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;">
+                  ${store.discount}% OFF
+                </span>
+                <span style="font-size: 12px; color: #666;">⭐ ${store.rating}</span>
+              </div>
+              <p style="font-size: 12px; color: #666; margin-bottom: 4px;">📍 ${store.distance}</p>
+              <p style="font-size: 12px; color: #666; margin-bottom: 8px;">🕐 ${store.pickupTime}</p>
+              <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #e0e0e0; text-align: center;">
+                <span style="font-size: 12px; color: #407b41; font-weight: 600;">👉 Click para ver detalles</span>
+              </div>
+            </div>`
+          );
 
-        // Agregar evento click al popup
-        marker.getElement().addEventListener('click', () => {
-          navigate(`/store/${store.id}`);
-        });
-      }
+          const marker = new mapboxgl.Marker({ color: "#407b41" })
+            .setLngLat([store.lng, store.lat])
+            .setPopup(popup)
+            .addTo(map.current);
+
+          markers.push(marker);
+
+          // Agregar evento click al popup cuando se abre
+          popup.on('open', () => {
+            const popupElement = document.querySelector(`[data-store-id="${store.id}"]`);
+            if (popupElement) {
+              popupElement.addEventListener('click', () => {
+                navigate(`/store/${store.id}`);
+              });
+            }
+          });
+        }
+      });
+
+      // Cleanup markers cuando se desmonte el componente
+      return () => {
+        markers.forEach(marker => marker.remove());
+      };
     });
 
-    // Cleanup markers
+    // Cleanup del mapa
     return () => {
-      markers.forEach(marker => marker.remove());
+      if (map.current) {
+        map.current.remove();
+        map.current = null;
+      }
     };
-
-    return () => {
-      map.current?.remove();
-      map.current = null;
-    };
-  }, []);
+  }, [navigate]);
 
   return (
     <div className="min-h-screen bg-background pb-20">
