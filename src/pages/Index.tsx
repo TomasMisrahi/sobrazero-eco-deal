@@ -81,8 +81,8 @@ const Index = () => {
       id: "1",
       name: "Panadería Don Juan",
       category: "panaderia",
-      lat: -34.603722,
-      lng: -58.381592,
+      lat: -34.599722,
+      lng: -58.438611,
       distance: "0.8 km",
       rating: 4.5,
       reviewCount: 127,
@@ -94,8 +94,8 @@ const Index = () => {
       id: "2",
       name: "Supermercado Express",
       category: "supermercado",
-      lat: -34.605722,
-      lng: -58.383592,
+      lat: -34.601500,
+      lng: -58.440200,
       distance: "1.2 km",
       rating: 4.2,
       reviewCount: 89,
@@ -107,8 +107,8 @@ const Index = () => {
       id: "3",
       name: "Verdulería Los Andes",
       category: "verduleria",
-      lat: -34.607722,
-      lng: -58.379592,
+      lat: -34.597800,
+      lng: -58.436500,
       distance: "1.5 km",
       rating: 4.7,
       reviewCount: 156,
@@ -120,8 +120,8 @@ const Index = () => {
       id: "4",
       name: "Restaurante La Estancia",
       category: "restaurant",
-      lat: -34.601722,
-      lng: -58.385592,
+      lat: -34.598500,
+      lng: -58.441000,
       distance: "0.5 km",
       rating: 4.8,
       reviewCount: 203,
@@ -133,8 +133,8 @@ const Index = () => {
       id: "5",
       name: "Panadería Artesanal",
       category: "panaderia",
-      lat: -34.609722,
-      lng: -58.377592,
+      lat: -34.602000,
+      lng: -58.437000,
       distance: "2.1 km",
       rating: 4.6,
       reviewCount: 94,
@@ -152,22 +152,25 @@ const Index = () => {
 
   // Inicializar Mapbox
   useEffect(() => {
-    if (!mapContainer.current || map.current || !mapboxToken) return;
+    if (!mapContainer.current || map.current) return;
 
-    mapboxgl.accessToken = mapboxToken;
+    mapboxgl.accessToken = "pk.eyJ1IjoidG9tYXNtaXNyYWhpIiwiYSI6ImNtaDJwdDE5MjBlczEybG9ma3htY2RmY2cifQ.-GK5Opm8KST4APdPp_XAjg";
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: "mapbox://styles/mapbox/light-v11", // Estilo más limpio y minimalista
-      center: [-58.381592, -34.603722], // Centro de Capital Federal
-      zoom: 13,
+      style: "mapbox://styles/mapbox/light-v11",
+      center: [-58.438611, -34.599722], // Centro de Villa Crespo
+      zoom: 14,
     });
 
     // Agregar controles de navegación
     map.current.addControl(new mapboxgl.NavigationControl(), "top-right");
 
+    // Cleanup function para marcadores
+    const markers: mapboxgl.Marker[] = [];
+
     // Agregar marcadores para cada comercio
-    filteredStores.forEach((store) => {
+    stores.forEach((store) => {
       if (map.current) {
         const marker = new mapboxgl.Marker({ color: "#407b41" })
           .setLngLat([store.lng, store.lat])
@@ -195,6 +198,8 @@ const Index = () => {
           )
           .addTo(map.current);
 
+        markers.push(marker);
+
         // Agregar evento click al popup
         marker.getElement().addEventListener('click', () => {
           navigate(`/store/${store.id}`);
@@ -202,10 +207,16 @@ const Index = () => {
       }
     });
 
+    // Cleanup markers
+    return () => {
+      markers.forEach(marker => marker.remove());
+    };
+
     return () => {
       map.current?.remove();
+      map.current = null;
     };
-  }, [mapboxToken, filteredStores]);
+  }, []);
 
   return (
     <div className="min-h-screen bg-background pb-20">
