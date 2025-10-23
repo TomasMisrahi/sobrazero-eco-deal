@@ -342,12 +342,7 @@ const Index = () => {
                           />
                         </div>
                         <div className="flex-1 min-w-0 pr-6">
-                          <div className="flex items-start justify-between gap-2 mb-1">
-                            <h3 className="font-semibold text-sm">{notification.title}</h3>
-                            {notification.unread && (
-                              <div className="w-2 h-2 rounded-full bg-primary flex-shrink-0 mt-1" />
-                            )}
-                          </div>
+                          <h3 className="font-semibold text-sm mb-1">{notification.title}</h3>
                           <p className="text-sm text-muted-foreground mb-1">
                             {notification.description}
                           </p>
