@@ -26,7 +26,7 @@ const Index = () => {
   const map = useRef<mapboxgl.Map | null>(null);
   const [unreadNotifications, setUnreadNotifications] = useState(3);
   const [showNotifications, setShowNotifications] = useState(false);
-  const [mapboxToken, setMapboxToken] = useState("");
+  const [mapboxToken] = useState("pk.eyJ1IjoidG9tYXNtaXNyYWhpIiwiYSI6ImNtaDJwdDE5MjBlczEybG9ma3htY2RmY2gifQ.-GK5Opm8KST4APdPp_XAjg");
 
   const notifications = [
     {
@@ -150,7 +150,7 @@ const Index = () => {
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: "mapbox://styles/mapbox/streets-v12",
+      style: "mapbox://styles/mapbox/light-v11", // Estilo más limpio y minimalista
       center: [-58.381592, -34.603722], // Centro de Capital Federal
       zoom: 13,
     });
@@ -161,17 +161,36 @@ const Index = () => {
     // Agregar marcadores para cada comercio
     filteredStores.forEach((store) => {
       if (map.current) {
-        new mapboxgl.Marker({ color: "#407b41" })
+        const marker = new mapboxgl.Marker({ color: "#407b41" })
           .setLngLat([store.lng, store.lat])
           .setPopup(
-            new mapboxgl.Popup({ offset: 25 }).setHTML(
-              `<div style="padding: 8px;">
-                <h3 style="font-weight: bold; margin-bottom: 4px;">${store.name}</h3>
-                <p style="font-size: 12px; color: #666;">${store.discount}% descuento</p>
+            new mapboxgl.Popup({ 
+              offset: 25,
+              closeButton: false,
+              className: 'mapbox-popup-custom'
+            }).setHTML(
+              `<div style="padding: 12px; min-width: 200px; cursor: pointer;" data-store-id="${store.id}">
+                <h3 style="font-weight: 600; margin-bottom: 8px; font-size: 14px; color: #1a1a1a;">${store.name}</h3>
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                  <span style="background: #407b41; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;">
+                    ${store.discount}% OFF
+                  </span>
+                  <span style="font-size: 12px; color: #666;">⭐ ${store.rating}</span>
+                </div>
+                <p style="font-size: 12px; color: #666; margin-bottom: 4px;">📍 ${store.distance}</p>
+                <p style="font-size: 12px; color: #666;">🕐 ${store.pickupTime}</p>
+                <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #e0e0e0;">
+                  <span style="font-size: 12px; color: #407b41; font-weight: 500;">👉 Click para ver detalles</span>
+                </div>
               </div>`
             )
           )
           .addTo(map.current);
+
+        // Agregar evento click al popup
+        marker.getElement().addEventListener('click', () => {
+          navigate(`/store/${store.id}`);
+        });
       }
     });
 
@@ -224,34 +243,23 @@ const Index = () => {
         </div>
 
         {/* Map */}
-        {!mapboxToken ? (
-          <Card className="p-4 space-y-3">
-            <Label htmlFor="mapbox-token">Token de Mapbox (requerido para el mapa)</Label>
-            <div className="flex gap-2">
-              <Input
-                id="mapbox-token"
-                type="text"
-                placeholder="pk.eyJ1..."
-                value={mapboxToken}
-                onChange={(e) => setMapboxToken(e.target.value)}
-                className="flex-1"
-              />
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Obtén tu token gratuito en{" "}
-              <a
-                href="https://mapbox.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary underline"
-              >
-                mapbox.com
-              </a>
-            </p>
-          </Card>
-        ) : (
-          <div ref={mapContainer} className="w-full h-[400px] rounded-xl overflow-hidden shadow-card" />
-        )}
+        <div className="relative">
+          <div ref={mapContainer} className="w-full h-[400px] rounded-xl overflow-hidden shadow-card mapbox-container" />
+          <style>{`
+            .mapbox-container .mapboxgl-ctrl-bottom-left,
+            .mapbox-container .mapboxgl-ctrl-bottom-right {
+              display: none !important;
+            }
+            .mapbox-popup-custom .mapboxgl-popup-content {
+              padding: 0;
+              border-radius: 8px;
+              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            }
+            .mapbox-popup-custom .mapboxgl-popup-tip {
+              border-top-color: white;
+            }
+          `}</style>
+        </div>
 
         {/* Filters */}
         <div>
