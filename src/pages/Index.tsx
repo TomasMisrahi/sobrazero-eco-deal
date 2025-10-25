@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, MapPin, Bell, Package, CheckCircle2, Clock, X } from "lucide-react";
+import { Search, MapPin, Bell, Package, CheckCircle2, Clock, X, Star, TrendingDown, ExternalLink } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -144,9 +144,23 @@ const Index = () => {
     },
   ];
 
+  // Función para normalizar texto (quitar tildes y convertir a minúsculas)
+  const normalizeText = (text: string) => {
+    return text
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+  };
+
   const filteredStores = stores.filter((store) => {
     const matchesCategory = selectedCategory === "all" || store.category === selectedCategory;
-    const matchesSearch = store.name.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    // Buscar por cualquier palabra del nombre del comercio
+    const normalizedSearch = normalizeText(searchQuery);
+    const normalizedName = normalizeText(store.name);
+    const searchWords = normalizedSearch.split(" ").filter(word => word.length > 0);
+    const matchesSearch = searchWords.length === 0 || searchWords.some(word => normalizedName.includes(word));
+    
     return matchesCategory && matchesSearch;
   });
 
@@ -167,11 +181,19 @@ const Index = () => {
     map.current.addControl(new mapboxgl.NavigationControl(), "top-right");
 
     // Esperar a que el mapa se cargue antes de agregar marcadores
-    map.current.on('load', () => {
-      const markers: mapboxgl.Marker[] = [];
+    let markers: mapboxgl.Marker[] = [];
 
-      // Agregar marcadores para cada comercio
-      stores.forEach((store) => {
+    const updateMarkers = () => {
+      // Eliminar marcadores existentes
+      markers.forEach(marker => marker.remove());
+      markers = [];
+
+      // Agregar marcadores para comercios filtrados
+      const storesToShow = selectedCategory === "all" 
+        ? stores 
+        : stores.filter(store => store.category === selectedCategory);
+
+      storesToShow.forEach((store) => {
         if (map.current) {
           // Obtener el nombre de la categoría en español
           const categoryNames: { [key: string]: string } = {
@@ -186,20 +208,47 @@ const Index = () => {
             closeButton: false,
             className: 'mapbox-popup-custom'
           }).setHTML(
-            `<div style="padding: 12px; min-width: 220px; cursor: pointer;" class="store-popup" data-store-id="${store.id}">
-              <h3 style="font-weight: 600; margin-bottom: 4px; font-size: 14px; color: #1a1a1a;">${store.name}</h3>
-              <p style="font-size: 12px; color: #666; margin-bottom: 8px;">${categoryNames[store.category]}</p>
-              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                <span style="background: #407b41; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;">
-                  ${store.discount}% OFF
+            `<div style="padding: 16px; min-width: 240px; cursor: pointer; font-family: system-ui, -apple-system, sans-serif;" class="store-popup" data-store-id="${store.id}">
+              <div style="display: flex; align-items: start; justify-content: space-between; margin-bottom: 8px;">
+                <h3 style="font-weight: 600; font-size: 15px; color: #1a1a1a; margin: 0; flex: 1;">${store.name}</h3>
+              </div>
+              <p style="font-size: 13px; color: #666; margin: 0 0 12px 0;">${categoryNames[store.category]}</p>
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                <span style="background: #407b41; color: white; padding: 4px 10px; border-radius: 6px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="22 17 13.5 8.5 8.5 13.5 2 7"></polyline>
+                    <polyline points="16 17 22 17 22 11"></polyline>
+                  </svg>
+                  ${store.discount}%
                 </span>
-                <span style="font-size: 12px; color: #666;">⭐ ${store.rating}</span>
+                <span style="font-size: 13px; color: #666; display: flex; align-items: center; gap: 3px;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                  </svg>
+                  ${store.rating}
+                </span>
               </div>
-              <p style="font-size: 12px; color: #666; margin-bottom: 4px;">📍 ${store.distance}</p>
-              <p style="font-size: 12px; color: #666; margin-bottom: 8px;">🕐 ${store.pickupTime}</p>
-              <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #e0e0e0; text-align: center;">
-                <span style="font-size: 12px; color: #407b41; font-weight: 600;">👉 Click para ver detalles</span>
+              <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px; font-size: 13px; color: #666;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#407b41" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                  <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+                ${store.distance}
               </div>
+              <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 14px; font-size: 13px; color: #666;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#407b41" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                ${store.pickupTime}
+              </div>
+              <button style="width: 100%; background: #407b41; color: white; border: none; padding: 10px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: background 0.2s;">
+                Ver detalles
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M7 17L17 7"></path>
+                  <path d="M7 7h10v10"></path>
+                </svg>
+              </button>
             </div>`
           );
 
@@ -221,21 +270,26 @@ const Index = () => {
           });
         }
       });
+    };
 
-      // Cleanup markers cuando se desmonte el componente
-      return () => {
-        markers.forEach(marker => marker.remove());
-      };
+    map.current.on('load', () => {
+      updateMarkers();
     });
 
-    // Cleanup del mapa
+    // Actualizar marcadores cuando cambie la categoría seleccionada
+    if (map.current && map.current.loaded()) {
+      updateMarkers();
+    }
+
+    // Cleanup del mapa y marcadores
     return () => {
+      markers.forEach(marker => marker.remove());
       if (map.current) {
         map.current.remove();
         map.current = null;
       }
     };
-  }, [navigate]);
+  }, [navigate, selectedCategory]);
 
   return (
     <div className="min-h-screen bg-background pb-20">

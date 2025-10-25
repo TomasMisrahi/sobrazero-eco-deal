@@ -4,6 +4,8 @@ import { ArrowLeft, MapPin, Clock, Star, TrendingDown, ShoppingBag } from "lucid
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import ReviewSection from "@/components/ReviewSection";
 import BottomNavigation from "@/components/BottomNavigation";
 import { toast } from "sonner";
@@ -12,6 +14,9 @@ const StoreDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [quantity, setQuantity] = useState(1);
+  const [newReviewRating, setNewReviewRating] = useState(5);
+  const [newReviewComment, setNewReviewComment] = useState("");
+  const [localReviews, setLocalReviews] = useState<any[]>([]);
 
   // Mock data - en producción vendría de una API
   const allStores = {
@@ -183,7 +188,8 @@ const StoreDetail = () => {
     ],
   };
 
-  const reviews = allReviews[id as string] || allReviews["1"];
+  const baseReviews = allReviews[id as string] || allReviews["1"];
+  const reviews = [...localReviews, ...baseReviews];
 
   const handleReserve = () => {
     // Crear el nuevo pedido
@@ -214,6 +220,27 @@ const StoreDetail = () => {
 
     // Resetear cantidad
     setQuantity(1);
+  };
+
+  const handleAddReview = () => {
+    if (!newReviewComment.trim()) {
+      toast.error("Por favor escribí un comentario");
+      return;
+    }
+
+    const newReview = {
+      id: Date.now().toString(),
+      userName: "Usuario Actual",
+      rating: newReviewRating,
+      comment: newReviewComment,
+      date: "Ahora",
+    };
+
+    setLocalReviews([newReview, ...localReviews]);
+    setNewReviewComment("");
+    setNewReviewRating(5);
+    
+    toast.success("¡Reseña agregada con éxito!");
   };
 
   return (
@@ -319,10 +346,54 @@ const StoreDetail = () => {
         {/* Reseñas */}
         <Card className="p-4">
           <h2 className="font-semibold mb-4">Reseñas</h2>
+          
+          {/* Formulario para agregar reseña */}
+          <div className="mb-6 p-4 bg-muted/50 rounded-lg">
+            <h3 className="font-medium mb-3">Dejá tu reseña</h3>
+            
+            <div className="mb-3">
+              <Label className="mb-2 block">Calificación</Label>
+              <div className="flex gap-2">
+                {[1, 2, 3, 4, 5].map((rating) => (
+                  <button
+                    key={rating}
+                    onClick={() => setNewReviewRating(rating)}
+                    className="focus:outline-none transition-transform hover:scale-110"
+                  >
+                    <Star
+                      className={`w-8 h-8 ${
+                        rating <= newReviewRating
+                          ? "fill-yellow-400 text-yellow-400"
+                          : "text-gray-300"
+                      }`}
+                    />
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="mb-3">
+              <Label htmlFor="review-comment" className="mb-2 block">
+                Comentario
+              </Label>
+              <Textarea
+                id="review-comment"
+                placeholder="Contanos tu experiencia..."
+                value={newReviewComment}
+                onChange={(e) => setNewReviewComment(e.target.value)}
+                className="min-h-[100px]"
+              />
+            </div>
+
+            <Button onClick={handleAddReview} className="w-full">
+              Publicar reseña
+            </Button>
+          </div>
+
           <ReviewSection
             reviews={reviews}
             averageRating={store.rating}
-            totalReviews={store.reviewCount}
+            totalReviews={store.reviewCount + localReviews.length}
           />
         </Card>
       </div>

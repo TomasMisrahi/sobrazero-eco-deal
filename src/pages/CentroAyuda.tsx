@@ -103,17 +103,6 @@ const CentroAyuda = () => {
 
       {/* Content */}
       <main className="px-4 py-4 space-y-4">
-        {/* Search */}
-        <Card className="p-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input
-              placeholder="Buscar en ayuda..."
-              className="pl-9"
-            />
-          </div>
-        </Card>
-
         {/* Quick Actions */}
         <div>
           <h2 className="font-semibold mb-3 px-1">Contacto rápido</h2>
