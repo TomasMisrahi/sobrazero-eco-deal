@@ -1,4 +1,4 @@
-import { ArrowLeft, Bell, BellOff, MapPin, ShoppingBag, Percent } from "lucide-react";
+import { ArrowLeft, Bell, BellOff, MapPin, ShoppingBag, Percent, X } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -15,9 +15,11 @@ const Notificaciones = () => {
   const [notifyOffers, setNotifyOffers] = useState(true);
   const [notifyOrders, setNotifyOrders] = useState(true);
   const [notifyNearby, setNotifyNearby] = useState(false);
+  const [notifyPush, setNotifyPush] = useState(true);
+  const [notifyEmail, setNotifyEmail] = useState(true);
 
   // Mock notification history
-  const notifications = [
+  const [notifications, setNotifications] = useState([
     {
       id: 1,
       type: "offer",
@@ -54,13 +56,23 @@ const Notificaciones = () => {
       time: "Hace 2 días",
       read: true,
     },
-  ];
+  ]);
 
   const handleToggle = (setter: (value: boolean) => void, name: string) => {
     return (checked: boolean) => {
       setter(checked);
       toast.success(checked ? `${name} activadas` : `${name} desactivadas`);
     };
+  };
+
+  const handleMarkAllAsRead = () => {
+    setNotifications([]);
+    toast.success("Todas las notificaciones han sido eliminadas");
+  };
+
+  const handleDeleteNotification = (id: number) => {
+    setNotifications(prev => prev.filter(n => n.id !== id));
+    toast.success("Notificación eliminada");
   };
 
   return (
@@ -159,58 +171,115 @@ const Notificaciones = () => {
                 onCheckedChange={handleToggle(setNotifyNearby, "Notificaciones de ofertas cercanas")}
               />
             </div>
+
+            <Separator />
+
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <Label htmlFor="notify-push" className="cursor-pointer">
+                  Notificaciones push
+                </Label>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Recibe alertas sobre ofertas cercanas
+                </p>
+              </div>
+              <Switch
+                id="notify-push"
+                checked={notifyPush}
+                onCheckedChange={handleToggle(setNotifyPush, "Notificaciones push")}
+              />
+            </div>
+
+            <Separator />
+
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <Label htmlFor="notify-email" className="cursor-pointer">
+                  Notificaciones por email
+                </Label>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Recibe resúmenes semanales
+                </p>
+              </div>
+              <Switch
+                id="notify-email"
+                checked={notifyEmail}
+                onCheckedChange={handleToggle(setNotifyEmail, "Notificaciones por email")}
+              />
+            </div>
           </div>
         </Card>
 
         {/* Notification History */}
         <div>
           <h2 className="font-semibold mb-3 px-1">Historial</h2>
-          <div className="space-y-2">
-            {notifications.map((notification) => {
-              const Icon = notification.icon;
-              return (
-                <Card
-                  key={notification.id}
-                  className={`p-4 ${!notification.read ? "bg-primary/5 border-primary/20" : ""}`}
-                >
-                  <div className="flex gap-3">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
-                      !notification.read ? "bg-primary/10" : "bg-muted"
-                    }`}>
-                      <Icon className={`w-5 h-5 ${
-                        !notification.read ? "text-primary" : "text-muted-foreground"
-                      }`} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-2 mb-1">
-                        <h3 className="font-semibold text-sm leading-tight">
-                          {notification.title}
-                        </h3>
-                        {!notification.read && (
-                          <Badge variant="secondary" className="text-xs flex-shrink-0">
-                            Nueva
-                          </Badge>
-                        )}
+          {notifications.length === 0 ? (
+            <Card className="p-8 text-center">
+              <Bell className="w-12 h-12 text-muted-foreground mx-auto mb-3 opacity-50" />
+              <p className="text-muted-foreground">No hay notificaciones</p>
+            </Card>
+          ) : (
+            <div className="space-y-2">
+              {notifications.map((notification) => {
+                const Icon = notification.icon;
+                return (
+                  <Card
+                    key={notification.id}
+                    className={`p-4 relative ${!notification.read ? "bg-primary/5 border-primary/20" : ""}`}
+                  >
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="absolute top-2 right-2 h-7 w-7 hover:bg-destructive/10"
+                      onClick={() => handleDeleteNotification(notification.id)}
+                    >
+                      <X className="w-4 h-4 text-muted-foreground hover:text-destructive" />
+                    </Button>
+                    <div className="flex gap-3 pr-8">
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
+                        !notification.read ? "bg-primary/10" : "bg-muted"
+                      }`}>
+                        <Icon className={`w-5 h-5 ${
+                          !notification.read ? "text-primary" : "text-muted-foreground"
+                        }`} />
                       </div>
-                      <p className="text-sm text-muted-foreground mb-2">
-                        {notification.message}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {notification.time}
-                      </p>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between gap-2 mb-1">
+                          <h3 className="font-semibold text-sm leading-tight">
+                            {notification.title}
+                          </h3>
+                          {!notification.read && (
+                            <Badge variant="secondary" className="text-xs flex-shrink-0">
+                              Nueva
+                            </Badge>
+                          )}
+                        </div>
+                        <p className="text-sm text-muted-foreground mb-2">
+                          {notification.message}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {notification.time}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </Card>
-              );
-            })}
-          </div>
+                  </Card>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* Clear All */}
-        <Button variant="outline" className="w-full">
-          <BellOff className="w-4 h-4 mr-2" />
-          Marcar todas como leídas
-        </Button>
+        {notifications.length > 0 && (
+          <Button 
+            variant="outline" 
+            className="w-full"
+            onClick={handleMarkAllAsRead}
+          >
+            <BellOff className="w-4 h-4 mr-2" />
+            Eliminar todas las notificaciones
+          </Button>
+        )}
       </main>
     </div>
   );

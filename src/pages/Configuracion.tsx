@@ -1,4 +1,4 @@
-import { ArrowLeft, Globe, Moon, Bell, Lock, CreditCard, Trash2 } from "lucide-react";
+import { ArrowLeft, Globe, Moon, Lock, CreditCard, Trash2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -23,8 +23,6 @@ const Configuracion = () => {
   const [darkMode, setDarkMode] = useState(() => {
     return document.documentElement.classList.contains('dark');
   });
-  const [notifications, setNotifications] = useState(true);
-  const [emailNotifications, setEmailNotifications] = useState(true);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   useEffect(() => {
@@ -38,11 +36,6 @@ const Configuracion = () => {
   const handleDarkModeToggle = (checked: boolean) => {
     setDarkMode(checked);
     toast.success(checked ? "Modo oscuro activado" : "Modo claro activado");
-  };
-
-  const handleNotificationsToggle = (checked: boolean) => {
-    setNotifications(checked);
-    toast.success(checked ? "Notificaciones activadas" : "Notificaciones desactivadas");
   };
 
   const handleDeleteAccount = () => {
@@ -105,46 +98,6 @@ const Configuracion = () => {
           </button>
         </Card>
 
-        {/* Notifications */}
-        <Card className="p-4">
-          <h2 className="font-semibold mb-4 flex items-center gap-2">
-            <Bell className="w-5 h-5" />
-            Notificaciones
-          </h2>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <Label htmlFor="push-notifications" className="cursor-pointer">
-                  Notificaciones push
-                </Label>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Recibe alertas sobre ofertas cercanas
-                </p>
-              </div>
-              <Switch
-                id="push-notifications"
-                checked={notifications}
-                onCheckedChange={handleNotificationsToggle}
-              />
-            </div>
-            <Separator />
-            <div className="flex items-center justify-between">
-              <div>
-                <Label htmlFor="email-notifications" className="cursor-pointer">
-                  Notificaciones por email
-                </Label>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Recibe resúmenes semanales
-                </p>
-              </div>
-              <Switch
-                id="email-notifications"
-                checked={emailNotifications}
-                onCheckedChange={setEmailNotifications}
-              />
-            </div>
-          </div>
-        </Card>
 
         {/* Privacy & Security */}
         <Card className="p-4">
