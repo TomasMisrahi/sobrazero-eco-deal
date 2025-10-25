@@ -25,7 +25,7 @@ const Index = () => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const [showNotifications, setShowNotifications] = useState(false);
-  const [mapboxToken] = useState("pk.eyJ1IjoidG9tYXNtaXNyYWhpIiwiYSI6ImNtaDJwdDE5MjBlczEybG9ma3htY2RmY2cifQ.-GK5Opm8KST4APdPp_XAjg");
+  const [mapboxToken] = useState("sk.eyJ1IjoidG9tYXNtaXNyYWhpIiwiYSI6ImNtaDZmdTJ4ZjBqZjAyam9hemw1amIzaHcifQ.6h5eVZaEIuhd0tOkDb5xEA");
   const [notifications, setNotifications] = useState([
     {
       id: "1",

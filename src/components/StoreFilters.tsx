@@ -11,7 +11,7 @@ const categories = [
   { id: "panaderia", label: "Panadería", icon: Croissant },
   { id: "supermercado", label: "Supermercado", icon: ShoppingBag },
   { id: "verduleria", label: "Verdulería", icon: Salad },
-  { id: "restaurant", label: "Restaurant", icon: UtensilsCrossed },
+  { id: "restaurante", label: "Restaurante", icon: UtensilsCrossed },
 ];
 
 const StoreFilters = ({ selectedCategory, onCategoryChange }: StoreFiltersProps) => {
