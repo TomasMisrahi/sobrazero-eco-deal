@@ -178,7 +178,7 @@ const Index = () => {
             panaderia: "Panadería",
             supermercado: "Supermercado",
             verduleria: "Verdulería",
-            restaurant: "Restaurante",
+            restaurante: "Restaurante",
           };
 
           const popup = new mapboxgl.Popup({ 
