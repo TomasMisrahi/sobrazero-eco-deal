@@ -83,7 +83,8 @@ All colors MUST be HSL.
     --input: 200 6% 25%;
     --ring: 142 40% 45%;
     
-    --success-light: 142 40% 15%;
+    --success: 142 45% 65%;
+    --success-light: 142 40% 25%;
   }
 }
 
