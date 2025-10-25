@@ -347,13 +347,19 @@ const StoreDetail = () => {
         <Card className="p-4">
           <h2 className="font-semibold mb-4">Reseñas</h2>
           
+          <ReviewSection
+            reviews={reviews}
+            averageRating={store.rating}
+            totalReviews={store.reviewCount + localReviews.length}
+          />
+
           {/* Formulario para agregar reseña */}
-          <div className="mb-6 p-4 bg-muted/50 rounded-lg">
+          <div className="mt-6 p-4 bg-muted/50 rounded-lg">
             <h3 className="font-medium mb-3">Dejá tu reseña</h3>
             
             <div className="mb-3">
-              <Label className="mb-2 block">Calificación</Label>
-              <div className="flex gap-2">
+              <Label className="mb-2 block text-sm">Calificación</Label>
+              <div className="flex gap-1">
                 {[1, 2, 3, 4, 5].map((rating) => (
                   <button
                     key={rating}
@@ -361,7 +367,7 @@ const StoreDetail = () => {
                     className="focus:outline-none transition-transform hover:scale-110"
                   >
                     <Star
-                      className={`w-8 h-8 ${
+                      className={`w-5 h-5 ${
                         rating <= newReviewRating
                           ? "fill-yellow-400 text-yellow-400"
                           : "text-gray-300"
@@ -373,7 +379,7 @@ const StoreDetail = () => {
             </div>
 
             <div className="mb-3">
-              <Label htmlFor="review-comment" className="mb-2 block">
+              <Label htmlFor="review-comment" className="mb-2 block text-sm">
                 Comentario
               </Label>
               <Textarea
@@ -389,12 +395,6 @@ const StoreDetail = () => {
               Publicar reseña
             </Button>
           </div>
-
-          <ReviewSection
-            reviews={reviews}
-            averageRating={store.rating}
-            totalReviews={store.reviewCount + localReviews.length}
-          />
         </Card>
       </div>
 

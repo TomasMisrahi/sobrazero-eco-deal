@@ -208,10 +208,10 @@ const Index = () => {
             closeButton: false,
             className: 'mapbox-popup-custom'
           }).setHTML(
-            `<div style="padding: 12px; min-width: 200px; cursor: pointer; font-family: system-ui, -apple-system, sans-serif;" class="store-popup" data-store-id="${store.id}">
+            `<div style="padding: 12px; min-width: 200px; cursor: pointer; font-family: system-ui, -apple-system, sans-serif; background-color: #f5f5dc;" class="store-popup" data-store-id="${store.id}">
               <h3 style="font-weight: 600; font-size: 14px; color: #1a1a1a; margin: 0 0 8px 0;">${store.name}</h3>
               <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                <span style="background: #407b41; color: white; padding: 3px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 3px;">
+                <span style="color: #407b41; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 3px;">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="22 17 13.5 8.5 8.5 13.5 2 7"></polyline>
                     <polyline points="16 17 22 17 22 11"></polyline>
