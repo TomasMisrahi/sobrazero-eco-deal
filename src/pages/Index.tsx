@@ -119,7 +119,7 @@ const Index = () => {
     {
       id: "4",
       name: "Restaurante La Estancia",
-      category: "restaurant",
+      category: "restaurante",
       lat: -34.598500,
       lng: -58.441000,
       distance: "0.5 km",

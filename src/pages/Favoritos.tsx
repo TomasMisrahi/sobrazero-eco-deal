@@ -35,7 +35,7 @@ const Favoritos = () => {
     {
       id: "4",
       name: "Restaurante La Estancia",
-      category: "restaurant",
+      category: "restaurante",
       distance: "0.5 km",
       rating: 4.8,
       reviewCount: 203,
