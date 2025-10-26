@@ -81,11 +81,11 @@ const Auth = () => {
             <img 
               src={logo} 
               alt="SobraZero" 
-              className="w-44 h-44 mx-auto mb-1" 
+              className="w-44 h-44 mx-auto" 
               loading="eager"
               fetchPriority="high"
             />
-            <p className="text-lg font-semibold text-primary">
+            <p className="text-lg font-semibold text-primary italic">
               Salvá comida, ahorrá dinero
             </p>
           </div>
