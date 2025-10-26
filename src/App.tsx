@@ -12,6 +12,7 @@ import Favoritos from "./pages/Favoritos";
 import Configuracion from "./pages/Configuracion";
 import Notificaciones from "./pages/Notificaciones";
 import CentroAyuda from "./pages/CentroAyuda";
+import ChatEnVivo from "./pages/ChatEnVivo";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -43,6 +44,7 @@ const App = () => (
           <Route path="/perfil/configuracion" element={<Configuracion />} />
           <Route path="/perfil/notificaciones" element={<Notificaciones />} />
           <Route path="/perfil/centro-ayuda" element={<CentroAyuda />} />
+          <Route path="/perfil/centro-ayuda/chat" element={<ChatEnVivo />} />
           <Route path="/auth" element={<Auth />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

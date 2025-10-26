@@ -1,4 +1,4 @@
-import { ArrowLeft, HelpCircle, MessageCircle, Mail, Phone, BookOpen, Search } from "lucide-react";
+import { ArrowLeft, HelpCircle, MessageCircle, Mail, BookOpen } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -54,10 +54,6 @@ const CentroAyuda = () => {
       answer: "Sí, los packs sorpresa varían según la disponibilidad del día en cada comercio. Es parte de la experiencia de ayudar a reducir el desperdicio de alimentos.",
     },
     {
-      question: "¿Cómo funcionan los pagos?",
-      answer: "Puedes pagar con tarjeta de crédito, débito o métodos de pago digital. El pago se procesa al momento de confirmar la reserva.",
-    },
-    {
       question: "¿Puedo pedir un reembolso?",
       answer: "Los reembolsos se procesan solo si el comercio cancela el pedido o no tiene stock disponible. En otros casos, contacta a nuestro equipo de soporte.",
     },
@@ -68,19 +64,32 @@ const CentroAyuda = () => {
       icon: MessageCircle,
       title: "Chat en vivo",
       description: "Respuesta en minutos",
-      action: () => toast.info("Abriendo chat en vivo..."),
+      action: () => navigate("/perfil/centro-ayuda/chat"),
     },
     {
       icon: Mail,
       title: "Email",
-      description: "soporte@foodsave.com",
-      action: () => toast.info("Abriendo cliente de email..."),
+      description: "soporte@sobrazero.com",
+      action: () => window.location.href = "mailto:soporte@sobrazero.com?subject=Consulta%20desde%20SobraZero&body=Hola%20SobraZero.%20Tengo%20un%20problema%20con%20lo%20siguiente%3A",
+    },
+  ];
+
+  const resourcesItems = [
+    {
+      title: "Guía de uso para principiantes",
+      content: "Con este video interactivo vas a entender a la perfección cómo funciona nuestra app: (próximamente disponible)",
     },
     {
-      icon: Phone,
-      title: "Teléfono",
-      description: "+54 11 1234-5678",
-      action: () => toast.info("Llamando a soporte..."),
+      title: "Términos y condiciones",
+      content: "Bienvenido a SobraZero. Al utilizar nuestra aplicación, aceptas los siguientes términos y condiciones. SobraZero actúa como intermediario entre comercios y usuarios para facilitar la venta de alimentos a precios reducidos. Los usuarios deben tener al menos 18 años o contar con autorización parental. Las reservas son vinculantes y están sujetas a las políticas de cancelación establecidas. SobraZero se reserva el derecho de modificar estos términos en cualquier momento, notificando a los usuarios con antelación razonable. El uso continuado de la aplicación implica la aceptación de los términos modificados.",
+    },
+    {
+      title: "Política de privacidad",
+      content: "En SobraZero valoramos tu privacidad. Recopilamos información personal como nombre, correo electrónico, ubicación y datos de pago únicamente para facilitar las transacciones y mejorar nuestros servicios. No compartimos tu información con terceros sin tu consentimiento, excepto cuando sea necesario para procesar pagos o cumplir con requisitos legales. Utilizamos medidas de seguridad estándar de la industria para proteger tus datos. Tienes derecho a acceder, modificar o eliminar tu información personal en cualquier momento contactando a nuestro equipo de soporte.",
+    },
+    {
+      title: "Sobre nosotros",
+      content: "SobraZero nació como un proyecto final de tres jóvenes estudiantes de la escuela Da Vinci: Tomás, Blas y Santiago. Unidos por la pasión de combatir el desperdicio de alimentos y ayudar a nuestra comunidad, desarrollamos esta aplicación con el objetivo de conectar comercios locales con usuarios conscientes del medio ambiente. Nuestro sueño es que ningún alimento en buen estado termine en la basura, mientras ayudamos a las personas a ahorrar dinero y disfrutar de comida deliciosa. Cada pack sorpresa es un paso hacia un futuro más sostenible.",
     },
   ];
 
@@ -157,26 +166,26 @@ const CentroAyuda = () => {
         </div>
 
         {/* Resources */}
-        <Card className="p-4">
-          <h2 className="font-semibold mb-3 flex items-center gap-2">
+        <div>
+          <h2 className="font-semibold mb-3 px-1 flex items-center gap-2">
             <HelpCircle className="w-5 h-5" />
             Recursos adicionales
           </h2>
-          <div className="space-y-2">
-            <button className="w-full flex items-center justify-between p-3 hover:bg-muted/50 rounded-md transition-colors text-left">
-              <span className="text-sm">Guía de uso para principiantes</span>
-            </button>
-            <button className="w-full flex items-center justify-between p-3 hover:bg-muted/50 rounded-md transition-colors text-left">
-              <span className="text-sm">Términos y condiciones</span>
-            </button>
-            <button className="w-full flex items-center justify-between p-3 hover:bg-muted/50 rounded-md transition-colors text-left">
-              <span className="text-sm">Política de privacidad</span>
-            </button>
-            <button className="w-full flex items-center justify-between p-3 hover:bg-muted/50 rounded-md transition-colors text-left">
-              <span className="text-sm">Sobre nosotros</span>
-            </button>
-          </div>
-        </Card>
+          <Card>
+            <Accordion type="single" collapsible className="w-full">
+              {resourcesItems.map((item, index) => (
+                <AccordionItem key={index} value={`resource-${index}`}>
+                  <AccordionTrigger className="px-4 text-left">
+                    {item.title}
+                  </AccordionTrigger>
+                  <AccordionContent className="px-4 text-muted-foreground">
+                    {item.content}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </Card>
+        </div>
 
         {/* Feedback */}
         <Card className="p-4">
