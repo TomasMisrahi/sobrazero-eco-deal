@@ -78,6 +78,8 @@ const Favoritos = () => {
               key={store.id}
               {...store}
               onClick={() => navigate(`/store/${store.id}`)}
+              isFavorite={true}
+              onFavoriteClick={(e) => handleRemoveFavorite(store.id, e)}
             />
           ))
         )}

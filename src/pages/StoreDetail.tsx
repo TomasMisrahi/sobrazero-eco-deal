@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, MapPin, Clock, Star, TrendingDown, ShoppingBag } from "lucide-react";
+import { ArrowLeft, MapPin, Clock, Star, TrendingDown, ShoppingBag, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -17,6 +17,7 @@ const StoreDetail = () => {
   const [newReviewRating, setNewReviewRating] = useState(5);
   const [newReviewComment, setNewReviewComment] = useState("");
   const [localReviews, setLocalReviews] = useState<any[]>([]);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   // Mock data - en producción vendría de una API
   const allStores = {
@@ -243,6 +244,11 @@ const StoreDetail = () => {
     toast.success("¡Reseña agregada con éxito!");
   };
 
+  const handleToggleFavorite = () => {
+    setIsFavorite(!isFavorite);
+    toast.success(isFavorite ? "Eliminado de favoritos" : "Agregado a favoritos");
+  };
+
   return (
     <div className="min-h-screen bg-background pb-20">
       {/* Header con imagen */}
@@ -258,6 +264,15 @@ const StoreDetail = () => {
           onClick={() => navigate(-1)}
         >
           <ArrowLeft className="w-5 h-5" />
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute top-4 right-4 z-10 bg-background/80 backdrop-blur-sm hover:bg-background"
+          onClick={handleToggleFavorite}
+        >
+          <Heart className={`w-5 h-5 ${isFavorite ? 'fill-success text-success' : ''}`} />
         </Button>
       </div>
 

@@ -1,4 +1,4 @@
-import { MapPin, Clock, Star, TrendingDown } from "lucide-react";
+import { MapPin, Clock, Star, TrendingDown, Heart } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
@@ -14,6 +14,8 @@ interface StoreCardProps {
   available: number;
   imageUrl?: string;
   onClick?: () => void;
+  isFavorite?: boolean;
+  onFavoriteClick?: (e: React.MouseEvent) => void;
 }
 
 const StoreCard = ({
@@ -27,6 +29,8 @@ const StoreCard = ({
   available,
   imageUrl,
   onClick,
+  isFavorite,
+  onFavoriteClick,
 }: StoreCardProps) => {
   return (
     <Card 
@@ -49,10 +53,19 @@ const StoreCard = ({
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2 mb-1">
             <h3 className="font-semibold text-sm truncate">{name}</h3>
-            <Badge variant="secondary" className="flex-shrink-0 bg-success-light text-success border-0">
-              <TrendingDown className="w-3 h-3 mr-1" />
-              {discount}%
-            </Badge>
+            {isFavorite ? (
+              <button
+                onClick={onFavoriteClick}
+                className="flex-shrink-0 text-success hover:scale-110 transition-transform"
+              >
+                <Heart className="w-5 h-5 fill-success" />
+              </button>
+            ) : (
+              <Badge variant="secondary" className="flex-shrink-0 bg-success-light text-success border-0">
+                <TrendingDown className="w-3 h-3 mr-1" />
+                {discount}%
+              </Badge>
+            )}
           </div>
           
           <p className="text-xs text-muted-foreground mb-2 capitalize">{category}</p>
@@ -73,7 +86,7 @@ const StoreCard = ({
           </div>
           
           <p className="text-xs text-muted-foreground mt-1">
-            {available} disponibles
+            {available} productos disponibles
           </p>
         </div>
       </div>

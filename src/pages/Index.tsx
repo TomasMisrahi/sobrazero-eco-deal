@@ -26,6 +26,7 @@ const Index = () => {
   const map = useRef<mapboxgl.Map | null>(null);
   const [showNotifications, setShowNotifications] = useState(false);
   const [mapboxToken] = useState("pk.eyJ1IjoidG9tYXNtaXNyYWhpIiwiYSI6ImNtaDJwZDkwaDJ1eW0yd3B5eDZ6b3Y1djMifQ.44qXpnbdv09ro4NME7QxJQ");
+  const [isDarkMode, setIsDarkMode] = useState(() => document.documentElement.classList.contains('dark'));
   const [notifications, setNotifications] = useState([
     {
       id: "1",
@@ -172,7 +173,7 @@ const Index = () => {
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: "mapbox://styles/mapbox/light-v11",
+      style: isDarkMode ? "mapbox://styles/mapbox/dark-v11" : "mapbox://styles/mapbox/light-v11",
       center: [-58.438611, -34.599722], // Centro de Villa Crespo
       zoom: 14,
     });
@@ -208,8 +209,8 @@ const Index = () => {
             closeButton: false,
             className: 'mapbox-popup-custom'
           }).setHTML(
-            `<div style="padding: 12px; min-width: 200px; cursor: pointer; font-family: system-ui, -apple-system, sans-serif; background-color: #f5f5dc;" class="store-popup" data-store-id="${store.id}">
-              <h3 style="font-weight: 600; font-size: 14px; color: #1a1a1a; margin: 0 0 8px 0;">${store.name}</h3>
+            `<div style="padding: 12px; min-width: 200px; cursor: pointer; font-family: system-ui, -apple-system, sans-serif; background-color: ${isDarkMode ? '#3e4345' : '#f5f5dc'}; color: ${isDarkMode ? '#ede8e4' : '#1a1a1a'};" class="store-popup" data-store-id="${store.id}">
+              <h3 style="font-weight: 600; font-size: 14px; margin: 0 0 8px 0;">${store.name}</h3>
               <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
                 <span style="color: #407b41; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 3px;">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -218,14 +219,14 @@ const Index = () => {
                   </svg>
                   ${store.discount}%
                 </span>
-                <span style="font-size: 12px; color: #666; display: flex; align-items: center; gap: 2px;">
+                <span style="font-size: 12px; color: ${isDarkMode ? '#b5b0a9' : '#666'}; display: flex; align-items: center; gap: 2px;">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="#fbbf24" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
                   </svg>
                   ${store.rating}
                 </span>
               </div>
-              <div style="display: flex; align-items: center; gap: 10px; font-size: 12px; color: #666;">
+              <div style="display: flex; align-items: center; gap: 10px; font-size: 12px; color: ${isDarkMode ? '#b5b0a9' : '#666'};">
                 <span style="display: flex; align-items: center; gap: 3px;">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#407b41" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
@@ -282,6 +283,26 @@ const Index = () => {
       }
     };
   }, [navigate, selectedCategory]);
+
+  // Observar cambios en el modo oscuro
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      const darkModeEnabled = document.documentElement.classList.contains('dark');
+      setIsDarkMode(darkModeEnabled);
+      
+      // Actualizar el estilo del mapa cuando cambia el modo oscuro
+      if (map.current) {
+        map.current.setStyle(darkModeEnabled ? "mapbox://styles/mapbox/dark-v11" : "mapbox://styles/mapbox/light-v11");
+      }
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class']
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div className="min-h-screen bg-background pb-20">
