@@ -58,7 +58,7 @@ const StoreCard = ({
                 onClick={onFavoriteClick}
                 className="flex-shrink-0 text-success hover:scale-110 transition-transform"
               >
-                <Heart className="w-5 h-5 fill-success" />
+                <Heart className="w-6 h-6 fill-success" />
               </button>
             ) : (
               <Badge variant="secondary" className="flex-shrink-0 bg-success-light text-success border-0">
@@ -86,7 +86,7 @@ const StoreCard = ({
           </div>
           
           <p className="text-xs text-muted-foreground mt-1">
-            {available} productos disponibles
+            {available} unidades disponibles
           </p>
         </div>
       </div>

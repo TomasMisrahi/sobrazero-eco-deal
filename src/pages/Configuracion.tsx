@@ -1,8 +1,7 @@
-import { ArrowLeft, Globe, Moon, Lock, CreditCard, Trash2 } from "lucide-react";
+import { ArrowLeft, Moon, Lock, CreditCard, Trash2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -82,22 +81,20 @@ const Configuracion = () => {
           </div>
         </Card>
 
-        {/* Language */}
+        {/* Payment */}
         <Card className="p-4">
           <h2 className="font-semibold mb-4 flex items-center gap-2">
-            <Globe className="w-5 h-5" />
-            Idioma y región
+            <CreditCard className="w-5 h-5" />
+            Métodos de pago
           </h2>
           <button className="w-full flex items-center justify-between p-3 hover:bg-muted/50 rounded-md transition-colors">
-            <span className="text-sm">Idioma</span>
-            <span className="text-sm text-muted-foreground">Español</span>
+            <span className="text-sm">Tarjetas guardadas</span>
+            <span className="text-xs text-muted-foreground">2</span>
           </button>
           <button className="w-full flex items-center justify-between p-3 hover:bg-muted/50 rounded-md transition-colors">
-            <span className="text-sm">Moneda</span>
-            <span className="text-sm text-muted-foreground">ARS ($)</span>
+            <span className="text-sm">Agregar método de pago</span>
           </button>
         </Card>
-
 
         {/* Privacy & Security */}
         <Card className="p-4">
@@ -113,21 +110,6 @@ const Configuracion = () => {
           </button>
           <button className="w-full flex items-center justify-between p-3 hover:bg-muted/50 rounded-md transition-colors">
             <span className="text-sm">Datos personales</span>
-          </button>
-        </Card>
-
-        {/* Payment */}
-        <Card className="p-4">
-          <h2 className="font-semibold mb-4 flex items-center gap-2">
-            <CreditCard className="w-5 h-5" />
-            Métodos de pago
-          </h2>
-          <button className="w-full flex items-center justify-between p-3 hover:bg-muted/50 rounded-md transition-colors">
-            <span className="text-sm">Tarjetas guardadas</span>
-            <span className="text-xs text-muted-foreground">2</span>
-          </button>
-          <button className="w-full flex items-center justify-between p-3 hover:bg-muted/50 rounded-md transition-colors">
-            <span className="text-sm">Agregar método de pago</span>
           </button>
         </Card>
 

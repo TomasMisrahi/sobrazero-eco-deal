@@ -3,13 +3,13 @@ import { Card } from "@/components/ui/card";
 import StoreCard from "@/components/StoreCard";
 import BottomNavigation from "@/components/BottomNavigation";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const Favoritos = () => {
   const navigate = useNavigate();
 
-  // Mismos comercios que en Index - en producción vendría de una API
-  const [favoriteStores, setFavoriteStores] = useState([
+  // Todos los comercios disponibles
+  const allStores = [
     {
       id: "1",
       name: "Panadería Don Juan",
@@ -20,6 +20,17 @@ const Favoritos = () => {
       discount: 60,
       pickupTime: "18:00 - 20:00",
       available: 5,
+    },
+    {
+      id: "2",
+      name: "Supermercado Express",
+      category: "supermercado",
+      distance: "1.2 km",
+      rating: 4.2,
+      reviewCount: 89,
+      discount: 50,
+      pickupTime: "19:00 - 21:00",
+      available: 8,
     },
     {
       id: "3",
@@ -43,11 +54,42 @@ const Favoritos = () => {
       pickupTime: "20:00 - 21:30",
       available: 4,
     },
-  ]);
+    {
+      id: "5",
+      name: "Panadería Artesanal",
+      category: "panadería",
+      distance: "2.1 km",
+      rating: 4.6,
+      reviewCount: 94,
+      discount: 65,
+      pickupTime: "18:30 - 20:00",
+      available: 6,
+    },
+  ];
+
+  const [favoriteStores, setFavoriteStores] = useState<typeof allStores>([]);
+
+  useEffect(() => {
+    // Load favorites from localStorage
+    const favorites = localStorage.getItem("favorites");
+    if (favorites) {
+      const favIds = JSON.parse(favorites);
+      const favStores = allStores.filter(store => favIds.includes(store.id));
+      setFavoriteStores(favStores);
+    }
+  }, []);
 
   const handleRemoveFavorite = (storeId: string, e: React.MouseEvent) => {
     e.stopPropagation();
+    // Remove from state
     setFavoriteStores(favoriteStores.filter(store => store.id !== storeId));
+    // Remove from localStorage
+    const favorites = localStorage.getItem("favorites");
+    if (favorites) {
+      let favArray = JSON.parse(favorites);
+      favArray = favArray.filter((id: string) => id !== storeId);
+      localStorage.setItem("favorites", JSON.stringify(favArray));
+    }
   };
 
   return (

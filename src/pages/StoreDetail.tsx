@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, MapPin, Clock, Star, TrendingDown, ShoppingBag, Heart } from "lucide-react";
+import { ArrowLeft, MapPin, Clock, Star, ShoppingBag, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -17,7 +17,14 @@ const StoreDetail = () => {
   const [newReviewRating, setNewReviewRating] = useState(5);
   const [newReviewComment, setNewReviewComment] = useState("");
   const [localReviews, setLocalReviews] = useState<any[]>([]);
-  const [isFavorite, setIsFavorite] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(() => {
+    const favorites = localStorage.getItem("favorites");
+    if (favorites) {
+      const favArray = JSON.parse(favorites);
+      return favArray.includes(id);
+    }
+    return false;
+  });
 
   // Mock data - en producción vendría de una API
   const allStores = {
@@ -245,8 +252,21 @@ const StoreDetail = () => {
   };
 
   const handleToggleFavorite = () => {
+    const favorites = localStorage.getItem("favorites");
+    let favArray: string[] = favorites ? JSON.parse(favorites) : [];
+    
+    if (isFavorite) {
+      // Remove from favorites
+      favArray = favArray.filter(favId => favId !== id);
+      toast.success("Eliminado de favoritos");
+    } else {
+      // Add to favorites
+      favArray.push(id as string);
+      toast.success("Agregado a favoritos");
+    }
+    
+    localStorage.setItem("favorites", JSON.stringify(favArray));
     setIsFavorite(!isFavorite);
-    toast.success(isFavorite ? "Eliminado de favoritos" : "Agregado a favoritos");
   };
 
   return (
@@ -266,14 +286,6 @@ const StoreDetail = () => {
           <ArrowLeft className="w-5 h-5" />
         </Button>
 
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute top-4 right-4 z-10 bg-background/80 backdrop-blur-sm hover:bg-background"
-          onClick={handleToggleFavorite}
-        >
-          <Heart className={`w-5 h-5 ${isFavorite ? 'fill-success text-success' : ''}`} />
-        </Button>
       </div>
 
       <div className="px-4 -mt-6">
@@ -284,10 +296,12 @@ const StoreDetail = () => {
               <h1 className="text-xl font-bold mb-1">{store.name}</h1>
               <p className="text-sm text-muted-foreground capitalize">{store.category}</p>
             </div>
-            <Badge className="bg-success-light text-success border-0 text-lg px-3 py-1">
-              <TrendingDown className="w-4 h-4 mr-1" />
-              {store.discount}%
-            </Badge>
+            <button
+              onClick={handleToggleFavorite}
+              className="flex-shrink-0 text-success hover:scale-110 transition-transform"
+            >
+              <Heart className={`w-6 h-6 ${isFavorite ? 'fill-success' : ''}`} />
+            </button>
           </div>
 
           <div className="flex items-center gap-2 mb-3">
