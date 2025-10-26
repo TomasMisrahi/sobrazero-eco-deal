@@ -78,7 +78,13 @@ const Auth = () => {
 
         <Card className="p-6">
           <div className="text-center mb-6">
-            <img src={logo} alt="SobraZero" className="w-32 h-32 mx-auto mb-3" />
+            <img 
+              src={logo} 
+              alt="SobraZero" 
+              className="w-44 h-44 mx-auto mb-1" 
+              loading="eager"
+              fetchPriority="high"
+            />
             <p className="text-lg font-semibold text-primary">
               Salvá comida, ahorrá dinero
             </p>
