@@ -341,6 +341,15 @@ const Index = () => {
 
       {/* Content */}
       <main className="px-4 py-4 space-y-4">
+        {/* Filters */}
+        <div>
+          <h2 className="text-sm font-semibold mb-3">Categorías</h2>
+          <StoreFilters
+            selectedCategory={selectedCategory}
+            onCategoryChange={setSelectedCategory}
+          />
+        </div>
+
         {/* Location */}
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <MapPin className="w-4 h-4 text-primary" />
@@ -364,15 +373,6 @@ const Index = () => {
               border-top-color: white;
             }
           `}</style>
-        </div>
-
-        {/* Filters */}
-        <div>
-          <h2 className="text-sm font-semibold mb-3">Categorías</h2>
-          <StoreFilters
-            selectedCategory={selectedCategory}
-            onCategoryChange={setSelectedCategory}
-          />
         </div>
 
         {/* Stores List */}
@@ -424,7 +424,7 @@ const Index = () => {
                         className="absolute top-2 right-2 h-6 w-6"
                         onClick={() => handleDeleteNotification(notification.id)}
                       >
-                        <X className="w-4 h-4" />
+                        <X className="w-5 h-5" />
                       </Button>
                       <div className="flex gap-3">
                         <div

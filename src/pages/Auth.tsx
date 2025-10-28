@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Mail, Lock, User, ArrowLeft } from "lucide-react";
 import logo from "@/assets/logo.png";
+import logoDark from "@/assets/logo-dark.png";
 import { toast } from "sonner";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -34,6 +35,7 @@ type SignupFormData = z.infer<typeof signupSchema>;
 const Auth = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("login");
+  const [isDarkMode, setIsDarkMode] = useState(() => document.documentElement.classList.contains('dark'));
 
   const loginForm = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -63,6 +65,21 @@ const Auth = () => {
     navigate("/");
   };
 
+  // Observar cambios en el modo oscuro
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      const darkModeEnabled = document.documentElement.classList.contains('dark');
+      setIsDarkMode(darkModeEnabled);
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class']
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -79,7 +96,7 @@ const Auth = () => {
         <Card className="p-6">
           <div className="text-center mb-6">
             <img 
-              src={logo} 
+              src={isDarkMode ? logoDark : logo} 
               alt="SobraZero" 
               className="w-44 h-44 mx-auto" 
               loading="eager"
