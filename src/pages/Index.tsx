@@ -199,6 +199,15 @@ const Index = () => {
     // Agregar controles de navegación
     map.current.addControl(new mapboxgl.NavigationControl(), "top-right");
 
+    // Asegurar que los marcadores se agreguen después de que el mapa esté cargado
+    map.current.on('load', () => {
+      // Forzar actualización de marcadores después de la carga
+      if (map.current) {
+        const event = new CustomEvent('mapLoaded');
+        window.dispatchEvent(event);
+      }
+    });
+
     // Cleanup del mapa al desmontar
     return () => {
       markersRef.current.forEach(marker => marker.remove());
@@ -212,74 +221,85 @@ const Index = () => {
 
   // Actualizar marcadores cuando cambien los filtros (sin re-crear el mapa)
   useEffect(() => {
-    if (!map.current || !map.current.loaded()) return;
+    const updateMarkers = () => {
+      if (!map.current || !map.current.loaded()) return;
 
-    // Eliminar marcadores existentes
-    markersRef.current.forEach(marker => marker.remove());
-    markersRef.current = [];
+      // Eliminar marcadores existentes
+      markersRef.current.forEach(marker => marker.remove());
+      markersRef.current = [];
 
-    // Agregar marcadores para comercios filtrados en el mapa
-    mapFilteredStores.forEach((store) => {
-      if (map.current) {
-        const popup = new mapboxgl.Popup({ 
-          offset: 25,
-          closeButton: false,
-          className: 'mapbox-popup-custom'
-        }).setHTML(
-          `<div style="padding: 12px; min-width: 200px; cursor: pointer; font-family: system-ui, -apple-system, sans-serif; background-color: ${isDarkMode ? '#3e4345' : '#f5f5dc'}; color: ${isDarkMode ? '#ede8e4' : '#1a1a1a'};" class="store-popup" data-store-id="${store.id}">
-            <h3 style="font-weight: 600; font-size: 14px; margin: 0 0 8px 0;">${store.name}</h3>
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-              <span style="color: #407b41; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 3px;">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="22 17 13.5 8.5 8.5 13.5 2 7"></polyline>
-                  <polyline points="16 17 22 17 22 11"></polyline>
-                </svg>
-                ${store.discount}%
-              </span>
-              <span style="font-size: 12px; color: ${isDarkMode ? '#b5b0a9' : '#666'}; display: flex; align-items: center; gap: 2px;">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="#fbbf24" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                </svg>
-                ${store.rating}
-              </span>
-            </div>
-            <div style="display: flex; align-items: center; gap: 10px; font-size: 12px; color: ${isDarkMode ? '#b5b0a9' : '#666'};">
-              <span style="display: flex; align-items: center; gap: 3px;">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#407b41" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <polyline points="12 6 12 12 16 14"></polyline>
-                </svg>
-                ${store.pickupTime}
-              </span>
-              <span style="display: flex; align-items: center; gap: 3px;">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#407b41" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                  <circle cx="12" cy="10" r="3"></circle>
-                </svg>
-                ${store.distance}
-              </span>
-            </div>
-          </div>`
-        );
+      // Agregar marcadores para comercios filtrados en el mapa
+      mapFilteredStores.forEach((store) => {
+        if (map.current) {
+          const popup = new mapboxgl.Popup({ 
+            offset: 25,
+            closeButton: false,
+            className: 'mapbox-popup-custom'
+          }).setHTML(
+            `<div style="padding: 12px; min-width: 200px; cursor: pointer; font-family: system-ui, -apple-system, sans-serif; background-color: ${isDarkMode ? '#3e4345' : '#f5f5dc'}; color: ${isDarkMode ? '#ede8e4' : '#1a1a1a'};" class="store-popup" data-store-id="${store.id}">
+              <h3 style="font-weight: 600; font-size: 14px; margin: 0 0 8px 0;">${store.name}</h3>
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                <span style="color: #407b41; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 3px;">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="22 17 13.5 8.5 8.5 13.5 2 7"></polyline>
+                    <polyline points="16 17 22 17 22 11"></polyline>
+                  </svg>
+                  ${store.discount}%
+                </span>
+                <span style="font-size: 12px; color: ${isDarkMode ? '#b5b0a9' : '#666'}; display: flex; align-items: center; gap: 2px;">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="#fbbf24" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                  </svg>
+                  ${store.rating}
+                </span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px; font-size: 12px; color: ${isDarkMode ? '#b5b0a9' : '#666'};">
+                <span style="display: flex; align-items: center; gap: 3px;">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#407b41" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  ${store.pickupTime}
+                </span>
+                <span style="display: flex; align-items: center; gap: 3px;">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#407b41" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                  </svg>
+                  ${store.distance}
+                </span>
+              </div>
+            </div>`
+          );
 
-        const marker = new mapboxgl.Marker({ color: "#407b41" })
-          .setLngLat([store.lng, store.lat])
-          .setPopup(popup)
-          .addTo(map.current);
+          const marker = new mapboxgl.Marker({ color: "#407b41" })
+            .setLngLat([store.lng, store.lat])
+            .setPopup(popup)
+            .addTo(map.current);
 
-        markersRef.current.push(marker);
+          markersRef.current.push(marker);
 
-        // Agregar evento click al popup cuando se abre
-        popup.on('open', () => {
-          const popupElement = document.querySelector(`[data-store-id="${store.id}"]`);
-          if (popupElement) {
-            popupElement.addEventListener('click', () => {
-              navigate(`/store/${store.id}`);
-            });
-          }
-        });
-      }
-    });
+          // Agregar evento click al popup cuando se abre
+          popup.on('open', () => {
+            const popupElement = document.querySelector(`[data-store-id="${store.id}"]`);
+            if (popupElement) {
+              popupElement.addEventListener('click', () => {
+                navigate(`/store/${store.id}`);
+              });
+            }
+          });
+        }
+      });
+    };
+
+    updateMarkers();
+
+    // Escuchar evento personalizado de carga del mapa
+    window.addEventListener('mapLoaded', updateMarkers);
+
+    return () => {
+      window.removeEventListener('mapLoaded', updateMarkers);
+    };
   }, [navigate, mapFilteredStores, isDarkMode]);
 
   // Observar cambios en el modo oscuro
