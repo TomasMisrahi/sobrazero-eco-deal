@@ -22,6 +22,7 @@ const Index = () => {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [mapSearchQuery, setMapSearchQuery] = useState(""); // Para actualizar el mapa solo al presionar Enter
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -82,8 +83,8 @@ const Index = () => {
       id: "1",
       name: "Panadería Don Juan",
       category: "panaderia",
-      lat: -34.6048,
-      lng: -58.3965,
+      lat: -34.6025,
+      lng: -58.3945,
       distance: "0.5 km",
       rating: 4.5,
       reviewCount: 127,
@@ -95,8 +96,8 @@ const Index = () => {
       id: "2",
       name: "Supermercado Express",
       category: "supermercado",
-      lat: -34.6035,
-      lng: -58.3950,
+      lat: -34.6058,
+      lng: -58.3975,
       distance: "0.9 km",
       rating: 4.2,
       reviewCount: 89,
@@ -108,8 +109,8 @@ const Index = () => {
       id: "3",
       name: "Verdulería Los Andes",
       category: "verduleria",
-      lat: -34.6050,
-      lng: -58.3975,
+      lat: -34.6070,
+      lng: -58.3950,
       distance: "0.7 km",
       rating: 4.7,
       reviewCount: 156,
@@ -121,8 +122,8 @@ const Index = () => {
       id: "4",
       name: "Restaurante La Estancia",
       category: "restaurante",
-      lat: -34.6040,
-      lng: -58.3940,
+      lat: -34.6032,
+      lng: -58.4005,
       distance: "0.3 km",
       rating: 4.8,
       reviewCount: 203,
@@ -134,8 +135,8 @@ const Index = () => {
       id: "5",
       name: "Panadería Artesanal",
       category: "panaderia",
-      lat: -34.6055,
-      lng: -58.3955,
+      lat: -34.6048,
+      lng: -58.3918,
       distance: "1.2 km",
       rating: 4.6,
       reviewCount: 94,
@@ -153,11 +154,25 @@ const Index = () => {
       .replace(/[\u0300-\u036f]/g, "");
   };
 
+  // Filtrar comercios para las cards (se actualiza en tiempo real)
   const filteredStores = stores.filter((store) => {
     const matchesCategory = selectedCategory === "all" || store.category === selectedCategory;
     
     // Buscar por cualquier palabra del nombre del comercio
     const normalizedSearch = normalizeText(searchQuery);
+    const normalizedName = normalizeText(store.name);
+    const searchWords = normalizedSearch.split(" ").filter(word => word.length > 0);
+    const matchesSearch = searchWords.length === 0 || searchWords.some(word => normalizedName.includes(word));
+    
+    return matchesCategory && matchesSearch;
+  });
+
+  // Filtrar comercios para el mapa (solo se actualiza al presionar Enter)
+  const mapFilteredStores = stores.filter((store) => {
+    const matchesCategory = selectedCategory === "all" || store.category === selectedCategory;
+    
+    // Buscar por cualquier palabra del nombre del comercio
+    const normalizedSearch = normalizeText(mapSearchQuery);
     const normalizedName = normalizeText(store.name);
     const searchWords = normalizedSearch.split(" ").filter(word => word.length > 0);
     const matchesSearch = searchWords.length === 0 || searchWords.some(word => normalizedName.includes(word));
@@ -189,8 +204,8 @@ const Index = () => {
       markers.forEach(marker => marker.remove());
       markers = [];
 
-      // Agregar marcadores para comercios filtrados (aplicar mismo filtro que la lista)
-      const storesToShow = filteredStores;
+      // Agregar marcadores para comercios filtrados en el mapa
+      const storesToShow = mapFilteredStores;
 
       storesToShow.forEach((store) => {
         if (map.current) {
@@ -280,7 +295,7 @@ const Index = () => {
         map.current = null;
       }
     };
-  }, [navigate, filteredStores]);
+  }, [navigate, mapFilteredStores, selectedCategory, isDarkMode]);
 
   // Observar cambios en el modo oscuro
   useEffect(() => {
@@ -316,6 +331,7 @@ const Index = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
+                    setMapSearchQuery(searchQuery); // Actualizar el mapa al presionar Enter
                     e.currentTarget.blur();
                   }
                 }}
