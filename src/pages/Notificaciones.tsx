@@ -13,9 +13,7 @@ const Notificaciones = () => {
   const [notifyNewStores, setNotifyNewStores] = useState(true);
   const [notifyOffers, setNotifyOffers] = useState(true);
   const [notifyOrders, setNotifyOrders] = useState(true);
-  const [notifyNearby, setNotifyNearby] = useState(false);
-  const [notifyPush, setNotifyPush] = useState(true);
-  const [notifyEmail, setNotifyEmail] = useState(true);
+  const [notifyPush, setNotifyPush] = useState(false);
 
   const handleToggle = (setter: (value: boolean) => void, name: string) => {
     return (checked: boolean) => {
@@ -107,24 +105,6 @@ const Notificaciones = () => {
 
             <div className="flex items-center justify-between">
               <div className="flex-1">
-                <Label htmlFor="notify-nearby" className="cursor-pointer">
-                  Ofertas cercanas
-                </Label>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Cuando haya ofertas a menos de 1km
-                </p>
-              </div>
-              <Switch
-                id="notify-nearby"
-                checked={notifyNearby}
-                onCheckedChange={handleToggle(setNotifyNearby, "Notificaciones de ofertas cercanas")}
-              />
-            </div>
-
-            <Separator />
-
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
                 <Label htmlFor="notify-push" className="cursor-pointer">
                   Notificaciones push
                 </Label>
@@ -139,23 +119,6 @@ const Notificaciones = () => {
               />
             </div>
 
-            <Separator />
-
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
-                <Label htmlFor="notify-email" className="cursor-pointer">
-                  Notificaciones por email
-                </Label>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Recibe resúmenes semanales
-                </p>
-              </div>
-              <Switch
-                id="notify-email"
-                checked={notifyEmail}
-                onCheckedChange={handleToggle(setNotifyEmail, "Notificaciones por email")}
-              />
-            </div>
           </div>
         </Card>
 

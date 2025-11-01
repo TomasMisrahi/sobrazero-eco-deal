@@ -154,12 +154,12 @@ const Index = () => {
       .replace(/[\u0300-\u036f]/g, "");
   };
 
-  // Filtrar comercios para las cards (se actualiza en tiempo real)
+  // Filtrar comercios para las cards (solo se actualiza al presionar Enter)
   const filteredStores = stores.filter((store) => {
     const matchesCategory = selectedCategory === "all" || store.category === selectedCategory;
     
     // Buscar por cualquier palabra del nombre del comercio
-    const normalizedSearch = normalizeText(searchQuery);
+    const normalizedSearch = normalizeText(mapSearchQuery);
     const normalizedName = normalizeText(store.name);
     const searchWords = normalizedSearch.split(" ").filter(word => word.length > 0);
     const matchesSearch = searchWords.length === 0 || searchWords.some(word => normalizedName.includes(word));
