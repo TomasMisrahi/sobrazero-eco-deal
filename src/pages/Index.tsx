@@ -338,8 +338,21 @@ const Index = () => {
                     e.currentTarget.blur();
                   }
                 }}
-                className="pl-10 bg-white dark:bg-card"
+                className="pl-10 pr-10 bg-white dark:bg-card"
               />
+              {searchQuery && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8"
+                  onClick={() => {
+                    setSearchQuery("");
+                    setMapSearchQuery("");
+                  }}
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              )}
             </div>
             <Button
               variant="ghost"
@@ -368,7 +381,13 @@ const Index = () => {
           <h2 className="text-sm font-semibold mb-3">Categorías</h2>
           <StoreFilters
             selectedCategory={selectedCategory}
-            onCategoryChange={setSelectedCategory}
+            onCategoryChange={(category) => {
+              setSelectedCategory(category);
+              if (category === "all") {
+                setSearchQuery("");
+                setMapSearchQuery("");
+              }
+            }}
           />
         </div>
 
