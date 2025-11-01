@@ -26,6 +26,19 @@ const StoreDetail = () => {
     return false;
   });
 
+  // Verificar si el usuario ha reservado en este comercio
+  const hasReserved = () => {
+    const ordersData = localStorage.getItem("orders");
+    if (!ordersData) return false;
+    
+    const orders = JSON.parse(ordersData);
+    return orders.some((order: any) => {
+      // Verificar si hay alguna orden para este comercio
+      const storeData = allStores[id as keyof typeof allStores];
+      return storeData && order.storeName === storeData.name;
+    });
+  };
+
   // Mock data - en producción vendría de una API
   const allStores = {
     "1": {
@@ -383,47 +396,55 @@ const StoreDetail = () => {
           />
 
           {/* Formulario para agregar reseña */}
-          <div className="mt-6 p-4 bg-muted/50 rounded-lg">
-            <h3 className="font-medium mb-3">Dejá tu reseña</h3>
-            
-            <div className="mb-3">
-              <Label className="mb-2 block text-sm">Calificación</Label>
-              <div className="flex gap-1">
-                {[1, 2, 3, 4, 5].map((rating) => (
-                  <button
-                    key={rating}
-                    onClick={() => setNewReviewRating(rating)}
-                    className="focus:outline-none transition-transform hover:scale-110"
-                  >
-                    <Star
-                      className={`w-5 h-5 ${
-                        rating <= newReviewRating
-                          ? "fill-yellow-400 text-yellow-400"
-                          : "text-gray-300"
-                      }`}
-                    />
-                  </button>
-                ))}
+          {hasReserved() ? (
+            <div className="mt-6 p-4 bg-muted/50 rounded-lg">
+              <h3 className="font-medium mb-3">Dejá tu reseña</h3>
+              
+              <div className="mb-3">
+                <Label className="mb-2 block text-sm">Calificación</Label>
+                <div className="flex gap-1">
+                  {[1, 2, 3, 4, 5].map((rating) => (
+                    <button
+                      key={rating}
+                      onClick={() => setNewReviewRating(rating)}
+                      className="focus:outline-none transition-transform hover:scale-110"
+                    >
+                      <Star
+                        className={`w-5 h-5 ${
+                          rating <= newReviewRating
+                            ? "fill-yellow-400 text-yellow-400"
+                            : "text-gray-300"
+                        }`}
+                      />
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
 
-            <div className="mb-3">
-              <Label htmlFor="review-comment" className="mb-2 block text-sm">
-                Comentario
-              </Label>
-              <Textarea
-                id="review-comment"
-                placeholder="Contanos tu experiencia..."
-                value={newReviewComment}
-                onChange={(e) => setNewReviewComment(e.target.value)}
-                className="min-h-[100px]"
-              />
-            </div>
+              <div className="mb-3">
+                <Label htmlFor="review-comment" className="mb-2 block text-sm">
+                  Comentario
+                </Label>
+                <Textarea
+                  id="review-comment"
+                  placeholder="Contanos tu experiencia..."
+                  value={newReviewComment}
+                  onChange={(e) => setNewReviewComment(e.target.value)}
+                  className="min-h-[100px]"
+                />
+              </div>
 
-            <Button onClick={handleAddReview} className="w-full">
-              Publicar reseña
-            </Button>
-          </div>
+              <Button onClick={handleAddReview} className="w-full">
+                Publicar reseña
+              </Button>
+            </div>
+          ) : (
+            <div className="mt-6 p-4 bg-muted/50 rounded-lg text-center">
+              <p className="text-sm text-muted-foreground">
+                Necesitás reservar en este comercio para poder dejar una reseña
+              </p>
+            </div>
+          )}
         </Card>
       </div>
 
