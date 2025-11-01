@@ -82,9 +82,9 @@ const Index = () => {
       id: "1",
       name: "Panadería Don Juan",
       category: "panaderia",
-      lat: -34.599722,
-      lng: -58.438611,
-      distance: "0.8 km",
+      lat: -34.6048,
+      lng: -58.3965,
+      distance: "0.5 km",
       rating: 4.5,
       reviewCount: 127,
       discount: 60,
@@ -95,9 +95,9 @@ const Index = () => {
       id: "2",
       name: "Supermercado Express",
       category: "supermercado",
-      lat: -34.601500,
-      lng: -58.440200,
-      distance: "1.2 km",
+      lat: -34.6035,
+      lng: -58.3950,
+      distance: "0.9 km",
       rating: 4.2,
       reviewCount: 89,
       discount: 50,
@@ -108,9 +108,9 @@ const Index = () => {
       id: "3",
       name: "Verdulería Los Andes",
       category: "verduleria",
-      lat: -34.597800,
-      lng: -58.436500,
-      distance: "1.5 km",
+      lat: -34.6050,
+      lng: -58.3975,
+      distance: "0.7 km",
       rating: 4.7,
       reviewCount: 156,
       discount: 55,
@@ -121,9 +121,9 @@ const Index = () => {
       id: "4",
       name: "Restaurante La Estancia",
       category: "restaurante",
-      lat: -34.598500,
-      lng: -58.441000,
-      distance: "0.5 km",
+      lat: -34.6040,
+      lng: -58.3940,
+      distance: "0.3 km",
       rating: 4.8,
       reviewCount: 203,
       discount: 70,
@@ -134,9 +134,9 @@ const Index = () => {
       id: "5",
       name: "Panadería Artesanal",
       category: "panaderia",
-      lat: -34.602000,
-      lng: -58.437000,
-      distance: "2.1 km",
+      lat: -34.6055,
+      lng: -58.3955,
+      distance: "1.2 km",
       rating: 4.6,
       reviewCount: 94,
       discount: 65,
@@ -174,7 +174,7 @@ const Index = () => {
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: isDarkMode ? "mapbox://styles/mapbox/dark-v11" : "mapbox://styles/mapbox/light-v11",
-      center: [-58.438611, -34.599722], // Centro de Villa Crespo
+      center: [-58.3960002, -34.6043469], // Centro en Escuela Da Vinci, Balvanera
       zoom: 14,
     });
 
@@ -189,10 +189,8 @@ const Index = () => {
       markers.forEach(marker => marker.remove());
       markers = [];
 
-      // Agregar marcadores para comercios filtrados
-      const storesToShow = selectedCategory === "all" 
-        ? stores 
-        : stores.filter(store => store.category === selectedCategory);
+      // Agregar marcadores para comercios filtrados (aplicar mismo filtro que la lista)
+      const storesToShow = filteredStores;
 
       storesToShow.forEach((store) => {
         if (map.current) {
@@ -269,7 +267,7 @@ const Index = () => {
       updateMarkers();
     });
 
-    // Actualizar marcadores cuando cambie la categoría seleccionada
+    // Actualizar marcadores cuando cambie la categoría o búsqueda
     if (map.current && map.current.loaded()) {
       updateMarkers();
     }
@@ -282,7 +280,7 @@ const Index = () => {
         map.current = null;
       }
     };
-  }, [navigate, selectedCategory]);
+  }, [navigate, filteredStores]);
 
   // Observar cambios en el modo oscuro
   useEffect(() => {
@@ -316,6 +314,11 @@ const Index = () => {
                 placeholder="Buscar comercios..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.currentTarget.blur();
+                  }
+                }}
                 className="pl-10 bg-white dark:bg-card"
               />
             </div>
@@ -353,7 +356,7 @@ const Index = () => {
         {/* Location */}
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <MapPin className="w-4 h-4 text-primary" />
-          <span>Villa Crespo, CABA</span>
+          <span>Balvanera, CABA</span>
         </div>
 
         {/* Map */}
@@ -396,12 +399,12 @@ const Index = () => {
 
       {/* Sheet de Notificaciones */}
       <Sheet open={showNotifications} onOpenChange={setShowNotifications}>
-        <SheetContent side="right" className="w-full sm:max-w-md">
+        <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto">
           <SheetHeader>
             <SheetTitle>Notificaciones</SheetTitle>
           </SheetHeader>
           
-          <div className="mt-6 space-y-3">
+          <div className="mt-6 space-y-3 pb-6">
             {notifications.length === 0 ? (
               <div className="text-center py-12">
                 <Bell className="w-12 h-12 text-muted-foreground/50 mx-auto mb-3" />

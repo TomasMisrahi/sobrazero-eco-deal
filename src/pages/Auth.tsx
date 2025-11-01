@@ -98,7 +98,7 @@ const Auth = () => {
             <img 
               src={isDarkMode ? logoDark : logo} 
               alt="SobraZero" 
-              className="w-44 h-44 mx-auto" 
+              className="w-32 h-32 mx-auto" 
               loading="eager"
               fetchPriority="high"
             />
