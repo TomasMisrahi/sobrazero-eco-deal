@@ -383,10 +383,8 @@ const Index = () => {
             selectedCategory={selectedCategory}
             onCategoryChange={(category) => {
               setSelectedCategory(category);
-              if (category === "all") {
-                setSearchQuery("");
-                setMapSearchQuery("");
-              }
+              setSearchQuery("");
+              setMapSearchQuery("");
             }}
           />
         </div>
