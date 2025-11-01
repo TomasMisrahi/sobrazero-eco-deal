@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -149,6 +149,13 @@ const Auth = () => {
                       </FormItem>
                     )}
                   />
+
+                  <div className="text-sm text-muted-foreground text-center">
+                    ¿Olvidaste tu contraseña?{" "}
+                    <Link to="/recuperar-password" className="underline text-primary hover:text-primary/80">
+                      Presioná acá
+                    </Link>
+                  </div>
 
                   <Button type="submit" className="w-full">
                     Iniciar sesión

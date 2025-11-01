@@ -14,6 +14,7 @@ import Notificaciones from "./pages/Notificaciones";
 import CentroAyuda from "./pages/CentroAyuda";
 import ChatEnVivo from "./pages/ChatEnVivo";
 import Auth from "./pages/Auth";
+import RecuperarPassword from "./pages/RecuperarPassword";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -46,6 +47,7 @@ const App = () => (
           <Route path="/perfil/centro-ayuda" element={<CentroAyuda />} />
           <Route path="/perfil/centro-ayuda/chat" element={<ChatEnVivo />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/recuperar-password" element={<RecuperarPassword />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
