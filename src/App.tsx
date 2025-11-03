@@ -38,7 +38,7 @@ const App = () => (
         <ScrollToTop />
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/store/:id" element={<StoreDetail />} />
+          <Route path="/comercio/:id" element={<StoreDetail />} />
           <Route path="/pedidos" element={<Pedidos />} />
           <Route path="/favoritos" element={<Favoritos />} />
           <Route path="/perfil" element={<Perfil />} />
@@ -46,7 +46,7 @@ const App = () => (
           <Route path="/perfil/notificaciones" element={<Notificaciones />} />
           <Route path="/perfil/centro-ayuda" element={<CentroAyuda />} />
           <Route path="/perfil/centro-ayuda/chat" element={<ChatEnVivo />} />
-          <Route path="/auth" element={<Auth />} />
+          <Route path="/autenticacion" element={<Auth />} />
           <Route path="/recuperar-password" element={<RecuperarPassword />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

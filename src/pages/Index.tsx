@@ -284,7 +284,7 @@ const Index = () => {
             const popupElement = document.querySelector(`[data-store-id="${store.id}"]`);
             if (popupElement) {
               popupElement.addEventListener('click', () => {
-                navigate(`/store/${store.id}`);
+                navigate(`/comercio/${store.id}`);
               });
             }
           });
@@ -444,7 +444,7 @@ const Index = () => {
               <StoreCard
                 key={store.id}
                 {...store}
-                onClick={() => navigate(`/store/${store.id}`)}
+                onClick={() => navigate(`/comercio/${store.id}`)}
               />
             ))}
           </div>

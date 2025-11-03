@@ -32,7 +32,7 @@ const RecuperarPassword = () => {
 
   const onSubmit = (data: ResetPasswordFormData) => {
     toast.success("Se ha enviado un correo con las instrucciones para restablecer tu contraseña");
-    setTimeout(() => navigate("/auth"), 2000);
+    setTimeout(() => navigate("/autenticacion"), 2000);
   };
 
   useEffect(() => {
@@ -55,7 +55,7 @@ const RecuperarPassword = () => {
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => navigate("/auth")}
+          onClick={() => navigate("/autenticacion")}
           className="mb-4"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />

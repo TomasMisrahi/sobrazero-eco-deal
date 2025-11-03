@@ -119,7 +119,7 @@ const Favoritos = () => {
             <StoreCard
               key={store.id}
               {...store}
-              onClick={() => navigate(`/store/${store.id}`)}
+              onClick={() => navigate(`/comercio/${store.id}`)}
               isFavorite={true}
               onFavoriteClick={(e) => handleRemoveFavorite(store.id, e)}
             />

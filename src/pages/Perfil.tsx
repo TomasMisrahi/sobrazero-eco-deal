@@ -71,7 +71,7 @@ const Perfil = () => {
   const handleLogout = () => {
     toast.success("Sesión cerrada correctamente");
     setShowLogoutDialog(false);
-    navigate("/auth");
+    navigate("/autenticacion");
   };
 
   const menuItems = [
