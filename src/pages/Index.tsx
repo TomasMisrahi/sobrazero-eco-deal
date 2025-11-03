@@ -360,6 +360,9 @@ const Index = () => {
         .mapbox-container .mapboxgl-ctrl-bottom-right {
           display: none !important;
         }
+        .mapbox-container .mapboxgl-ctrl-top-right {
+          top: 140px !important;
+        }
         .mapbox-popup-custom .mapboxgl-popup-content {
           padding: 0;
           border-radius: 8px;
