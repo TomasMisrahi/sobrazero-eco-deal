@@ -152,7 +152,7 @@ const Auth = () => {
 
                   <div className="text-sm text-muted-foreground text-center">
                     ¿Olvidaste tu contraseña?{" "}
-                    <Link to="/recuperar-contraseña" className="underline text-primary hover:text-primary/80">
+                    <Link to="/recuperar-password" className="underline text-primary hover:text-primary/80">
                       Presioná acá
                     </Link>
                   </div>
