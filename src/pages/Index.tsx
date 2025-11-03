@@ -10,6 +10,12 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/drawer";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import StoreFilters from "@/components/StoreFilters";
@@ -26,6 +32,7 @@ const Index = () => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [selectedStore, setSelectedStore] = useState<string | null>(null);
   const [mapboxToken] = useState("pk.eyJ1IjoidG9tYXNtaXNyYWhpIiwiYSI6ImNtaDJwZDkwaDJ1eW0yd3B5eDZ6b3Y1djMifQ.44qXpnbdv09ro4NME7QxJQ");
   const [isDarkMode, setIsDarkMode] = useState(() => document.documentElement.classList.contains('dark'));
   const [notifications, setNotifications] = useState([
@@ -284,7 +291,8 @@ const Index = () => {
             const popupElement = document.querySelector(`[data-store-id="${store.id}"]`);
             if (popupElement) {
               popupElement.addEventListener('click', () => {
-                navigate(`/comercio/${store.id}`);
+                setSelectedStore(store.id);
+                popup.remove(); // Cerrar el popup cuando se abre el drawer
               });
             }
           });
@@ -340,65 +348,80 @@ const Index = () => {
     }
   }, [showNotifications]);
 
-  return (
-    <div className="min-h-screen bg-background pb-20">
-      {/* Header */}
-      <header className="sticky top-0 z-10 bg-background border-b border-border shadow-sm">
-        <div className="px-4 py-4">
-          <div className="flex items-center gap-2">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                placeholder="Buscar comercios..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    setMapSearchQuery(searchQuery); // Actualizar el mapa al presionar Enter
-                    e.currentTarget.blur();
-                  }
-                }}
-                className="pl-10 pr-10 bg-white dark:bg-card"
-              />
-              {searchQuery && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8"
-                  onClick={() => {
-                    setSearchQuery("");
-                    setMapSearchQuery("");
-                  }}
-                >
-                  <X className="w-4 h-4" />
-                </Button>
-              )}
-            </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="relative flex-shrink-0"
-              onClick={() => setShowNotifications(true)}
-            >
-              <Bell className="w-5 h-5" />
-              {unreadNotifications > 0 && (
-                <Badge
-                  variant="destructive"
-                  className="absolute -top-1 -right-1 w-5 h-5 p-0 flex items-center justify-center text-xs"
-                >
-                  {unreadNotifications}
-                </Badge>
-              )}
-            </Button>
-          </div>
-        </div>
-      </header>
+  const selectedStoreData = stores.find(s => s.id === selectedStore);
 
-      {/* Content */}
-      <main className="px-4 py-4 space-y-4">
-        {/* Filters */}
-        <div>
-          <h2 className="text-sm font-semibold mb-3">Categorías</h2>
+  return (
+    <div className="relative w-full h-screen overflow-hidden">
+      {/* Mapa de fondo (fullscreen) */}
+      <div ref={mapContainer} className="absolute inset-0 w-full h-full mapbox-container" />
+      
+      <style>{`
+        .mapbox-container .mapboxgl-ctrl-bottom-left,
+        .mapbox-container .mapboxgl-ctrl-bottom-right {
+          display: none !important;
+        }
+        .mapbox-popup-custom .mapboxgl-popup-content {
+          padding: 0;
+          border-radius: 8px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        .mapbox-popup-custom .mapboxgl-popup-tip {
+          border-top-color: white;
+        }
+      `}</style>
+
+      {/* Controles flotantes sobre el mapa */}
+      <div className="absolute top-0 left-0 right-0 z-10 p-4 space-y-3">
+        {/* Barra de búsqueda y notificaciones */}
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              placeholder="Buscar comercios..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  setMapSearchQuery(searchQuery);
+                  e.currentTarget.blur();
+                }
+              }}
+              className="pl-10 pr-10 bg-white dark:bg-card shadow-lg"
+            />
+            {searchQuery && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8"
+                onClick={() => {
+                  setSearchQuery("");
+                  setMapSearchQuery("");
+                }}
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            )}
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="relative flex-shrink-0 bg-white dark:bg-card shadow-lg"
+            onClick={() => setShowNotifications(true)}
+          >
+            <Bell className="w-5 h-5" />
+            {unreadNotifications > 0 && (
+              <Badge
+                variant="destructive"
+                className="absolute -top-1 -right-1 w-5 h-5 p-0 flex items-center justify-center text-xs"
+              >
+                {unreadNotifications}
+              </Badge>
+            )}
+          </Button>
+        </div>
+
+        {/* Filtros de categoría */}
+        <div className="bg-white/95 dark:bg-card/95 backdrop-blur-sm rounded-lg p-3 shadow-lg">
           <StoreFilters
             selectedCategory={selectedCategory}
             onCategoryChange={(category) => {
@@ -409,49 +432,38 @@ const Index = () => {
           />
         </div>
 
-        {/* Location */}
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        {/* Ubicación */}
+        <div className="bg-white/95 dark:bg-card/95 backdrop-blur-sm rounded-lg px-3 py-2 shadow-lg inline-flex items-center gap-2 text-sm">
           <MapPin className="w-4 h-4 text-primary" />
-          <span>Balvanera, CABA</span>
+          <span className="font-medium">Balvanera, CABA</span>
         </div>
-
-        {/* Map */}
-        <div className="relative">
-          <div ref={mapContainer} className="w-full h-[400px] rounded-xl overflow-hidden shadow-card mapbox-container" />
-          <style>{`
-            .mapbox-container .mapboxgl-ctrl-bottom-left,
-            .mapbox-container .mapboxgl-ctrl-bottom-right {
-              display: none !important;
-            }
-            .mapbox-popup-custom .mapboxgl-popup-content {
-              padding: 0;
-              border-radius: 8px;
-              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            }
-            .mapbox-popup-custom .mapboxgl-popup-tip {
-              border-top-color: white;
-            }
-          `}</style>
-        </div>
-
-        {/* Stores List */}
-        <div>
-          <h2 className="text-sm font-semibold mb-3">
-            {filteredStores.length} comercios cercanos
-          </h2>
-          <div className="space-y-3">
-            {filteredStores.map((store) => (
-              <StoreCard
-                key={store.id}
-                {...store}
-                onClick={() => navigate(`/comercio/${store.id}`)}
-              />
-            ))}
-          </div>
-        </div>
-      </main>
+      </div>
 
       <BottomNavigation />
+
+      {/* Drawer para mostrar el comercio seleccionado */}
+      <Drawer 
+        open={!!selectedStore} 
+        onOpenChange={(open) => !open && setSelectedStore(null)}
+        snapPoints={[0.45, 0.95]}
+        fadeFromIndex={1}
+      >
+        <DrawerContent className="max-h-[96vh]">
+          <DrawerHeader>
+            <DrawerTitle className="sr-only">
+              {selectedStoreData?.name}
+            </DrawerTitle>
+          </DrawerHeader>
+          <div className="overflow-y-auto px-4 pb-20">
+            {selectedStoreData && (
+              <StoreCard
+                {...selectedStoreData}
+                onClick={() => navigate(`/comercio/${selectedStoreData.id}`)}
+              />
+            )}
+          </div>
+        </DrawerContent>
+      </Drawer>
 
       {/* Sheet de Notificaciones */}
       <Sheet open={showNotifications} onOpenChange={setShowNotifications}>
