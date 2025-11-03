@@ -47,7 +47,7 @@ const App = () => (
           <Route path="/perfil/centro-ayuda" element={<CentroAyuda />} />
           <Route path="/perfil/centro-ayuda/chat" element={<ChatEnVivo />} />
           <Route path="/autenticacion" element={<Auth />} />
-          <Route path="/recuperar-password" element={<RecuperarPassword />} />
+          <Route path="/recuperar-contraseña" element={<RecuperarPassword />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
