@@ -421,16 +421,14 @@ const Index = () => {
         </div>
 
         {/* Filtros de categoría */}
-        <div className="bg-white/95 dark:bg-card/95 backdrop-blur-sm rounded-lg p-3 shadow-lg">
-          <StoreFilters
-            selectedCategory={selectedCategory}
-            onCategoryChange={(category) => {
-              setSelectedCategory(category);
-              setSearchQuery("");
-              setMapSearchQuery("");
-            }}
-          />
-        </div>
+        <StoreFilters
+          selectedCategory={selectedCategory}
+          onCategoryChange={(category) => {
+            setSelectedCategory(category);
+            setSearchQuery("");
+            setMapSearchQuery("");
+          }}
+        />
 
         {/* Ubicación */}
         <div className="bg-white/95 dark:bg-card/95 backdrop-blur-sm rounded-lg px-3 py-2 shadow-lg inline-flex items-center gap-2 text-sm">
