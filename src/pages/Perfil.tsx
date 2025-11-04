@@ -1,16 +1,9 @@
-import { User, Mail, Phone, MapPin, Settings, LogOut, Bell, HelpCircle, ChevronRight } from "lucide-react";
+import { Settings, LogOut, Bell, HelpCircle, ChevronRight, Edit, ShoppingBag } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Separator } from "@/components/ui/separator";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import BottomNavigation from "@/components/BottomNavigation";
 import { toast } from "sonner";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import {
@@ -24,49 +17,15 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-const profileSchema = z.object({
-  name: z.string().trim().min(1, "El nombre es requerido").max(100, "Máximo 100 caracteres"),
-  email: z.string().trim().email("Email inválido").max(255, "Máximo 255 caracteres"),
-  phone: z.string().trim().min(1, "El teléfono es requerido").max(20, "Máximo 20 caracteres"),
-  address: z.string().trim().min(1, "La dirección es requerida").max(200, "Máximo 200 caracteres"),
-});
-
-type ProfileFormData = z.infer<typeof profileSchema>;
-
 const Perfil = () => {
   const navigate = useNavigate();
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   
   // Estado local para datos del usuario
-  const [user, setUser] = useState({
+  const [user] = useState({
     name: "María González",
-    email: "maria.gonzalez@email.com",
-    phone: "+54 9 11 1234-5678",
-    address: "Balvanera, CABA",
     completedOrders: 12,
   });
-
-  const form = useForm<ProfileFormData>({
-    resolver: zodResolver(profileSchema),
-    defaultValues: {
-      name: user.name,
-      email: user.email,
-      phone: user.phone,
-      address: user.address,
-    },
-  });
-
-  const onSubmit = (data: ProfileFormData) => {
-    // Actualizar estado local
-    setUser({
-      ...user,
-      name: data.name,
-      email: data.email,
-      phone: data.phone,
-      address: data.address,
-    });
-    toast.success("Perfil actualizado correctamente");
-  };
 
   const handleLogout = () => {
     toast.success("Sesión cerrada correctamente");
@@ -75,6 +34,11 @@ const Perfil = () => {
   };
 
   const menuItems = [
+    {
+      icon: Edit,
+      label: "Editar perfil",
+      path: "/perfil/editar",
+    },
     {
       icon: Settings,
       label: "Configuración",
@@ -103,9 +67,9 @@ const Perfil = () => {
 
       {/* Content */}
       <main className="px-4 py-4 space-y-4">
-        {/* Profile Card */}
+        {/* Profile Info */}
         <Card className="p-6">
-          <div className="flex flex-col items-center text-center mb-6">
+          <div className="flex flex-col items-center text-center">
             <Avatar className="w-20 h-20 mb-3">
               <AvatarFallback className="bg-primary/10 text-primary text-2xl">
                 {user.name
@@ -114,96 +78,15 @@ const Perfil = () => {
                   .join("")}
               </AvatarFallback>
             </Avatar>
-            <h2 className="text-xl font-bold mb-1">{user.name}</h2>
-            <p className="text-sm text-muted-foreground">
-              {user.completedOrders} pedidos realizados
-            </p>
+            <h2 className="text-xl font-bold">{user.name}</h2>
           </div>
-
-          <Separator className="my-4" />
-
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="flex items-center gap-2 text-sm">
-                      <User className="w-4 h-4 text-muted-foreground" />
-                      Nombre completo
-                    </FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="flex items-center gap-2 text-sm">
-                      <Mail className="w-4 h-4 text-muted-foreground" />
-                      Email
-                    </FormLabel>
-                    <FormControl>
-                      <Input {...field} type="email" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="flex items-center gap-2 text-sm">
-                      <Phone className="w-4 h-4 text-muted-foreground" />
-                      Teléfono
-                    </FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="address"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="flex items-center gap-2 text-sm">
-                      <MapPin className="w-4 h-4 text-muted-foreground" />
-                      Dirección
-                    </FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <Button type="submit" className="w-full">
-                Guardar cambios
-              </Button>
-            </form>
-          </Form>
         </Card>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-3 gap-3">
           <Card className="p-4 bg-primary/5 border-primary/20">
             <div className="text-center">
-              <p className="text-2xl font-bold text-primary mb-1">
+              <p className="text-xl font-bold text-primary mb-1">
                 {user.completedOrders * 2.5}kg
               </p>
               <p className="text-xs text-muted-foreground">
@@ -214,11 +97,23 @@ const Perfil = () => {
 
           <Card className="p-4 bg-accent/5 border-accent/20">
             <div className="text-center">
-              <p className="text-2xl font-bold text-accent mb-1">
+              <p className="text-xl font-bold text-accent mb-1">
                 ${(user.completedOrders * 450).toLocaleString()}
               </p>
               <p className="text-xs text-muted-foreground">
                 ahorrados en total
+              </p>
+            </div>
+          </Card>
+
+          <Card className="p-4 bg-secondary/5 border-secondary/20">
+            <div className="text-center">
+              <ShoppingBag className="w-6 h-6 mx-auto mb-1 text-secondary" />
+              <p className="text-xl font-bold text-secondary mb-1">
+                {user.completedOrders}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                pedidos
               </p>
             </div>
           </Card>

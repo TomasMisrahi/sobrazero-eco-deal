@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import StoreDetail from "./pages/StoreDetail";
 import Pedidos from "./pages/Pedidos";
 import Perfil from "./pages/Perfil";
+import EditarPerfil from "./pages/EditarPerfil";
 import Favoritos from "./pages/Favoritos";
 import Configuracion from "./pages/Configuracion";
 import Notificaciones from "./pages/Notificaciones";
@@ -42,6 +43,7 @@ const App = () => (
           <Route path="/pedidos" element={<Pedidos />} />
           <Route path="/favoritos" element={<Favoritos />} />
           <Route path="/perfil" element={<Perfil />} />
+          <Route path="/perfil/editar" element={<EditarPerfil />} />
           <Route path="/perfil/configuracion" element={<Configuracion />} />
           <Route path="/perfil/notificaciones" element={<Notificaciones />} />
           <Route path="/perfil/centro-ayuda" element={<CentroAyuda />} />
