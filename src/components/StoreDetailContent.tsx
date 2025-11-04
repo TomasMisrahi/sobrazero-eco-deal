@@ -185,7 +185,7 @@ const StoreDetailContent = ({
 
       <div className="px-4">
         {/* Info Card */}
-        <Card className="p-4 mb-4 shadow-card-hover -mt-12 relative z-10">
+        <Card className="p-4 mb-4 shadow-card-hover -mt-24 relative z-10">
           <div className="flex items-start justify-between gap-3 mb-3">
             <div className="flex-1">
               <h1 className="text-xl font-bold mb-1">{store.name}</h1>
