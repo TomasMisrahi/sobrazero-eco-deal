@@ -83,9 +83,9 @@ const Perfil = () => {
           </div>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-3 gap-4">
-            <div className="text-center p-4 rounded-lg bg-primary/5 border border-primary/20">
-              <p className="text-2xl font-bold text-primary mb-1">
+          <div className="grid grid-cols-3 gap-3">
+            <div className="text-center p-3 rounded-lg bg-primary/5 border border-primary/20">
+              <p className="text-xl font-bold text-primary mb-1">
                 {user.completedOrders * 2.5}kg
               </p>
               <p className="text-xs text-muted-foreground">
@@ -93,8 +93,8 @@ const Perfil = () => {
               </p>
             </div>
 
-            <div className="text-center p-4 rounded-lg bg-accent/5 border border-accent/20">
-              <p className="text-2xl font-bold text-accent mb-1">
+            <div className="text-center p-3 rounded-lg bg-primary/5 border border-primary/20">
+              <p className="text-xl font-bold text-primary mb-1">
                 ${(user.completedOrders * 450).toLocaleString()}
               </p>
               <p className="text-xs text-muted-foreground">
@@ -102,9 +102,9 @@ const Perfil = () => {
               </p>
             </div>
 
-            <div className="text-center p-4 rounded-lg bg-secondary/5 border border-secondary/20">
-              <ShoppingBag className="w-8 h-8 mx-auto mb-2 text-secondary" />
-              <p className="text-2xl font-bold text-secondary mb-1">
+            <div className="text-center p-3 rounded-lg bg-primary/5 border border-primary/20">
+              <ShoppingBag className="w-6 h-6 mx-auto mb-1 text-primary" />
+              <p className="text-xl font-bold text-primary mb-1">
                 {user.completedOrders}
               </p>
               <p className="text-xs text-muted-foreground">
