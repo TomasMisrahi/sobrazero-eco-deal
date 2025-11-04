@@ -67,9 +67,10 @@ const Perfil = () => {
 
       {/* Content */}
       <main className="px-4 py-4 space-y-4">
-        {/* Profile Info */}
+        {/* Profile Info and Stats */}
         <Card className="p-6">
-          <div className="flex flex-col items-center text-center">
+          {/* Avatar and Name */}
+          <div className="flex flex-col items-center text-center mb-6">
             <Avatar className="w-20 h-20 mb-3">
               <AvatarFallback className="bg-primary/10 text-primary text-2xl">
                 {user.name
@@ -80,44 +81,38 @@ const Perfil = () => {
             </Avatar>
             <h2 className="text-xl font-bold">{user.name}</h2>
           </div>
-        </Card>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-3 gap-3">
-          <Card className="p-4 bg-primary/5 border-primary/20">
-            <div className="text-center">
-              <p className="text-xl font-bold text-primary mb-1">
+          {/* Stats Cards */}
+          <div className="grid grid-cols-3 gap-4">
+            <div className="text-center p-4 rounded-lg bg-primary/5 border border-primary/20">
+              <p className="text-2xl font-bold text-primary mb-1">
                 {user.completedOrders * 2.5}kg
               </p>
               <p className="text-xs text-muted-foreground">
                 de comida salvada
               </p>
             </div>
-          </Card>
 
-          <Card className="p-4 bg-accent/5 border-accent/20">
-            <div className="text-center">
-              <p className="text-xl font-bold text-accent mb-1">
+            <div className="text-center p-4 rounded-lg bg-accent/5 border border-accent/20">
+              <p className="text-2xl font-bold text-accent mb-1">
                 ${(user.completedOrders * 450).toLocaleString()}
               </p>
               <p className="text-xs text-muted-foreground">
                 ahorrados en total
               </p>
             </div>
-          </Card>
 
-          <Card className="p-4 bg-secondary/5 border-secondary/20">
-            <div className="text-center">
-              <ShoppingBag className="w-6 h-6 mx-auto mb-1 text-secondary" />
-              <p className="text-xl font-bold text-secondary mb-1">
+            <div className="text-center p-4 rounded-lg bg-secondary/5 border border-secondary/20">
+              <ShoppingBag className="w-8 h-8 mx-auto mb-2 text-secondary" />
+              <p className="text-2xl font-bold text-secondary mb-1">
                 {user.completedOrders}
               </p>
               <p className="text-xs text-muted-foreground">
                 pedidos
               </p>
             </div>
-          </Card>
-        </div>
+          </div>
+        </Card>
 
         {/* Menu Items */}
         <Card className="divide-y divide-border">
