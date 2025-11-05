@@ -1,4 +1,4 @@
-import { Settings, LogOut, Bell, HelpCircle, ChevronRight, Edit, ShoppingBag } from "lucide-react";
+import { Settings, LogOut, Bell, HelpCircle, ChevronRight, Edit, ShoppingBag, Leaf, DollarSign } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -85,6 +85,7 @@ const Perfil = () => {
           {/* Stats Cards */}
           <div className="grid grid-cols-3 gap-3">
             <div className="text-center p-3 rounded-lg bg-primary/5 border border-primary/20">
+              <Leaf className="w-6 h-6 mx-auto mb-1 text-primary" />
               <p className="text-xl font-bold text-primary mb-1">
                 {user.completedOrders * 2.5}kg
               </p>
@@ -94,6 +95,7 @@ const Perfil = () => {
             </div>
 
             <div className="text-center p-3 rounded-lg bg-primary/5 border border-primary/20">
+              <DollarSign className="w-6 h-6 mx-auto mb-1 text-primary" />
               <p className="text-xl font-bold text-primary mb-1">
                 ${(user.completedOrders * 450).toLocaleString()}
               </p>
