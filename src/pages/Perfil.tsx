@@ -66,7 +66,7 @@ const Perfil = () => {
       </header>
 
       {/* Content */}
-      <main className="px-4 py-4 space-y-4">
+      <main className="px-3 py-4 space-y-4">
         {/* Profile Info and Stats */}
         <Card className="p-6">
           {/* Avatar and Name */}
@@ -83,8 +83,8 @@ const Perfil = () => {
           </div>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-3 gap-3">
-            <div className="text-center p-3 rounded-lg bg-primary/5 border border-primary/20">
+          <div className="grid grid-cols-3 gap-2">
+            <div className="text-center p-2 rounded-lg bg-primary/5 border border-primary/20">
               <Leaf className="w-6 h-6 mx-auto mb-1 text-primary" />
               <p className="text-xl font-bold text-primary mb-1">
                 {user.completedOrders * 2.5}kg
@@ -94,7 +94,7 @@ const Perfil = () => {
               </p>
             </div>
 
-            <div className="text-center p-3 rounded-lg bg-primary/5 border border-primary/20">
+            <div className="text-center p-2 rounded-lg bg-primary/5 border border-primary/20">
               <DollarSign className="w-6 h-6 mx-auto mb-1 text-primary" />
               <p className="text-xl font-bold text-primary mb-1">
                 ${(user.completedOrders * 450).toLocaleString()}
@@ -104,7 +104,7 @@ const Perfil = () => {
               </p>
             </div>
 
-            <div className="text-center p-3 rounded-lg bg-primary/5 border border-primary/20">
+            <div className="text-center p-2 rounded-lg bg-primary/5 border border-primary/20">
               <ShoppingBag className="w-6 h-6 mx-auto mb-1 text-primary" />
               <p className="text-xl font-bold text-primary mb-1">
                 {user.completedOrders}
