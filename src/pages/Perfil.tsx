@@ -140,7 +140,7 @@ const Perfil = () => {
         <Button
           variant="outline"
           size="lg"
-          className="w-full bg-background text-destructive border-destructive/30 hover:bg-destructive/5 hover:border-destructive/50"
+          className="w-full bg-background text-destructive border-destructive/30 hover:bg-destructive hover:text-destructive-foreground hover:border-destructive"
           onClick={() => setShowLogoutDialog(true)}
         >
           <LogOut className="w-5 h-5 mr-2" />
