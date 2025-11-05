@@ -121,7 +121,7 @@ const Configuracion = () => {
           </h2>
           <Button
             variant="outline"
-            className="w-full bg-amber-50 dark:bg-amber-950/20 text-destructive border-destructive/30 hover:bg-amber-100 dark:hover:bg-amber-950/30 hover:border-destructive/50"
+            className="w-full bg-background text-destructive border-destructive/30 hover:bg-destructive hover:text-destructive-foreground hover:border-destructive"
             onClick={() => setShowDeleteDialog(true)}
           >
             Eliminar cuenta
