@@ -138,9 +138,9 @@ const Perfil = () => {
 
         {/* Logout Button */}
         <Button
-          variant="destructive"
+          variant="outline"
           size="lg"
-          className="w-full"
+          className="w-full bg-background text-destructive border-destructive/30 hover:bg-destructive/5 hover:border-destructive/50"
           onClick={() => setShowLogoutDialog(true)}
         >
           <LogOut className="w-5 h-5 mr-2" />
