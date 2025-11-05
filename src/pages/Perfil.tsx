@@ -90,7 +90,7 @@ const Perfil = () => {
                 {user.completedOrders * 2.5}kg
               </p>
               <p className="text-xs text-muted-foreground">
-                de comida salvada
+                salvados
               </p>
             </div>
 
@@ -100,7 +100,7 @@ const Perfil = () => {
                 ${(user.completedOrders * 450).toLocaleString()}
               </p>
               <p className="text-xs text-muted-foreground">
-                ahorrados en total
+                ahorrados
               </p>
             </div>
 
