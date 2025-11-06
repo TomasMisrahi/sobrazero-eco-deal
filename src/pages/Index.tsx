@@ -35,6 +35,7 @@ const Index = () => {
   const [selectedStore, setSelectedStore] = useState<string | null>(null);
   const [mapboxToken] = useState("pk.eyJ1IjoidG9tYXNtaXNyYWhpIiwiYSI6ImNtaDJwZDkwaDJ1eW0yd3B5eDZ6b3Y1djMifQ.44qXpnbdv09ro4NME7QxJQ");
   const [isDarkMode, setIsDarkMode] = useState(() => document.documentElement.classList.contains('dark'));
+  const [localStores, setLocalStores] = useState(stores);
   const [notifications, setNotifications] = useState([
     {
       id: "1",
@@ -93,7 +94,7 @@ const Index = () => {
   };
 
   // Filtrar comercios para las cards (se actualiza solo al presionar Enter)
-  const filteredStores = stores.filter((store) => {
+  const filteredStores = localStores.filter((store) => {
     const matchesCategory = selectedCategory === "all" || store.category === selectedCategory;
     
     // Buscar por cualquier palabra del nombre del comercio
@@ -106,7 +107,7 @@ const Index = () => {
   });
 
   // Filtrar comercios para el mapa (solo se actualiza al presionar Enter)
-  const mapFilteredStores = stores.filter((store) => {
+  const mapFilteredStores = localStores.filter((store) => {
     const matchesCategory = selectedCategory === "all" || store.category === selectedCategory;
     
     // Buscar por cualquier palabra del nombre del comercio
@@ -231,6 +232,23 @@ const Index = () => {
     }
   }, [showNotifications]);
 
+  // Escuchar eventos de reserva para actualizar contadores
+  useEffect(() => {
+    const handleStoreReserved = (e: any) => {
+      const { storeId, newAvailable } = e.detail;
+      setLocalStores(prev => 
+        prev.map(store => 
+          store.id === storeId 
+            ? { ...store, available: newAvailable }
+            : store
+        )
+      );
+    };
+
+    window.addEventListener('storeReserved', handleStoreReserved);
+    return () => window.removeEventListener('storeReserved', handleStoreReserved);
+  }, []);
+
   return (
     <div className="relative w-full h-screen overflow-hidden">
       {/* Mapa de fondo (fullscreen) */}
@@ -340,7 +358,7 @@ const Index = () => {
             {selectedStore && (
               <StoreDetailContent 
                 storeId={selectedStore}
-                stores={stores}
+                stores={localStores}
                 allReviews={allReviews}
                 showBackButton={false}
               />

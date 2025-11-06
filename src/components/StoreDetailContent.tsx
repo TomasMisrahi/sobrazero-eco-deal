@@ -64,7 +64,10 @@ const StoreDetailContent = ({
     return false;
   });
 
-  const store = stores.find(s => s.id === storeId);
+  const storeData = stores.find(s => s.id === storeId);
+  const [available, setAvailable] = useState(storeData?.available || 0);
+  
+  const store = storeData ? { ...storeData, available } : undefined;
 
   // Verificar si el usuario ha reservado en este comercio
   const hasReserved = () => {
@@ -83,6 +86,10 @@ const StoreDetailContent = ({
   const handleReserve = () => {
     if (!store) return;
 
+    // Decrementar unidades disponibles
+    const newAvailable = available - quantity;
+    setAvailable(newAvailable);
+
     const newOrder = {
       id: Date.now().toString(),
       storeName: store.name,
@@ -98,6 +105,11 @@ const StoreDetailContent = ({
     const orders = existingOrders ? JSON.parse(existingOrders) : [];
     orders.unshift(newOrder);
     localStorage.setItem("orders", JSON.stringify(orders));
+
+    // Disparar evento personalizado para actualizar otros componentes
+    window.dispatchEvent(new CustomEvent('storeReserved', { 
+      detail: { storeId, quantity, newAvailable } 
+    }));
 
     toast.success("Reserva confirmada!", {
       description: `Retirá tu pedido hoy entre ${store.pickupTime}`,
@@ -153,7 +165,13 @@ const StoreDetailContent = ({
       setIsFavorite(false);
     }
     setQuantity(1);
-  }, [storeId]);
+    
+    // Reset available cuando cambia el store
+    const newStore = stores.find(s => s.id === storeId);
+    if (newStore) {
+      setAvailable(newStore.available);
+    }
+  }, [storeId, stores]);
 
   if (!store) {
     return (

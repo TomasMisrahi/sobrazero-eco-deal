@@ -4,79 +4,39 @@ import StoreCard from "@/components/StoreCard";
 import BottomNavigation from "@/components/BottomNavigation";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { stores as allStoresData } from "@/data/mockStores";
 
 const Favoritos = () => {
   const navigate = useNavigate();
 
-  // Todos los comercios disponibles
-  const allStores = [
-    {
-      id: "1",
-      name: "Panadería Don Juan",
-      category: "panaderia",
-      distance: "0.8 km",
-      rating: 4.5,
-      reviewCount: 127,
-      discount: 60,
-      pickupTime: "18:00 - 20:00",
-      available: 5,
-    },
-    {
-      id: "2",
-      name: "Supermercado Express",
-      category: "supermercado",
-      distance: "1.2 km",
-      rating: 4.2,
-      reviewCount: 89,
-      discount: 50,
-      pickupTime: "19:00 - 21:00",
-      available: 8,
-    },
-    {
-      id: "3",
-      name: "Verdulería Los Andes",
-      category: "verduleria",
-      distance: "1.5 km",
-      rating: 4.7,
-      reviewCount: 156,
-      discount: 55,
-      pickupTime: "17:00 - 19:00",
-      available: 3,
-    },
-    {
-      id: "4",
-      name: "Restaurante La Estancia",
-      category: "restaurante",
-      distance: "0.5 km",
-      rating: 4.8,
-      reviewCount: 203,
-      discount: 70,
-      pickupTime: "20:00 - 21:30",
-      available: 4,
-    },
-    {
-      id: "5",
-      name: "Panadería Artesanal",
-      category: "panadería",
-      distance: "2.1 km",
-      rating: 4.6,
-      reviewCount: 94,
-      discount: 65,
-      pickupTime: "18:30 - 20:00",
-      available: 6,
-    },
-  ];
+  const [favoriteStores, setFavoriteStores] = useState<typeof allStoresData>([]);
 
-  const [favoriteStores, setFavoriteStores] = useState<typeof allStores>([]);
-
-  useEffect(() => {
-    // Load favorites from localStorage
+  const loadFavorites = () => {
     const favorites = localStorage.getItem("favorites");
     if (favorites) {
       const favIds = JSON.parse(favorites);
-      const favStores = allStores.filter(store => favIds.includes(store.id));
+      const favStores = allStoresData.filter(store => favIds.includes(store.id));
       setFavoriteStores(favStores);
     }
+  };
+
+  useEffect(() => {
+    loadFavorites();
+
+    // Escuchar eventos de reserva para actualizar el contador
+    const handleStoreReserved = (e: any) => {
+      const { storeId, newAvailable } = e.detail;
+      setFavoriteStores(prev => 
+        prev.map(store => 
+          store.id === storeId 
+            ? { ...store, available: newAvailable }
+            : store
+        )
+      );
+    };
+
+    window.addEventListener('storeReserved', handleStoreReserved);
+    return () => window.removeEventListener('storeReserved', handleStoreReserved);
   }, []);
 
   const handleRemoveFavorite = (storeId: string, e: React.MouseEvent) => {

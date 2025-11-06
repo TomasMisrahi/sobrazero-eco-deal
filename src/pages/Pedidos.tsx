@@ -7,11 +7,60 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
 const Pedidos = () => {
-  // Leer pedidos del localStorage
-  const [orders, setOrders] = useState(() => {
+  // Inicializar con pedidos de ejemplo si no hay ninguno
+  const initializeOrders = () => {
     const savedOrders = localStorage.getItem("orders");
-    return savedOrders ? JSON.parse(savedOrders) : [];
-  });
+    if (!savedOrders) {
+      const exampleOrders = [
+        {
+          id: "1",
+          storeName: "Panadería Don Juan",
+          status: "pending",
+          pickupTime: "18:00 - 20:00",
+          address: "Av. Corrientes 2850, Balvanera",
+          total: 1000,
+          items: 1,
+          date: "Hoy",
+        },
+        {
+          id: "2",
+          storeName: "Supermercado Express",
+          status: "picked_up",
+          pickupTime: "19:00 - 21:00",
+          address: "Av. Pueyrredón 258, Balvanera",
+          total: 3000,
+          items: 2,
+          date: "Ayer",
+        },
+        {
+          id: "3",
+          storeName: "Restaurante La Estancia",
+          status: "cancelled",
+          pickupTime: "20:00 - 21:30",
+          address: "Av. Rivadavia 2380, Balvanera",
+          total: 1500,
+          items: 1,
+          date: "Hace 2 días",
+        },
+        {
+          id: "4",
+          storeName: "Verdulería Los Andes",
+          status: "picked_up",
+          pickupTime: "17:00 - 19:00",
+          address: "Av. Córdoba 2645, Balvanera",
+          total: 1800,
+          items: 2,
+          date: "Hace 3 días",
+        },
+      ];
+      localStorage.setItem("orders", JSON.stringify(exampleOrders));
+      return exampleOrders;
+    }
+    return JSON.parse(savedOrders);
+  };
+
+  // Leer pedidos del localStorage
+  const [orders, setOrders] = useState(initializeOrders);
 
   // Actualizar cuando cambien los pedidos
   useEffect(() => {
