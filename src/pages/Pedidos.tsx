@@ -7,13 +7,14 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
 const Pedidos = () => {
-  // Inicializar con pedidos de ejemplo si no hay ninguno
-  const initializeOrders = () => {
+  // Leer pedidos del localStorage o crear ejemplos
+  const [orders, setOrders] = useState(() => {
     const savedOrders = localStorage.getItem("orders");
-    if (!savedOrders) {
+    if (!savedOrders || JSON.parse(savedOrders).length === 0) {
+      // Si no hay pedidos, crear ejemplos
       const exampleOrders = [
         {
-          id: "1",
+          id: "example-1",
           storeName: "Panadería Don Juan",
           status: "pending",
           pickupTime: "18:00 - 20:00",
@@ -23,7 +24,7 @@ const Pedidos = () => {
           date: "Hoy",
         },
         {
-          id: "2",
+          id: "example-2",
           storeName: "Supermercado Express",
           status: "picked_up",
           pickupTime: "19:00 - 21:00",
@@ -33,7 +34,7 @@ const Pedidos = () => {
           date: "Ayer",
         },
         {
-          id: "3",
+          id: "example-3",
           storeName: "Restaurante La Estancia",
           status: "cancelled",
           pickupTime: "20:00 - 21:30",
@@ -43,7 +44,7 @@ const Pedidos = () => {
           date: "Hace 2 días",
         },
         {
-          id: "4",
+          id: "example-4",
           storeName: "Verdulería Los Andes",
           status: "picked_up",
           pickupTime: "17:00 - 19:00",
@@ -57,10 +58,7 @@ const Pedidos = () => {
       return exampleOrders;
     }
     return JSON.parse(savedOrders);
-  };
-
-  // Leer pedidos del localStorage
-  const [orders, setOrders] = useState(initializeOrders);
+  });
 
   // Actualizar cuando cambien los pedidos
   useEffect(() => {
@@ -117,6 +115,17 @@ const Pedidos = () => {
       <header className="sticky top-0 z-10 bg-background border-b border-border shadow-sm">
         <div className="px-4 py-4">
           <h1 className="text-2xl font-bold">Mis Pedidos</h1>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="mt-2"
+            onClick={() => {
+              localStorage.removeItem("orders");
+              window.location.reload();
+            }}
+          >
+            Resetear pedidos de ejemplo
+          </Button>
         </div>
       </header>
 
