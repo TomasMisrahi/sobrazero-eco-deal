@@ -8,6 +8,11 @@ import { Label } from "@/components/ui/label";
 import ReviewSection from "@/components/ReviewSection";
 import { toast } from "sonner";
 
+interface Product {
+  name: string;
+  quantity: string;
+}
+
 interface Store {
   id: string;
   name: string;
@@ -22,6 +27,7 @@ interface Store {
   pickupTime: string;
   available: number;
   description: string;
+  products: Product[];
   imageUrl?: string;
   lat?: number;
   lng?: number;
@@ -235,12 +241,24 @@ const StoreDetailContent = ({
           </div>
         </Card>
 
-        {/* Descripción */}
+        {/* Descripción y productos */}
         <Card className="p-4 mb-4">
-          <h2 className="font-semibold mb-2">¿Qué incluye?</h2>
-          <p className="text-sm text-muted-foreground leading-relaxed">
+          <h2 className="font-semibold mb-3">¿Qué incluye?</h2>
+          <p className="text-sm text-muted-foreground leading-relaxed mb-4">
             {store.description}
           </p>
+          
+          <div className="border-t border-border pt-3">
+            <h3 className="font-medium text-sm mb-2">Productos incluidos:</h3>
+            <ul className="space-y-1.5">
+              {store.products.map((product, index) => (
+                <li key={index} className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">{product.name}</span>
+                  <span className="font-medium">{product.quantity}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </Card>
 
         {/* Precio y cantidad */}

@@ -1,5 +1,10 @@
 // Mock data centralizado para los comercios y reseñas
 
+export interface Product {
+  name: string;
+  quantity: string;
+}
+
 export interface Store {
   id: string;
   name: string;
@@ -14,6 +19,7 @@ export interface Store {
   pickupTime: string;
   available: number;
   description: string;
+  products: Product[];
   imageUrl?: string;
   lat?: number;
   lng?: number;
@@ -44,6 +50,12 @@ export const stores: Store[] = [
     pickupTime: "18:00 - 20:00",
     available: 5,
     description: "Bolsa sorpresa con productos de panadería frescos del día: pan, facturas, medialunas y más. Todos los productos están en perfecto estado.",
+    products: [
+      { name: "Medialunas", quantity: "6 unidades" },
+      { name: "Pan francés", quantity: "500g" },
+      { name: "Facturas surtidas", quantity: "4 unidades" },
+      { name: "Pan de campo", quantity: "1kg" },
+    ],
     imageUrl: "",
   },
   {
@@ -62,6 +74,13 @@ export const stores: Store[] = [
     pickupTime: "19:00 - 21:00",
     available: 8,
     description: "Bolsa sorpresa con variedad de productos: verduras, frutas, lácteos y otros productos frescos. Perfecto para abastecer tu hogar.",
+    products: [
+      { name: "Frutas de estación variadas", quantity: "2kg" },
+      { name: "Verduras frescas mixtas", quantity: "1.5kg" },
+      { name: "Lácteos (leche, yogurt)", quantity: "3 unidades" },
+      { name: "Pan del día", quantity: "500g" },
+      { name: "Productos de almacén", quantity: "4 unidades" },
+    ],
   },
   {
     id: "3",
@@ -79,6 +98,14 @@ export const stores: Store[] = [
     pickupTime: "17:00 - 19:00",
     available: 3,
     description: "Bolsa sorpresa con frutas y verduras frescas de estación. Productos de excelente calidad directos de la quinta.",
+    products: [
+      { name: "Tomates", quantity: "1 kilo" },
+      { name: "Lechuga", quantity: "2 unidades" },
+      { name: "Zanahorias", quantity: "medio kilo" },
+      { name: "Manzanas", quantity: "1 kilo" },
+      { name: "Bananas", quantity: "medio kilo" },
+      { name: "Papas", quantity: "1 kilo" },
+    ],
   },
   {
     id: "4",
@@ -96,6 +123,12 @@ export const stores: Store[] = [
     pickupTime: "20:00 - 21:30",
     available: 4,
     description: "Bolsa sorpresa con platos de restaurante preparados del día: minutas, guarniciones y postres. Comida casera de alta calidad.",
+    products: [
+      { name: "Milanesa napolitana con guarnición", quantity: "1 porción" },
+      { name: "Ensalada mixta", quantity: "1 porción" },
+      { name: "Tarta de verduras", quantity: "1 porción" },
+      { name: "Flan casero con dulce de leche", quantity: "1 porción" },
+    ],
   },
   {
     id: "5",
@@ -113,6 +146,12 @@ export const stores: Store[] = [
     pickupTime: "18:30 - 20:00",
     available: 6,
     description: "Bolsa sorpresa con pan artesanal, masas dulces y productos de pastelería. Todo elaborado con masa madre y productos naturales.",
+    products: [
+      { name: "Pan de masa madre integral", quantity: "1kg" },
+      { name: "Croissants de manteca", quantity: "4 unidades" },
+      { name: "Budín de limón", quantity: "500g" },
+      { name: "Cookies artesanales", quantity: "6 unidades" },
+    ],
   },
 ];
 

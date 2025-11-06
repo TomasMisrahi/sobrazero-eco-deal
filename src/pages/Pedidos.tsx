@@ -30,9 +30,10 @@ const Pedidos = () => {
           items: 1,
           date: "Hoy",
           products: [
-            { name: "Medialunas", quantity: 6 },
-            { name: "Pan de campo", quantity: 1 },
-            { name: "Facturas surtidas", quantity: 4 },
+            { name: "Medialunas", quantity: "6 unidades" },
+            { name: "Pan francés", quantity: "500g" },
+            { name: "Facturas surtidas", quantity: "4 unidades" },
+            { name: "Pan de campo", quantity: "1kg" },
           ],
         },
         {
@@ -45,8 +46,10 @@ const Pedidos = () => {
           items: 2,
           date: "Ayer",
           products: [
-            { name: "Frutas y verduras variadas", quantity: 1 },
-            { name: "Productos de panadería", quantity: 1 },
+            { name: "Frutas de estación variadas", quantity: "2kg" },
+            { name: "Verduras frescas mixtas", quantity: "1.5kg" },
+            { name: "Lácteos (leche, yogurt)", quantity: "3 unidades" },
+            { name: "Pan del día", quantity: "500g" },
           ],
         },
         {
@@ -59,8 +62,9 @@ const Pedidos = () => {
           items: 1,
           date: "Hace 2 días",
           products: [
-            { name: "Platos del día variados", quantity: 2 },
-            { name: "Ensaladas", quantity: 1 },
+            { name: "Milanesa napolitana con guarnición", quantity: "1 porción" },
+            { name: "Tarta de verduras", quantity: "1 porción" },
+            { name: "Flan casero con dulce de leche", quantity: "1 porción" },
           ],
         },
         {
@@ -73,8 +77,10 @@ const Pedidos = () => {
           items: 2,
           date: "Hace 3 días",
           products: [
-            { name: "Verduras de hoja", quantity: 1 },
-            { name: "Frutas de estación", quantity: 1 },
+            { name: "Tomates", quantity: "1 kilo" },
+            { name: "Lechuga", quantity: "2 unidades" },
+            { name: "Manzanas", quantity: "1 kilo" },
+            { name: "Zanahorias", quantity: "medio kilo" },
           ],
         },
       ];

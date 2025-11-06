@@ -1,12 +1,12 @@
 import { useParams } from "react-router-dom";
 import StoreDetailContent from "@/components/StoreDetailContent";
 import BottomNavigation from "@/components/BottomNavigation";
-import { stores, allReviews } from "@/data/mockStores";
+import { stores, allReviews, type Store } from "@/data/mockStores";
 import { useState, useEffect } from "react";
 
 const StoreDetail = () => {
   const { id } = useParams();
-  const [localStores, setLocalStores] = useState(stores);
+  const [localStores, setLocalStores] = useState<Store[]>(stores);
 
   // Escuchar eventos de reserva para actualizar contadores
   useEffect(() => {
