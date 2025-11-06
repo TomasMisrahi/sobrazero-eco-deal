@@ -1,4 +1,4 @@
-import { Clock, MapPin, Package, RotateCcw } from "lucide-react";
+import { Clock, MapPin, Package } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -115,17 +115,6 @@ const Pedidos = () => {
       <header className="sticky top-0 z-10 bg-background border-b border-border shadow-sm">
         <div className="px-4 py-4">
           <h1 className="text-2xl font-bold">Mis Pedidos</h1>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="mt-2"
-            onClick={() => {
-              localStorage.removeItem("orders");
-              window.location.reload();
-            }}
-          >
-            Resetear pedidos de ejemplo
-          </Button>
         </div>
       </header>
 
@@ -179,11 +168,9 @@ const Pedidos = () => {
                   {order.status === "picked_up" && (
                     <Button 
                       onClick={() => handleReorder(order)}
-                      variant="outline"
                       className="w-full"
                       size="sm"
                     >
-                      <RotateCcw className="w-4 h-4 mr-2" />
                       Volver a pedir
                     </Button>
                   )}

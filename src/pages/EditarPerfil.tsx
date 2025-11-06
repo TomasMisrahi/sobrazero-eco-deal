@@ -74,7 +74,6 @@ const EditarPerfil = () => {
       address: data.address,
     });
     toast.success("Perfil actualizado correctamente");
-    navigate("/perfil");
   };
 
   return (
