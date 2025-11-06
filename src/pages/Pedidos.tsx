@@ -105,8 +105,18 @@ const Pedidos = () => {
   };
 
   const handleReorder = (order: any) => {
-    toast.success(`Pedido agregado nuevamente: ${order.storeName}`);
-    // Aquí puedes agregar la lógica para volver a crear el pedido
+    const newOrder = {
+      ...order,
+      id: `order-${Date.now()}`,
+      status: "pending",
+      date: "Hoy",
+    };
+    
+    const updatedOrders = [newOrder, ...orders];
+    setOrders(updatedOrders);
+    localStorage.setItem("orders", JSON.stringify(updatedOrders));
+    
+    toast.success(`Pedido de ${order.storeName} agregado nuevamente`);
   };
 
   return (
