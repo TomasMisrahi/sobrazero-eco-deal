@@ -1,8 +1,10 @@
-import { Clock, MapPin, Package } from "lucide-react";
+import { Clock, MapPin, Package, RotateCcw } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import BottomNavigation from "@/components/BottomNavigation";
 import { useState, useEffect } from "react";
+import { toast } from "sonner";
 
 const Pedidos = () => {
   // Leer pedidos del localStorage
@@ -30,11 +32,34 @@ const Pedidos = () => {
   }, []);
 
   const getStatusLabel = (status: string) => {
-    return status === "pending" ? "Pendiente" : "Completado";
+    switch (status) {
+      case "pending":
+        return "Pendiente";
+      case "cancelled":
+        return "Cancelado";
+      case "picked_up":
+        return "Retirado";
+      default:
+        return "Completado";
+    }
   };
 
-  const getStatusVariant = (status: string) => {
-    return status === "pending" ? "default" : "secondary";
+  const getStatusVariant = (status: string): "default" | "secondary" | "destructive" => {
+    switch (status) {
+      case "pending":
+        return "default";
+      case "cancelled":
+        return "destructive";
+      case "picked_up":
+        return "secondary";
+      default:
+        return "secondary";
+    }
+  };
+
+  const handleReorder = (order: any) => {
+    toast.success(`Pedido agregado nuevamente: ${order.storeName}`);
+    // Aquí puedes agregar la lógica para volver a crear el pedido
   };
 
   return (
@@ -85,11 +110,25 @@ const Pedidos = () => {
                   </div>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-border flex items-center justify-between">
-                  <span className="text-sm font-medium">Total</span>
-                  <span className="text-lg font-bold text-primary">
-                    ${order.total.toLocaleString()}
-                  </span>
+                <div className="mt-4 pt-3 border-t border-border">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-sm font-medium">Total</span>
+                    <span className="text-lg font-bold text-primary">
+                      ${order.total.toLocaleString()}
+                    </span>
+                  </div>
+                  
+                  {order.status === "picked_up" && (
+                    <Button 
+                      onClick={() => handleReorder(order)}
+                      variant="outline"
+                      className="w-full"
+                      size="sm"
+                    >
+                      <RotateCcw className="w-4 h-4 mr-2" />
+                      Volver a pedir
+                    </Button>
+                  )}
                 </div>
               </Card>
             ))}
