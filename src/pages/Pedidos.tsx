@@ -1,12 +1,19 @@
-import { Clock, MapPin, Package } from "lucide-react";
+import { Clock, MapPin, Package, ChevronDown } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import BottomNavigation from "@/components/BottomNavigation";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 const Pedidos = () => {
+  const [expandedOrders, setExpandedOrders] = useState<string[]>([]);
+  
   // Leer pedidos del localStorage o crear ejemplos
   const [orders, setOrders] = useState(() => {
     const savedOrders = localStorage.getItem("orders");
@@ -22,6 +29,11 @@ const Pedidos = () => {
           total: 1000,
           items: 1,
           date: "Hoy",
+          products: [
+            { name: "Medialunas", quantity: 6 },
+            { name: "Pan de campo", quantity: 1 },
+            { name: "Facturas surtidas", quantity: 4 },
+          ],
         },
         {
           id: "example-2",
@@ -32,6 +44,10 @@ const Pedidos = () => {
           total: 3000,
           items: 2,
           date: "Ayer",
+          products: [
+            { name: "Frutas y verduras variadas", quantity: 1 },
+            { name: "Productos de panadería", quantity: 1 },
+          ],
         },
         {
           id: "example-3",
@@ -42,6 +58,10 @@ const Pedidos = () => {
           total: 1500,
           items: 1,
           date: "Hace 2 días",
+          products: [
+            { name: "Platos del día variados", quantity: 2 },
+            { name: "Ensaladas", quantity: 1 },
+          ],
         },
         {
           id: "example-4",
@@ -52,6 +72,10 @@ const Pedidos = () => {
           total: 1800,
           items: 2,
           date: "Hace 3 días",
+          products: [
+            { name: "Verduras de hoja", quantity: 1 },
+            { name: "Frutas de estación", quantity: 1 },
+          ],
         },
       ];
       localStorage.setItem("orders", JSON.stringify(exampleOrders));
@@ -102,6 +126,14 @@ const Pedidos = () => {
       default:
         return "secondary";
     }
+  };
+
+  const toggleExpanded = (orderId: string) => {
+    setExpandedOrders(prev => 
+      prev.includes(orderId) 
+        ? prev.filter(id => id !== orderId)
+        : [...prev, orderId]
+    );
   };
 
   const handleReorder = (order: any) => {
@@ -166,6 +198,34 @@ const Pedidos = () => {
                     <span>{order.items} {order.items === 1 ? "producto" : "productos"}</span>
                   </div>
                 </div>
+
+                {/* Detalles expandibles de productos */}
+                {order.products && order.products.length > 0 && (
+                  <Collapsible
+                    open={expandedOrders.includes(order.id)}
+                    onOpenChange={() => toggleExpanded(order.id)}
+                    className="mt-3"
+                  >
+                    <CollapsibleTrigger className="flex items-center gap-2 text-sm font-medium text-primary hover:underline w-full">
+                      <ChevronDown 
+                        className={`w-4 h-4 transition-transform ${
+                          expandedOrders.includes(order.id) ? 'rotate-180' : ''
+                        }`} 
+                      />
+                      Ver productos incluidos
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="mt-2 pt-2 border-t border-border">
+                      <ul className="space-y-1.5">
+                        {order.products.map((product: any, index: number) => (
+                          <li key={index} className="flex justify-between text-sm">
+                            <span className="text-muted-foreground">{product.name}</span>
+                            <span className="font-medium">x{product.quantity}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </CollapsibleContent>
+                  </Collapsible>
+                )}
 
                 <div className="mt-4 pt-3 border-t border-border">
                   <div className="flex items-center justify-between mb-3">
