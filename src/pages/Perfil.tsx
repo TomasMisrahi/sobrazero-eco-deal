@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import BottomNavigation from "@/components/BottomNavigation";
+import DecorativeShapes from "@/components/DecorativeShapes";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -57,7 +58,8 @@ const Perfil = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-background pb-20 relative">
+      <DecorativeShapes />
       {/* Header */}
       <header className="sticky top-0 z-10 bg-background border-b border-border shadow-sm">
         <div className="px-4 py-4">
@@ -66,7 +68,7 @@ const Perfil = () => {
       </header>
 
       {/* Content */}
-      <main className="px-3 py-4 space-y-4">
+      <main className="px-3 py-4 space-y-4 relative z-10">
         {/* Profile Info and Stats */}
         <Card className="p-6">
           {/* Avatar and Name */}

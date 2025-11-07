@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import BottomNavigation from "@/components/BottomNavigation";
+import DecorativeShapes from "@/components/DecorativeShapes";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -77,7 +78,8 @@ const EditarPerfil = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-background pb-20 relative">
+      <DecorativeShapes />
       {/* Header */}
       <header className="sticky top-0 z-10 bg-background border-b border-border shadow-sm">
         <div className="px-4 py-4 flex items-center gap-3">
@@ -94,7 +96,7 @@ const EditarPerfil = () => {
       </header>
 
       {/* Content */}
-      <main className="px-4 py-4">
+      <main className="px-4 py-4 relative z-10">
         <Card className="p-6">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

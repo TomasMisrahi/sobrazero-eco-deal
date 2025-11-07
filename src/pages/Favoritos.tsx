@@ -2,6 +2,7 @@ import { Heart } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import StoreCard from "@/components/StoreCard";
 import BottomNavigation from "@/components/BottomNavigation";
+import DecorativeShapes from "@/components/DecorativeShapes";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { stores as allStoresData } from "@/data/mockStores";
@@ -53,7 +54,8 @@ const Favoritos = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-background pb-20 relative">
+      <DecorativeShapes />
       {/* Header */}
       <header className="sticky top-0 z-10 bg-background border-b border-border shadow-sm">
         <div className="px-4 py-4">
@@ -65,7 +67,7 @@ const Favoritos = () => {
       </header>
 
       {/* Content */}
-      <main className="px-4 py-4 space-y-3">
+      <main className="px-4 py-4 space-y-3 relative z-10">
         {favoriteStores.length === 0 ? (
           <Card className="p-8 text-center">
             <Heart className="w-12 h-12 mx-auto mb-3 text-muted-foreground" />

@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import DecorativeShapes from "@/components/DecorativeShapes";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useState } from "react";
@@ -94,7 +95,8 @@ const CentroAyuda = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-background pb-20 relative">
+      <DecorativeShapes />
       {/* Header */}
       <header className="sticky top-0 z-10 bg-background border-b border-border shadow-sm">
         <div className="px-4 py-4 flex items-center gap-3">
@@ -111,7 +113,7 @@ const CentroAyuda = () => {
       </header>
 
       {/* Content */}
-      <main className="px-4 py-4 space-y-4">
+      <main className="px-4 py-4 space-y-4 relative z-10">
         {/* Quick Actions */}
         <div>
           <h2 className="font-semibold mb-3 px-1">Contacto rápido</h2>

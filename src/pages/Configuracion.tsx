@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import DecorativeShapes from "@/components/DecorativeShapes";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
@@ -43,7 +44,8 @@ const Configuracion = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-background pb-20 relative">
+      <DecorativeShapes />
       {/* Header */}
       <header className="sticky top-0 z-10 bg-background border-b border-border shadow-sm">
         <div className="px-4 py-4 flex items-center gap-3">
@@ -60,7 +62,7 @@ const Configuracion = () => {
       </header>
 
       {/* Content */}
-      <main className="px-4 py-4 space-y-4">
+      <main className="px-4 py-4 space-y-4 relative z-10">
         {/* Appearance */}
         <Card className="p-4">
           <h2 className="font-semibold mb-4 flex items-center gap-2">

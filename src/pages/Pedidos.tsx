@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import BottomNavigation from "@/components/BottomNavigation";
+import DecorativeShapes from "@/components/DecorativeShapes";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import {
@@ -158,7 +159,8 @@ const Pedidos = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-background pb-20 relative">
+      <DecorativeShapes />
       {/* Header */}
       <header className="sticky top-0 z-10 bg-background border-b border-border shadow-sm">
         <div className="px-4 py-4">
@@ -167,7 +169,7 @@ const Pedidos = () => {
       </header>
 
       {/* Content */}
-      <main className="px-4 py-4">
+      <main className="px-4 py-4 relative z-10">
         {orders.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center">
             <Package className="w-16 h-16 text-muted-foreground mb-4" />

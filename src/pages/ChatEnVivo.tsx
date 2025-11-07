@@ -2,6 +2,7 @@ import { ArrowLeft, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
+import DecorativeShapes from "@/components/DecorativeShapes";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 
@@ -55,7 +56,8 @@ const ChatEnVivo = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col relative">
+      <DecorativeShapes />
       {/* Header */}
       <header className="sticky top-0 z-10 bg-background border-b border-border shadow-sm">
         <div className="px-4 py-4 flex items-center gap-3">
@@ -75,7 +77,7 @@ const ChatEnVivo = () => {
       </header>
 
       {/* Chat Messages */}
-      <main className="flex-1 overflow-y-auto px-4 py-4 pb-24">
+      <main className="flex-1 overflow-y-auto px-4 py-4 pb-24 relative z-10">
         <div className="space-y-4 max-w-2xl mx-auto">
           {messages.map((message, index) => (
             <div
