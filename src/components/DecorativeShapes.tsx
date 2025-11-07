@@ -3,7 +3,7 @@ const DecorativeShapes = () => {
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
       {/* Top Left - Quarter circle GREEN with wavy edge */}
       <svg 
-        className="absolute top-0 left-0 w-[250px] h-[250px]" 
+        className="absolute top-0 left-0 w-[120px] h-[120px] md:w-[200px] md:h-[200px]" 
         viewBox="0 0 200 200"
         style={{ opacity: 0.6 }}
       >
@@ -23,7 +23,7 @@ const DecorativeShapes = () => {
 
       {/* Top Right - Quarter circle GRAY with wavy edge */}
       <svg 
-        className="absolute top-0 right-0 w-[250px] h-[250px]" 
+        className="absolute top-0 right-0 w-[120px] h-[120px] md:w-[200px] md:h-[200px]" 
         viewBox="0 0 200 200"
         style={{ opacity: 0.6 }}
       >
@@ -43,7 +43,7 @@ const DecorativeShapes = () => {
 
       {/* Bottom Left - Quarter circle GRAY with wavy edge */}
       <svg 
-        className="absolute bottom-0 left-0 w-[250px] h-[250px]" 
+        className="absolute bottom-0 left-0 w-[120px] h-[120px] md:w-[200px] md:h-[200px]" 
         viewBox="0 0 200 200"
         style={{ opacity: 0.6 }}
       >
@@ -63,7 +63,7 @@ const DecorativeShapes = () => {
 
       {/* Bottom Right - Quarter circle GREEN with wavy edge */}
       <svg 
-        className="absolute bottom-0 right-0 w-[250px] h-[250px]" 
+        className="absolute bottom-0 right-0 w-[120px] h-[120px] md:w-[200px] md:h-[200px]" 
         viewBox="0 0 200 200"
         style={{ opacity: 0.6 }}
       >
