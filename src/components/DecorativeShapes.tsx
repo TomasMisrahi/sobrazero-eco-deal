@@ -1,6 +1,18 @@
 const DecorativeShapes = () => {
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+      {/* Top Left - Quarter circle GREEN */}
+      <svg 
+        className="absolute top-0 left-0 w-[350px] h-[350px]" 
+        viewBox="0 0 200 200"
+        style={{ opacity: 0.9 }}
+      >
+        <path 
+          d="M 0 0 L 0 200 A 200 200 0 0 0 200 0 Z" 
+          fill="hsl(142, 50%, 45%)"
+        />
+      </svg>
+      
       {/* Top Left - Green blob with stroke */}
       <svg 
         className="absolute -top-32 -left-32 w-[500px] h-[500px]" 
@@ -12,6 +24,18 @@ const DecorativeShapes = () => {
           fill="hsl(142, 50%, 45%)"
           stroke="hsl(142, 60%, 35%)"
           strokeWidth="3"
+        />
+      </svg>
+
+      {/* Top Right - Quarter circle GRAY */}
+      <svg 
+        className="absolute top-0 right-0 w-[350px] h-[350px]" 
+        viewBox="0 0 200 200"
+        style={{ opacity: 0.85 }}
+      >
+        <path 
+          d="M 200 0 L 200 200 A 200 200 0 0 1 0 0 Z" 
+          fill="hsl(210, 15%, 30%)"
         />
       </svg>
       
@@ -41,6 +65,18 @@ const DecorativeShapes = () => {
         />
       </svg>
 
+      {/* Bottom Left - Quarter circle GRAY */}
+      <svg 
+        className="absolute bottom-0 left-0 w-[350px] h-[350px]" 
+        viewBox="0 0 200 200"
+        style={{ opacity: 0.85 }}
+      >
+        <path 
+          d="M 0 200 L 0 0 A 200 200 0 0 1 200 200 Z" 
+          fill="hsl(210, 15%, 30%)"
+        />
+      </svg>
+
       {/* Bottom Left - Dark gray blob */}
       <svg 
         className="absolute -bottom-28 -left-28 w-[480px] h-[480px]" 
@@ -64,6 +100,18 @@ const DecorativeShapes = () => {
           fill="hsl(20, 25%, 85%)"
           stroke="hsl(142, 60%, 35%)"
           strokeWidth="2"
+        />
+      </svg>
+
+      {/* Bottom Right - Quarter circle GREEN */}
+      <svg 
+        className="absolute bottom-0 right-0 w-[350px] h-[350px]" 
+        viewBox="0 0 200 200"
+        style={{ opacity: 0.9 }}
+      >
+        <path 
+          d="M 200 200 L 200 0 A 200 200 0 0 0 0 200 Z" 
+          fill="hsl(142, 50%, 45%)"
         />
       </svg>
 
