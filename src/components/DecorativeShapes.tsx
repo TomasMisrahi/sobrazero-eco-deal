@@ -13,7 +13,7 @@ const DecorativeShapes = () => {
         />
         {/* Gray irregular stripe */}
         <path 
-          d="M 10 190 Q 30 170 50 150 Q 70 130 90 110 Q 110 90 130 70 Q 150 50 170 30 Q 180 20 190 10" 
+          d="M 0 180 A 180 180 0 0 1 180 0" 
           fill="none"
           stroke="#3e4345"
           strokeWidth="3"
@@ -33,7 +33,7 @@ const DecorativeShapes = () => {
         />
         {/* Green irregular stripe */}
         <path 
-          d="M 190 190 Q 170 170 150 150 Q 130 130 110 110 Q 90 90 70 70 Q 50 50 30 30 Q 20 20 10 10" 
+          d="M 200 180 A 180 180 0 0 0 20 0" 
           fill="none"
           stroke="#407b41"
           strokeWidth="3"
@@ -53,7 +53,7 @@ const DecorativeShapes = () => {
         />
         {/* Green irregular stripe */}
         <path 
-          d="M 10 10 Q 20 30 30 50 Q 50 70 70 90 Q 90 110 110 130 Q 130 150 150 170 Q 170 180 190 190" 
+          d="M 0 20 A 180 180 0 0 0 180 200" 
           fill="none"
           stroke="#407b41"
           strokeWidth="3"
@@ -73,7 +73,7 @@ const DecorativeShapes = () => {
         />
         {/* Gray irregular stripe */}
         <path 
-          d="M 190 10 Q 180 30 170 50 Q 150 70 130 90 Q 110 110 90 130 Q 70 150 50 170 Q 30 180 10 190" 
+          d="M 200 20 A 180 180 0 0 1 20 200" 
           fill="none"
           stroke="#3e4345"
           strokeWidth="3"
