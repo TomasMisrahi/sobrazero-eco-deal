@@ -1,4 +1,4 @@
-import { Settings, LogOut, Bell, HelpCircle, ChevronRight, Edit, ShoppingBag, Leaf, DollarSign } from "lucide-react";
+import { Settings, LogOut, Bell, HelpCircle, ChevronRight, Edit, ShoppingBag, Leaf, DollarSign, Store } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -54,6 +54,11 @@ const Perfil = () => {
       icon: HelpCircle,
       label: "Centro de ayuda",
       path: "/perfil/centro-ayuda",
+    },
+    {
+      icon: Store,
+      label: "Registra tu tienda",
+      path: "/perfil/registrar-tienda",
     },
   ];
 
