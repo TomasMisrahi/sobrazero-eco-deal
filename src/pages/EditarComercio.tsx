@@ -41,6 +41,15 @@ interface StoreData {
   products?: Product[];
 }
 
+interface ProductError {
+  [productId: string]: {
+    name?: string;
+    stock?: string;
+    originalPrice?: string;
+    discountedPrice?: string;
+  };
+}
+
 type EditingField = 'info' | 'description' | 'pricing' | 'pickupTime' | 'contact' | 'products' | null;
 
 const EditarComercio = () => {
@@ -63,6 +72,7 @@ const EditarComercio = () => {
   const [editedEmail, setEditedEmail] = useState("");
   const [editedProducts, setEditedProducts] = useState<Product[]>([]);
   const [showImageDialog, setShowImageDialog] = useState(false);
+  const [productErrors, setProductErrors] = useState<ProductError>({});
 
   const storeTypes = [
     { id: "panaderia", label: "Panadería" },
@@ -167,12 +177,41 @@ const EditarComercio = () => {
         updatedStore.email = editedEmail;
         break;
       case 'products':
-        // Validar que todos los productos tengan nombre y stock
-        const invalidProducts = editedProducts.filter(p => !p.name.trim() || p.stock <= 0);
-        if (invalidProducts.length > 0) {
-          toast.error("Todos los productos deben tener un nombre y stock mayor a 0");
+        // Validar que todos los productos tengan nombre, stock, precio original y precio con descuento
+        const errors: ProductError = {};
+        let hasErrors = false;
+        
+        editedProducts.forEach(product => {
+          const productError: any = {};
+          
+          if (!product.name.trim()) {
+            productError.name = "El nombre es obligatorio";
+            hasErrors = true;
+          }
+          if (product.stock <= 0) {
+            productError.stock = "El stock debe ser mayor a 0";
+            hasErrors = true;
+          }
+          if (!product.originalPrice || product.originalPrice <= 0) {
+            productError.originalPrice = "El precio original es obligatorio";
+            hasErrors = true;
+          }
+          if (!product.discountedPrice || product.discountedPrice <= 0) {
+            productError.discountedPrice = "El precio con descuento es obligatorio";
+            hasErrors = true;
+          }
+          
+          if (Object.keys(productError).length > 0) {
+            errors[product.id] = productError;
+          }
+        });
+        
+        if (hasErrors) {
+          setProductErrors(errors);
           return;
         }
+        
+        setProductErrors({});
         updatedStore.products = editedProducts;
         break;
     }
@@ -200,6 +239,7 @@ const EditarComercio = () => {
     setEditedPhone(storeData.phone || "");
     setEditedEmail(storeData.email || "");
     setEditedProducts(storeData.products || []);
+    setProductErrors({});
     
     setEditingField(null);
   };
@@ -271,7 +311,7 @@ const EditarComercio = () => {
             <AlertDialogHeader>
               <AlertDialogTitle>Cambiar imagen del comercio</AlertDialogTitle>
               <AlertDialogDescription>
-                Para obtener los mejores resultados, te recomendamos usar una imagen de 1920 x 1080 píxeles.
+                Para obtener los mejores resultados, te recomendamos usar una imagen en formato horizontal de medidas cercanas a 1920 x 1080 píxeles.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
@@ -460,7 +500,7 @@ const EditarComercio = () => {
                       </Button>
                     </div>
                     <div className="space-y-2">
-                      <div>
+                       <div>
                         <Label className="text-xs">Nombre</Label>
                         <Input
                           value={product.name}
@@ -468,17 +508,23 @@ const EditarComercio = () => {
                           placeholder="Nombre del producto"
                           className="h-8"
                         />
+                        {productErrors[product.id]?.name && (
+                          <p className="text-xs text-destructive mt-1">{productErrors[product.id].name}</p>
+                        )}
                       </div>
                       <div className="grid grid-cols-2 gap-2">
                         <div>
                           <Label className="text-xs">Stock</Label>
                           <Input
                             type="number"
-                            value={product.stock}
+                            value={product.stock || ""}
                             onChange={(e) => handleUpdateProduct(product.id, 'stock', parseInt(e.target.value) || 0)}
-                            placeholder="0"
+                            placeholder=""
                             className="h-8"
                           />
+                          {productErrors[product.id]?.stock && (
+                            <p className="text-xs text-destructive mt-1">{productErrors[product.id].stock}</p>
+                          )}
                         </div>
                         <div>
                           <Label className="text-xs">Peso en kilos (opcional)</Label>
@@ -486,9 +532,9 @@ const EditarComercio = () => {
                             type="number"
                             step="0.01"
                             min="0"
-                            value={product.weight || ""}
+                            value={product.weight !== undefined ? product.weight : ""}
                             onChange={(e) => handleUpdateProduct(product.id, 'weight', e.target.value ? parseFloat(e.target.value) : undefined)}
-                            placeholder="0.0"
+                            placeholder=""
                             className="h-8"
                           />
                         </div>
@@ -498,26 +544,32 @@ const EditarComercio = () => {
                           <Label className="text-xs">Precio original</Label>
                           <Input
                             type="number"
-                            value={product.originalPrice}
+                            value={product.originalPrice || ""}
                             onChange={(e) => handleUpdateProduct(product.id, 'originalPrice', parseInt(e.target.value) || 0)}
-                            placeholder="0"
+                            placeholder=""
                             className="h-8"
                           />
+                          {productErrors[product.id]?.originalPrice && (
+                            <p className="text-xs text-destructive mt-1">{productErrors[product.id].originalPrice}</p>
+                          )}
                         </div>
                         <div>
                           <Label className="text-xs">Precio con descuento</Label>
                           <Input
                             type="number"
-                            value={product.discountedPrice}
+                            value={product.discountedPrice || ""}
                             onChange={(e) => handleUpdateProduct(product.id, 'discountedPrice', parseInt(e.target.value) || 0)}
-                            placeholder="0"
+                            placeholder=""
                             className="h-8"
                           />
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Este es el precio que se cobrará al público
+                          </p>
+                          {productErrors[product.id]?.discountedPrice && (
+                            <p className="text-xs text-destructive mt-1">{productErrors[product.id].discountedPrice}</p>
+                          )}
                         </div>
                       </div>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Este es el precio que se cobrará al público
-                      </p>
                     </div>
                   </Card>
                 ))}
@@ -553,65 +605,6 @@ const EditarComercio = () => {
               </div>
             )}
           </div>
-        </Card>
-
-        {/* Precio y disponibilidad */}
-        <Card className="p-4">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold">Precios</h2>
-            {editingField !== 'pricing' && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setEditingField('pricing')}
-              >
-                Editar
-              </Button>
-            )}
-          </div>
-
-          {editingField === 'pricing' ? (
-            <div className="space-y-3">
-              <div>
-                <Label>Precio original</Label>
-                <Input
-                  type="number"
-                  value={editedOriginalPrice}
-                  onChange={(e) => setEditedOriginalPrice(e.target.value)}
-                  placeholder="3000"
-                />
-              </div>
-              <div>
-                <Label>Precio con descuento</Label>
-                <Input
-                  type="number"
-                  value={editedDiscountedPrice}
-                  onChange={(e) => setEditedDiscountedPrice(e.target.value)}
-                  placeholder="1000"
-                />
-                <p className="text-xs text-muted-foreground mt-1">
-                  Este es el precio que se cobrará al público
-                </p>
-              </div>
-              <div className="flex gap-2">
-                <Button size="sm" onClick={() => handleSaveField('pricing')}>
-                  Guardar
-                </Button>
-                <Button size="sm" variant="outline" onClick={handleCancelEdit}>
-                  Cancelar
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <div>
-              <p className="text-sm text-muted-foreground line-through">
-                ${(storeData.originalPrice || 3000).toLocaleString()} aprox.
-              </p>
-              <p className="text-2xl font-bold text-primary">
-                ${(storeData.discountedPrice || 1000).toLocaleString()}
-              </p>
-            </div>
-          )}
         </Card>
 
         {/* Información de contacto */}

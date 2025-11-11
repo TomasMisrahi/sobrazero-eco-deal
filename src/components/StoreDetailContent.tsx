@@ -146,6 +146,22 @@ const StoreDetailContent = ({
     orders.unshift(newOrder);
     localStorage.setItem("orders", JSON.stringify(orders));
 
+    // Actualizar el stock de los productos en el store
+    const updatedProducts = store.products.map(product => {
+      const reservedQty = selectedProducts[product.id] || 0;
+      return {
+        ...product,
+        stock: product.stock - reservedQty
+      };
+    });
+
+    // Actualizar el store en el array de stores (en mockStores)
+    // Esto solo afectará la vista actual, en una app real esto se haría en la base de datos
+    const storeIndex = stores.findIndex(s => s.id === storeId);
+    if (storeIndex !== -1) {
+      stores[storeIndex] = { ...store, products: updatedProducts };
+    }
+
     toast.success("Reserva confirmada!", {
       description: `Retirá tu pedido hoy entre ${store.pickupTime}`,
     });
@@ -287,7 +303,7 @@ const StoreDetailContent = ({
                       </span>
                     </div>
                     <p className="text-xs text-muted-foreground mt-1">
-                      Stock: {product.stock} {product.weight && `· ${product.weight}kg`}
+                      Unidades disponibles: {product.stock} {product.weight && `· ${product.weight}kg`}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
