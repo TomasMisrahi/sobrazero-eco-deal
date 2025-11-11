@@ -26,6 +26,7 @@ interface Product {
 
 interface StoreData {
   storeName: string;
+  storeType?: string;
   address: string;
   phone: string;
   email: string;
@@ -49,6 +50,7 @@ const EditarComercio = () => {
   
   // Estados para edición
   const [editedName, setEditedName] = useState("");
+  const [editedStoreType, setEditedStoreType] = useState("");
   const [editedAddress, setEditedAddress] = useState("");
   const [editedDescription, setEditedDescription] = useState("");
   const [editedPickupStart, setEditedPickupStart] = useState("");
@@ -60,6 +62,13 @@ const EditarComercio = () => {
   const [editedEmail, setEditedEmail] = useState("");
   const [editedProducts, setEditedProducts] = useState<Product[]>([]);
   const [showImageDialog, setShowImageDialog] = useState(false);
+
+  const storeTypes = [
+    { id: "panaderia", label: "Panadería" },
+    { id: "supermercado", label: "Supermercado" },
+    { id: "verduleria", label: "Verdulería" },
+    { id: "restaurante", label: "Restaurante" },
+  ];
 
   useEffect(() => {
     const registeredStore = localStorage.getItem("registeredStore");
@@ -74,6 +83,7 @@ const EditarComercio = () => {
     
     // Inicializar valores editables
     setEditedName(store.storeName || "");
+    setEditedStoreType(store.storeType || "");
     setEditedAddress(store.address || "");
     setEditedDescription(store.description || "Bolsa sorpresa con productos variados del comercio");
     const pickupTime = store.pickupTime || "18:00 - 20:00";
@@ -136,7 +146,9 @@ const EditarComercio = () => {
     switch (field) {
       case 'info':
         updatedStore.storeName = editedName;
+        updatedStore.storeType = editedStoreType;
         updatedStore.address = editedAddress;
+        updatedStore.pickupTime = `${editedPickupStart} - ${editedPickupEnd}`;
         break;
       case 'description':
         updatedStore.description = editedDescription;
@@ -171,6 +183,7 @@ const EditarComercio = () => {
 
     // Restaurar valores originales
     setEditedName(storeData.storeName || "");
+    setEditedStoreType(storeData.storeType || "");
     setEditedAddress(storeData.address || "");
     setEditedDescription(storeData.description || "");
     const pickupTime = storeData.pickupTime || "18:00 - 20:00";
@@ -303,6 +316,25 @@ const EditarComercio = () => {
                 />
               </div>
               <div>
+                <Label>Tipo de comercio</Label>
+                <div className="grid grid-cols-2 gap-3">
+                  {storeTypes.map((type) => (
+                    <button
+                      key={type.id}
+                      type="button"
+                      onClick={() => setEditedStoreType(type.id)}
+                      className={`p-3 rounded-lg border-2 transition-all ${
+                        editedStoreType === type.id
+                          ? "border-primary bg-primary/10"
+                          : "border-border hover:border-primary/50"
+                      }`}
+                    >
+                      <span className="font-medium">{type.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
                 <Label>Dirección</Label>
                 <Input
                   value={editedAddress}
@@ -337,6 +369,12 @@ const EditarComercio = () => {
             </div>
           ) : (
             <div className="space-y-2 text-sm">
+              <div className="flex items-start gap-2 text-muted-foreground">
+                <ShoppingBag className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                <span>
+                  {storeTypes.find(t => t.id === storeData.storeType)?.label || "Tipo no especificado"}
+                </span>
+              </div>
               <div className="flex items-start gap-2 text-muted-foreground">
                 <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
                 <span>{storeData.address}</span>
@@ -521,6 +559,9 @@ const EditarComercio = () => {
                   onChange={(e) => setEditedDiscountedPrice(e.target.value)}
                   placeholder="1000"
                 />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Este es el precio final que se mostrará al público
+                </p>
               </div>
               <div className="flex gap-2">
                 <Button size="sm" onClick={() => handleSaveField('pricing')}>

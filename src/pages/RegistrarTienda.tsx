@@ -13,6 +13,7 @@ import DecorativeShapes from "@/components/DecorativeShapes";
 
 const storeSchema = z.object({
   storeName: z.string().min(1, "El nombre del comercio es requerido").max(100),
+  storeType: z.string().min(1, "Debes seleccionar un tipo de comercio"),
   address: z.string().min(1, "La dirección es requerida").max(200),
   phone: z.string().min(1, "El celular es requerido").regex(/^[^a-zA-Z]+$/, "Solo se permiten números y caracteres especiales").max(20),
   email: z.string().email("Email inválido"),
@@ -39,6 +40,7 @@ const RegistrarTienda = () => {
     resolver: zodResolver(storeSchema),
     defaultValues: {
       storeName: "",
+      storeType: "",
       address: "",
       phone: "",
       email: "",
@@ -49,11 +51,20 @@ const RegistrarTienda = () => {
 
   const hasLocalRegistry = watch("hasLocalRegistry");
   const hasPhysicalStore = watch("hasPhysicalStore");
+  const storeType = watch("storeType");
+
+  const storeTypes = [
+    { id: "panaderia", label: "Panadería" },
+    { id: "supermercado", label: "Supermercado" },
+    { id: "verduleria", label: "Verdulería" },
+    { id: "restaurante", label: "Restaurante" },
+  ];
 
   const onSubmit = (data: StoreFormData) => {
     // Guardar los datos del comercio en localStorage
     const storeData = {
       storeName: data.storeName,
+      storeType: data.storeType,
       address: data.address,
       phone: data.phone,
       email: data.email,
@@ -104,6 +115,30 @@ const RegistrarTienda = () => {
               />
               {errors.storeName && (
                 <p className="text-sm text-destructive">{errors.storeName.message}</p>
+              )}
+            </div>
+
+            {/* Store Type */}
+            <div className="space-y-2">
+              <Label>Tipo de comercio</Label>
+              <div className="grid grid-cols-2 gap-3">
+                {storeTypes.map((type) => (
+                  <button
+                    key={type.id}
+                    type="button"
+                    onClick={() => setValue("storeType", type.id, { shouldValidate: true })}
+                    className={`p-3 rounded-lg border-2 transition-all ${
+                      storeType === type.id
+                        ? "border-primary bg-primary/10"
+                        : "border-border hover:border-primary/50"
+                    }`}
+                  >
+                    <span className="font-medium">{type.label}</span>
+                  </button>
+                ))}
+              </div>
+              {errors.storeType && (
+                <p className="text-sm text-destructive">{errors.storeType.message}</p>
               )}
             </div>
 
