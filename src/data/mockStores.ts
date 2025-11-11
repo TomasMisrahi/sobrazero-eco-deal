@@ -7,6 +7,7 @@ export interface Product {
   weight?: number;
   originalPrice: number;
   discountedPrice: number;
+  imageUrl?: string;
 }
 
 export interface Store {

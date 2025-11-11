@@ -15,6 +15,7 @@ interface Product {
   weight?: number;
   originalPrice: number;
   discountedPrice: number;
+  imageUrl?: string;
 }
 
 interface Store {
@@ -291,7 +292,10 @@ const StoreDetailContent = ({
             <h3 className="font-medium text-sm mb-3">Productos disponibles:</h3>
             <div className="space-y-3">
               {store.products.map((product) => (
-                <div key={product.id} className="flex items-center justify-between gap-3 p-3 border border-border rounded-lg">
+                <div key={product.id} className="flex items-center gap-3 p-3 border border-border rounded-lg">
+                  {product.imageUrl && (
+                    <img src={product.imageUrl} alt={product.name} className="w-16 h-16 object-cover rounded flex-shrink-0" />
+                  )}
                   <div className="flex-1">
                     <p className="font-medium text-sm">{product.name}</p>
                     <div className="flex items-center gap-2 mt-1">
@@ -303,10 +307,10 @@ const StoreDetailContent = ({
                       </span>
                     </div>
                     <p className="text-xs text-muted-foreground mt-1">
-                      Unidades disponibles: {product.stock} {product.weight && `· ${product.weight}kg`}
+                      Unidades disponibles: {product.stock}{product.weight && ` · peso: ${product.weight}kilos`}
                     </p>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-shrink-0">
                     <Button
                       variant="outline"
                       size="icon"

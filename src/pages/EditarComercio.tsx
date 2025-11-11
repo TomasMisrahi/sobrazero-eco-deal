@@ -24,6 +24,7 @@ interface Product {
   weight?: number;
   originalPrice: number;
   discountedPrice: number;
+  imageUrl?: string;
 }
 
 interface StoreData {
@@ -136,8 +137,24 @@ const EditarComercio = () => {
       weight: undefined,
       originalPrice: 0,
       discountedPrice: 0,
+      imageUrl: undefined,
     };
     setEditedProducts([...editedProducts, newProduct]);
+  };
+
+  const handleProductImageChange = (productId: string, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const imageUrl = reader.result as string;
+        setEditedProducts(editedProducts.map(p => 
+          p.id === productId ? { ...p, imageUrl } : p
+        ));
+        toast.success("Imagen del producto actualizada");
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleUpdateProduct = (id: string, field: keyof Product, value: string | number) => {
@@ -198,6 +215,10 @@ const EditarComercio = () => {
           }
           if (!product.discountedPrice || product.discountedPrice <= 0) {
             productError.discountedPrice = "El precio con descuento es obligatorio";
+            hasErrors = true;
+          }
+          if (product.originalPrice && product.discountedPrice && product.originalPrice <= product.discountedPrice) {
+            productError.discountedPrice = "El precio con descuento debe ser menor al precio original";
             hasErrors = true;
           }
           
@@ -500,7 +521,21 @@ const EditarComercio = () => {
                       </Button>
                     </div>
                     <div className="space-y-2">
-                       <div>
+                      <div>
+                        <Label className="text-xs">Imagen del producto (opcional)</Label>
+                        <div className="flex items-center gap-2">
+                          {product.imageUrl && (
+                            <img src={product.imageUrl} alt={product.name} className="w-16 h-16 object-cover rounded" />
+                          )}
+                          <Input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => handleProductImageChange(product.id, e)}
+                            className="h-8"
+                          />
+                        </div>
+                      </div>
+                      <div>
                         <Label className="text-xs">Nombre</Label>
                         <Input
                           value={product.name}
@@ -595,8 +630,8 @@ const EditarComercio = () => {
                 {storeData.products && storeData.products.length > 0 ? (
                   storeData.products.map((product, index) => (
                     <div key={product.id} className="text-sm text-muted-foreground">
-                      <span className="font-medium">Producto {index + 1}:</span> {product.name} - Stock: {product.stock}
-                      {product.weight && ` - Peso: ${product.weight}kg`} - ${product.discountedPrice}
+                      <strong>Nombre:</strong> {product.name} - <strong>Stock:</strong> {product.stock}
+                      {product.weight && <> - <strong>Peso:</strong> {product.weight}kilos</>} - <strong>Precio con descuento:</strong> ${product.discountedPrice}
                     </div>
                   ))
                 ) : (
