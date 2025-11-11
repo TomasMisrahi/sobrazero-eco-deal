@@ -93,7 +93,7 @@ const RegistrarTienda = () => {
 
             {/* Address */}
             <div className="space-y-2">
-              <Label htmlFor="address">Dirección</Label>
+              <Label htmlFor="address">Dirección y número de la tienda</Label>
               <Input
                 id="address"
                 type="text"
@@ -101,7 +101,7 @@ const RegistrarTienda = () => {
                 {...register("address")}
               />
               <p className="text-xs text-muted-foreground">
-                Solo direcciones dentro de Capital Federal, Buenos Aires
+                Solo direcciones dentro de Capital Federal, Buenos Aires, Argentina
               </p>
               {errors.address && (
                 <p className="text-sm text-destructive">{errors.address.message}</p>
@@ -110,7 +110,7 @@ const RegistrarTienda = () => {
 
             {/* Phone */}
             <div className="space-y-2">
-              <Label htmlFor="phone">Celular</Label>
+              <Label htmlFor="phone">Número de celular</Label>
               <Input
                 id="phone"
                 type="tel"
