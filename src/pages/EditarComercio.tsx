@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, MapPin, Clock, ShoppingBag, Edit2, Check, X, Plus, Trash2, Camera } from "lucide-react";
+import { ArrowLeft, MapPin, Clock, ShoppingBag, Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -38,7 +38,7 @@ interface StoreData {
   products?: Product[];
 }
 
-type EditingField = 'name' | 'address' | 'description' | 'pricing' | 'pickupTime' | 'available' | 'contact' | 'products' | null;
+type EditingField = 'info' | 'description' | 'pricing' | 'pickupTime' | 'available' | 'contact' | 'products' | null;
 
 const EditarComercio = () => {
   const navigate = useNavigate();
@@ -51,13 +51,15 @@ const EditarComercio = () => {
   const [editedName, setEditedName] = useState("");
   const [editedAddress, setEditedAddress] = useState("");
   const [editedDescription, setEditedDescription] = useState("");
-  const [editedPickupTime, setEditedPickupTime] = useState("");
+  const [editedPickupStart, setEditedPickupStart] = useState("");
+  const [editedPickupEnd, setEditedPickupEnd] = useState("");
   const [editedOriginalPrice, setEditedOriginalPrice] = useState("");
   const [editedDiscountedPrice, setEditedDiscountedPrice] = useState("");
   const [editedAvailable, setEditedAvailable] = useState("");
   const [editedPhone, setEditedPhone] = useState("");
   const [editedEmail, setEditedEmail] = useState("");
   const [editedProducts, setEditedProducts] = useState<Product[]>([]);
+  const [showImageDialog, setShowImageDialog] = useState(false);
 
   useEffect(() => {
     const registeredStore = localStorage.getItem("registeredStore");
@@ -74,7 +76,10 @@ const EditarComercio = () => {
     setEditedName(store.storeName || "");
     setEditedAddress(store.address || "");
     setEditedDescription(store.description || "Bolsa sorpresa con productos variados del comercio");
-    setEditedPickupTime(store.pickupTime || "18:00 - 20:00");
+    const pickupTime = store.pickupTime || "18:00 - 20:00";
+    const [start, end] = pickupTime.split(" - ");
+    setEditedPickupStart(start || "18:00");
+    setEditedPickupEnd(end || "20:00");
     setEditedOriginalPrice(store.originalPrice?.toString() || "3000");
     setEditedDiscountedPrice(store.discountedPrice?.toString() || "1000");
     setEditedAvailable(store.available?.toString() || "5");
@@ -82,6 +87,10 @@ const EditarComercio = () => {
     setEditedEmail(store.email || "");
     setEditedProducts(store.products || []);
   }, []);
+
+  const handleImageClick = () => {
+    setShowImageDialog(true);
+  };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -92,6 +101,7 @@ const EditarComercio = () => {
         const updatedStore = { ...storeData!, imageUrl };
         localStorage.setItem("registeredStore", JSON.stringify(updatedStore));
         setStoreData(updatedStore);
+        setShowImageDialog(false);
         toast.success("Imagen actualizada");
       };
       reader.readAsDataURL(file);
@@ -124,17 +134,15 @@ const EditarComercio = () => {
     const updatedStore = { ...storeData };
 
     switch (field) {
-      case 'name':
+      case 'info':
         updatedStore.storeName = editedName;
-        break;
-      case 'address':
         updatedStore.address = editedAddress;
         break;
       case 'description':
         updatedStore.description = editedDescription;
         break;
       case 'pickupTime':
-        updatedStore.pickupTime = editedPickupTime;
+        updatedStore.pickupTime = `${editedPickupStart} - ${editedPickupEnd}`;
         break;
       case 'pricing':
         updatedStore.originalPrice = parseFloat(editedOriginalPrice);
@@ -165,7 +173,10 @@ const EditarComercio = () => {
     setEditedName(storeData.storeName || "");
     setEditedAddress(storeData.address || "");
     setEditedDescription(storeData.description || "");
-    setEditedPickupTime(storeData.pickupTime || "");
+    const pickupTime = storeData.pickupTime || "18:00 - 20:00";
+    const [start, end] = pickupTime.split(" - ");
+    setEditedPickupStart(start || "18:00");
+    setEditedPickupEnd(end || "20:00");
     setEditedOriginalPrice(storeData.originalPrice?.toString() || "");
     setEditedDiscountedPrice(storeData.discountedPrice?.toString() || "");
     setEditedAvailable(storeData.available?.toString() || "");
@@ -230,127 +241,112 @@ const EditarComercio = () => {
             </div>
           )}
           <button
-            onClick={() => fileInputRef.current?.click()}
+            onClick={handleImageClick}
             className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
           >
             <Camera className="w-12 h-12 text-white" />
           </button>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="hidden"
-          />
         </div>
+
+        {/* Dialog de recomendación de imagen */}
+        <AlertDialog open={showImageDialog} onOpenChange={setShowImageDialog}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Cambiar imagen del comercio</AlertDialogTitle>
+              <AlertDialogDescription>
+                Para obtener los mejores resultados, te recomendamos usar una imagen de 1920 x 1080 píxeles.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <Button variant="outline" onClick={() => setShowImageDialog(false)}>
+                Cancelar
+              </Button>
+              <Button onClick={() => {
+                fileInputRef.current?.click();
+              }}>
+                Seleccionar imagen
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          onChange={handleImageChange}
+          className="hidden"
+        />
 
         {/* Nombre y Dirección */}
         <Card className="p-4">
-          {editingField === 'name' ? (
-            <div className="space-y-2 mb-4">
-              <Label>Nombre del comercio</Label>
-              <Input
-                value={editedName}
-                onChange={(e) => setEditedName(e.target.value)}
-                placeholder="Nombre del comercio"
-              />
-              <div className="flex gap-2">
-                <Button size="sm" onClick={() => handleSaveField('name')}>
-                  <Check className="w-4 h-4 mr-1" />
-                  Guardar
-                </Button>
-                <Button size="sm" variant="outline" onClick={handleCancelEdit}>
-                  <X className="w-4 h-4 mr-1" />
-                  Cancelar
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <div className="flex items-center justify-between mb-4">
-              <h1 className="text-xl font-bold">{storeData.storeName}</h1>
+          <div className="flex items-center justify-between mb-4">
+            <h1 className="text-xl font-bold">{storeData.storeName}</h1>
+            {editingField !== 'info' && (
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => setEditingField('name')}
+                onClick={() => setEditingField('info')}
               >
                 Editar
               </Button>
-            </div>
-          )}
+            )}
+          </div>
 
-          <div className="space-y-2 text-sm">
-            {editingField === 'address' ? (
-              <div className="space-y-2">
+          {editingField === 'info' ? (
+            <div className="space-y-3">
+              <div>
+                <Label>Nombre del comercio</Label>
+                <Input
+                  value={editedName}
+                  onChange={(e) => setEditedName(e.target.value)}
+                  placeholder="Nombre del comercio"
+                />
+              </div>
+              <div>
                 <Label>Dirección</Label>
                 <Input
                   value={editedAddress}
                   onChange={(e) => setEditedAddress(e.target.value)}
                   placeholder="Dirección del comercio"
                 />
-                <div className="flex gap-2">
-                  <Button size="sm" onClick={() => handleSaveField('address')}>
-                    <Check className="w-4 h-4 mr-1" />
-                    Guardar
-                  </Button>
-                  <Button size="sm" variant="outline" onClick={handleCancelEdit}>
-                    <X className="w-4 h-4 mr-1" />
-                    Cancelar
-                  </Button>
-                </div>
               </div>
-            ) : (
+              <div>
+                <Label>Horario de retiro - Inicio</Label>
+                <Input
+                  type="time"
+                  value={editedPickupStart}
+                  onChange={(e) => setEditedPickupStart(e.target.value)}
+                />
+              </div>
+              <div>
+                <Label>Horario de retiro - Fin</Label>
+                <Input
+                  type="time"
+                  value={editedPickupEnd}
+                  onChange={(e) => setEditedPickupEnd(e.target.value)}
+                />
+              </div>
+              <div className="flex gap-2 pt-2">
+                <Button size="sm" onClick={() => handleSaveField('info')}>
+                  Guardar
+                </Button>
+                <Button size="sm" variant="outline" onClick={handleCancelEdit}>
+                  Cancelar
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-2 text-sm">
               <div className="flex items-start gap-2 text-muted-foreground">
                 <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                <div className="flex-1">
-                  <span>{storeData.address}</span>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setEditingField('address')}
-                    className="ml-2 text-xs"
-                  >
-                    <Edit2 className="w-3 h-3 mr-1" />
-                    Editar
-                  </Button>
-                </div>
+                <span>{storeData.address}</span>
               </div>
-            )}
-
-            {editingField === 'pickupTime' ? (
-              <div className="space-y-2 pt-2">
-                <Label>Horario de retiro</Label>
-                <Input
-                  value={editedPickupTime}
-                  onChange={(e) => setEditedPickupTime(e.target.value)}
-                  placeholder="Ej: 18:00 - 20:00"
-                />
-                <div className="flex gap-2">
-                  <Button size="sm" onClick={() => handleSaveField('pickupTime')}>
-                    <Check className="w-4 h-4 mr-1" />
-                    Guardar
-                  </Button>
-                  <Button size="sm" variant="outline" onClick={handleCancelEdit}>
-                    <X className="w-4 h-4 mr-1" />
-                    Cancelar
-                  </Button>
-                </div>
-              </div>
-            ) : (
               <div className="flex items-center gap-2 text-muted-foreground">
                 <Clock className="w-4 h-4" />
                 <span>Retiro hoy: {storeData.pickupTime || "18:00 - 20:00"}</span>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setEditingField('pickupTime')}
-                  className="text-xs"
-                >
-                  <Edit2 className="w-3 h-3 mr-1" />
-                  Editar
-                </Button>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </Card>
 
         {/* Descripción */}
@@ -363,7 +359,6 @@ const EditarComercio = () => {
                 size="sm"
                 onClick={() => setEditingField('description')}
               >
-                <Edit2 className="w-4 h-4 mr-1" />
                 Editar
               </Button>
             )}
@@ -379,11 +374,9 @@ const EditarComercio = () => {
               />
               <div className="flex gap-2">
                 <Button size="sm" onClick={() => handleSaveField('description')}>
-                  <Check className="w-4 h-4 mr-1" />
                   Guardar
                 </Button>
                 <Button size="sm" variant="outline" onClick={handleCancelEdit}>
-                  <X className="w-4 h-4 mr-1" />
                   Cancelar
                 </Button>
               </div>
@@ -404,7 +397,6 @@ const EditarComercio = () => {
                   size="sm"
                   onClick={() => setEditingField('products')}
                 >
-                  <Edit2 className="w-4 h-4 mr-1" />
                   Editar
                 </Button>
               )}
@@ -422,7 +414,7 @@ const EditarComercio = () => {
                         onClick={() => handleDeleteProduct(product.id)}
                         className="h-6 w-6 p-0"
                       >
-                        <Trash2 className="w-3 h-3" />
+                        ×
                       </Button>
                     </div>
                     <div className="space-y-2">
@@ -447,10 +439,10 @@ const EditarComercio = () => {
                           />
                         </div>
                         <div>
-                          <Label className="text-xs">Peso (kg, opcional)</Label>
+                          <Label className="text-xs">Peso en kilos (opcional)</Label>
                           <Input
                             type="number"
-                            step="0.1"
+                            step="0.01"
                             value={product.weight || ""}
                             onChange={(e) => handleUpdateProduct(product.id, 'weight', e.target.value ? parseFloat(e.target.value) : undefined)}
                             placeholder="0.0"
@@ -467,16 +459,13 @@ const EditarComercio = () => {
                   onClick={handleAddProduct}
                   className="w-full"
                 >
-                  <Plus className="w-4 h-4 mr-1" />
                   Agregar producto
                 </Button>
                 <div className="flex gap-2 pt-2">
                   <Button size="sm" onClick={() => handleSaveField('products')}>
-                    <Check className="w-4 h-4 mr-1" />
                     Guardar
                   </Button>
                   <Button size="sm" variant="outline" onClick={handleCancelEdit}>
-                    <X className="w-4 h-4 mr-1" />
                     Cancelar
                   </Button>
                 </div>
@@ -508,7 +497,6 @@ const EditarComercio = () => {
                 size="sm"
                 onClick={() => setEditingField('pricing')}
               >
-                <Edit2 className="w-4 h-4 mr-1" />
                 Editar
               </Button>
             )}
@@ -536,11 +524,9 @@ const EditarComercio = () => {
               </div>
               <div className="flex gap-2">
                 <Button size="sm" onClick={() => handleSaveField('pricing')}>
-                  <Check className="w-4 h-4 mr-1" />
                   Guardar
                 </Button>
                 <Button size="sm" variant="outline" onClick={handleCancelEdit}>
-                  <X className="w-4 h-4 mr-1" />
                   Cancelar
                 </Button>
               </div>
@@ -565,7 +551,6 @@ const EditarComercio = () => {
                   size="sm"
                   onClick={() => setEditingField('available')}
                 >
-                  <Edit2 className="w-4 h-4 mr-1" />
                   Editar
                 </Button>
               )}
@@ -581,22 +566,28 @@ const EditarComercio = () => {
                     onChange={(e) => setEditedAvailable(e.target.value)}
                     placeholder="5"
                   />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Cada unidad incluye todos los productos de la sección "Productos individuales"
+                  </p>
                 </div>
                 <div className="flex gap-2">
                   <Button size="sm" onClick={() => handleSaveField('available')}>
-                    <Check className="w-4 h-4 mr-1" />
                     Guardar
                   </Button>
                   <Button size="sm" variant="outline" onClick={handleCancelEdit}>
-                    <X className="w-4 h-4 mr-1" />
                     Cancelar
                   </Button>
                 </div>
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground">
-                {storeData.available || 5} unidades disponibles
-              </p>
+              <div>
+                <p className="text-sm text-muted-foreground">
+                  {storeData.available || 5} unidades disponibles
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Cada unidad incluye todos los productos individuales
+                </p>
+              </div>
             )}
           </div>
         </Card>
@@ -611,7 +602,6 @@ const EditarComercio = () => {
                 size="sm"
                 onClick={() => setEditingField('contact')}
               >
-                <Edit2 className="w-4 h-4 mr-1" />
                 Editar
               </Button>
             )}
@@ -638,11 +628,9 @@ const EditarComercio = () => {
               </div>
               <div className="flex gap-2">
                 <Button size="sm" onClick={() => handleSaveField('contact')}>
-                  <Check className="w-4 h-4 mr-1" />
                   Guardar
                 </Button>
                 <Button size="sm" variant="outline" onClick={handleCancelEdit}>
-                  <X className="w-4 h-4 mr-1" />
                   Cancelar
                 </Button>
               </div>
