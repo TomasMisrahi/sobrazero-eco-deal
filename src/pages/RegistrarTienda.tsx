@@ -14,7 +14,7 @@ import DecorativeShapes from "@/components/DecorativeShapes";
 const storeSchema = z.object({
   storeName: z.string().min(1, "El nombre del comercio es requerido").max(100),
   address: z.string().min(1, "La dirección es requerida").max(200),
-  phone: z.string().min(1, "El celular es requerido").regex(/^[0-9+\-() ]+$/, "Solo se permiten números y caracteres como +, -, (), espacios").max(20),
+  phone: z.string().min(1, "El celular es requerido").regex(/^[0-9+\-() ]+$/, "Solo se permiten números y caracteres especiales").max(20),
   email: z.string().email("Email inválido"),
   hasLocalRegistry: z.boolean().refine((val) => val === true, {
     message: "Debes marcar esta opción para continuar"
@@ -83,7 +83,7 @@ const RegistrarTienda = () => {
               <Input
                 id="storeName"
                 type="text"
-                placeholder="Ingresa el nombre de tu comercio"
+                placeholder="Ingresá el nombre de tu comercio"
                 {...register("storeName")}
               />
               {errors.storeName && (
@@ -97,7 +97,7 @@ const RegistrarTienda = () => {
               <Input
                 id="address"
                 type="text"
-                placeholder="Ingresa tu dirección"
+                placeholder="Ingresá tu dirección y número de tu comercio"
                 {...register("address")}
               />
               <p className="text-xs text-muted-foreground">
@@ -114,7 +114,7 @@ const RegistrarTienda = () => {
               <Input
                 id="phone"
                 type="tel"
-                placeholder="Ingresa tu celular"
+                placeholder="Ingresá tu número de celular"
                 {...register("phone")}
               />
               {errors.phone && (
@@ -124,11 +124,11 @@ const RegistrarTienda = () => {
 
             {/* Email */}
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">Email con el que accedes a SobraZero</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="Ingresa tu email"
+                placeholder="Ingresá tu email"
                 {...register("email")}
               />
               {errors.email && (
