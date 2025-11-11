@@ -16,8 +16,12 @@ const storeSchema = z.object({
   address: z.string().min(1, "La dirección es requerida").max(200),
   phone: z.string().min(1, "El celular es requerido").max(20),
   email: z.string().email("Email inválido"),
-  hasLocalRegistry: z.boolean(),
-  hasPhysicalStore: z.boolean(),
+  hasLocalRegistry: z.boolean().refine((val) => val === true, {
+    message: "Debes marcar esta opción para continuar"
+  }),
+  hasPhysicalStore: z.boolean().refine((val) => val === true, {
+    message: "Debes marcar esta opción para continuar"
+  }),
 });
 
 type StoreFormData = z.infer<typeof storeSchema>;
@@ -65,7 +69,7 @@ const RegistrarTienda = () => {
           >
             <ArrowLeft className="w-6 h-6" />
           </button>
-          <h1 className="text-2xl font-bold">Registra tu tienda</h1>
+          <h1 className="text-2xl font-bold">Registrá tu tienda</h1>
         </div>
       </header>
 
@@ -134,36 +138,46 @@ const RegistrarTienda = () => {
 
             {/* Checkboxes */}
             <div className="space-y-4 pt-2">
-              <div className="flex items-start gap-3">
-                <Checkbox
-                  id="hasLocalRegistry"
-                  checked={hasLocalRegistry}
-                  onCheckedChange={(checked) =>
-                    setValue("hasLocalRegistry", checked as boolean)
-                  }
-                />
-                <label
-                  htmlFor="hasLocalRegistry"
-                  className="text-sm leading-tight cursor-pointer"
-                >
-                  Cuento con una empresa con registro local vigente
-                </label>
+              <div className="space-y-2">
+                <div className="flex items-start gap-3">
+                  <Checkbox
+                    id="hasLocalRegistry"
+                    checked={hasLocalRegistry}
+                    onCheckedChange={(checked) =>
+                      setValue("hasLocalRegistry", checked as boolean, { shouldValidate: true })
+                    }
+                  />
+                  <label
+                    htmlFor="hasLocalRegistry"
+                    className="text-sm leading-tight cursor-pointer"
+                  >
+                    Cuento con una empresa con registro local vigente
+                  </label>
+                </div>
+                {errors.hasLocalRegistry && (
+                  <p className="text-sm text-destructive ml-7">{errors.hasLocalRegistry.message}</p>
+                )}
               </div>
 
-              <div className="flex items-start gap-3">
-                <Checkbox
-                  id="hasPhysicalStore"
-                  checked={hasPhysicalStore}
-                  onCheckedChange={(checked) =>
-                    setValue("hasPhysicalStore", checked as boolean)
-                  }
-                />
-                <label
-                  htmlFor="hasPhysicalStore"
-                  className="text-sm leading-tight cursor-pointer"
-                >
-                  Cuento con un local físico abierto al público
-                </label>
+              <div className="space-y-2">
+                <div className="flex items-start gap-3">
+                  <Checkbox
+                    id="hasPhysicalStore"
+                    checked={hasPhysicalStore}
+                    onCheckedChange={(checked) =>
+                      setValue("hasPhysicalStore", checked as boolean, { shouldValidate: true })
+                    }
+                  />
+                  <label
+                    htmlFor="hasPhysicalStore"
+                    className="text-sm leading-tight cursor-pointer"
+                  >
+                    Cuento con un local físico abierto al público
+                  </label>
+                </div>
+                {errors.hasPhysicalStore && (
+                  <p className="text-sm text-destructive ml-7">{errors.hasPhysicalStore.message}</p>
+                )}
               </div>
             </div>
 

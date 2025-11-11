@@ -52,7 +52,7 @@ const Perfil = () => {
     },
     {
       icon: Store,
-      label: "Registra tu tienda",
+      label: "Registrá tu tienda",
       path: "/perfil/registrar-tienda",
     },
     {
