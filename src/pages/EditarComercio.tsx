@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, MapPin, Clock, ShoppingBag, Edit2, Check, X } from "lucide-react";
+import { ArrowLeft, MapPin, Clock, ShoppingBag, Edit2, Check, X, Plus, Trash2, Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -17,6 +17,13 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
+interface Product {
+  id: string;
+  name: string;
+  stock: number;
+  weight?: number;
+}
+
 interface StoreData {
   storeName: string;
   address: string;
@@ -27,15 +34,18 @@ interface StoreData {
   originalPrice?: number;
   discountedPrice?: number;
   available?: number;
+  imageUrl?: string;
+  products?: Product[];
 }
 
-type EditingField = 'name' | 'address' | 'description' | 'pricing' | 'pickupTime' | 'available' | null;
+type EditingField = 'name' | 'address' | 'description' | 'pricing' | 'pickupTime' | 'available' | 'contact' | 'products' | null;
 
 const EditarComercio = () => {
   const navigate = useNavigate();
   const [storeData, setStoreData] = useState<StoreData | null>(null);
   const [showNoStoreDialog, setShowNoStoreDialog] = useState(false);
   const [editingField, setEditingField] = useState<EditingField>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   // Estados para edición
   const [editedName, setEditedName] = useState("");
@@ -45,6 +55,9 @@ const EditarComercio = () => {
   const [editedOriginalPrice, setEditedOriginalPrice] = useState("");
   const [editedDiscountedPrice, setEditedDiscountedPrice] = useState("");
   const [editedAvailable, setEditedAvailable] = useState("");
+  const [editedPhone, setEditedPhone] = useState("");
+  const [editedEmail, setEditedEmail] = useState("");
+  const [editedProducts, setEditedProducts] = useState<Product[]>([]);
 
   useEffect(() => {
     const registeredStore = localStorage.getItem("registeredStore");
@@ -65,7 +78,45 @@ const EditarComercio = () => {
     setEditedOriginalPrice(store.originalPrice?.toString() || "3000");
     setEditedDiscountedPrice(store.discountedPrice?.toString() || "1000");
     setEditedAvailable(store.available?.toString() || "5");
+    setEditedPhone(store.phone || "");
+    setEditedEmail(store.email || "");
+    setEditedProducts(store.products || []);
   }, []);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const imageUrl = reader.result as string;
+        const updatedStore = { ...storeData!, imageUrl };
+        localStorage.setItem("registeredStore", JSON.stringify(updatedStore));
+        setStoreData(updatedStore);
+        toast.success("Imagen actualizada");
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleAddProduct = () => {
+    const newProduct: Product = {
+      id: Date.now().toString(),
+      name: "",
+      stock: 0,
+      weight: undefined,
+    };
+    setEditedProducts([...editedProducts, newProduct]);
+  };
+
+  const handleUpdateProduct = (id: string, field: keyof Product, value: string | number) => {
+    setEditedProducts(editedProducts.map(p => 
+      p.id === id ? { ...p, [field]: value } : p
+    ));
+  };
+
+  const handleDeleteProduct = (id: string) => {
+    setEditedProducts(editedProducts.filter(p => p.id !== id));
+  };
 
   const handleSaveField = (field: EditingField) => {
     if (!storeData) return;
@@ -92,6 +143,13 @@ const EditarComercio = () => {
       case 'available':
         updatedStore.available = parseInt(editedAvailable);
         break;
+      case 'contact':
+        updatedStore.phone = editedPhone;
+        updatedStore.email = editedEmail;
+        break;
+      case 'products':
+        updatedStore.products = editedProducts;
+        break;
     }
 
     localStorage.setItem("registeredStore", JSON.stringify(updatedStore));
@@ -111,6 +169,9 @@ const EditarComercio = () => {
     setEditedOriginalPrice(storeData.originalPrice?.toString() || "");
     setEditedDiscountedPrice(storeData.discountedPrice?.toString() || "");
     setEditedAvailable(storeData.available?.toString() || "");
+    setEditedPhone(storeData.phone || "");
+    setEditedEmail(storeData.email || "");
+    setEditedProducts(storeData.products || []);
     
     setEditingField(null);
   };
@@ -160,51 +221,62 @@ const EditarComercio = () => {
 
       <div className="px-4 py-6 space-y-4 relative z-10">
         {/* Header con imagen */}
-        <div className="relative h-48 bg-gradient-to-br from-primary/20 to-accent/20 rounded-lg overflow-hidden">
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <ShoppingBag className="w-20 h-20 text-primary/40" />
-          </div>
+        <div className="relative h-48 bg-gradient-to-br from-primary/20 to-accent/20 rounded-lg overflow-hidden group">
+          {storeData.imageUrl ? (
+            <img src={storeData.imageUrl} alt={storeData.storeName} className="w-full h-full object-cover" />
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <ShoppingBag className="w-20 h-20 text-primary/40" />
+            </div>
+          )}
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+          >
+            <Camera className="w-12 h-12 text-white" />
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="hidden"
+          />
         </div>
 
         {/* Nombre y Dirección */}
         <Card className="p-4">
-          <div className="flex items-start justify-between gap-3 mb-4">
-            <div className="flex-1">
-              {editingField === 'name' ? (
-                <div className="space-y-2">
-                  <Label>Nombre del comercio</Label>
-                  <Input
-                    value={editedName}
-                    onChange={(e) => setEditedName(e.target.value)}
-                    placeholder="Nombre del comercio"
-                  />
-                  <div className="flex gap-2">
-                    <Button size="sm" onClick={() => handleSaveField('name')}>
-                      <Check className="w-4 h-4 mr-1" />
-                      Guardar
-                    </Button>
-                    <Button size="sm" variant="outline" onClick={handleCancelEdit}>
-                      <X className="w-4 h-4 mr-1" />
-                      Cancelar
-                    </Button>
-                  </div>
-                </div>
-              ) : (
-                <>
-                  <h1 className="text-xl font-bold mb-1">{storeData.storeName}</h1>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setEditingField('name')}
-                    className="text-xs text-muted-foreground"
-                  >
-                    <Edit2 className="w-3 h-3 mr-1" />
-                    Editar nombre
-                  </Button>
-                </>
-              )}
+          {editingField === 'name' ? (
+            <div className="space-y-2 mb-4">
+              <Label>Nombre del comercio</Label>
+              <Input
+                value={editedName}
+                onChange={(e) => setEditedName(e.target.value)}
+                placeholder="Nombre del comercio"
+              />
+              <div className="flex gap-2">
+                <Button size="sm" onClick={() => handleSaveField('name')}>
+                  <Check className="w-4 h-4 mr-1" />
+                  Guardar
+                </Button>
+                <Button size="sm" variant="outline" onClick={handleCancelEdit}>
+                  <X className="w-4 h-4 mr-1" />
+                  Cancelar
+                </Button>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="flex items-center justify-between mb-4">
+              <h1 className="text-xl font-bold">{storeData.storeName}</h1>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setEditingField('name')}
+              >
+                Editar
+              </Button>
+            </div>
+          )}
 
           <div className="space-y-2 text-sm">
             {editingField === 'address' ? (
@@ -321,6 +393,109 @@ const EditarComercio = () => {
               {storeData.description || "Bolsa sorpresa con productos variados del comercio"}
             </p>
           )}
+
+          {/* Productos individuales */}
+          <div className="mt-6 pt-6 border-t border-border">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-semibold">Productos individuales</h3>
+              {editingField !== 'products' && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setEditingField('products')}
+                >
+                  <Edit2 className="w-4 h-4 mr-1" />
+                  Editar
+                </Button>
+              )}
+            </div>
+
+            {editingField === 'products' ? (
+              <div className="space-y-4">
+                {editedProducts.map((product, index) => (
+                  <Card key={product.id} className="p-3 bg-muted/50">
+                    <div className="flex items-start justify-between mb-2">
+                      <Label className="text-xs text-muted-foreground">Producto {index + 1}</Label>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDeleteProduct(product.id)}
+                        className="h-6 w-6 p-0"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </Button>
+                    </div>
+                    <div className="space-y-2">
+                      <div>
+                        <Label className="text-xs">Nombre</Label>
+                        <Input
+                          value={product.name}
+                          onChange={(e) => handleUpdateProduct(product.id, 'name', e.target.value)}
+                          placeholder="Nombre del producto"
+                          className="h-8"
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div>
+                          <Label className="text-xs">Stock</Label>
+                          <Input
+                            type="number"
+                            value={product.stock}
+                            onChange={(e) => handleUpdateProduct(product.id, 'stock', parseInt(e.target.value) || 0)}
+                            placeholder="0"
+                            className="h-8"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-xs">Peso (kg, opcional)</Label>
+                          <Input
+                            type="number"
+                            step="0.1"
+                            value={product.weight || ""}
+                            onChange={(e) => handleUpdateProduct(product.id, 'weight', e.target.value ? parseFloat(e.target.value) : undefined)}
+                            placeholder="0.0"
+                            className="h-8"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleAddProduct}
+                  className="w-full"
+                >
+                  <Plus className="w-4 h-4 mr-1" />
+                  Agregar producto
+                </Button>
+                <div className="flex gap-2 pt-2">
+                  <Button size="sm" onClick={() => handleSaveField('products')}>
+                    <Check className="w-4 h-4 mr-1" />
+                    Guardar
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={handleCancelEdit}>
+                    <X className="w-4 h-4 mr-1" />
+                    Cancelar
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {storeData.products && storeData.products.length > 0 ? (
+                  storeData.products.map((product, index) => (
+                    <div key={product.id} className="text-sm text-muted-foreground">
+                      <span className="font-medium">Producto {index + 1}:</span> {product.name} - Stock: {product.stock}
+                      {product.weight && ` - Peso: ${product.weight}kg`}
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-sm text-muted-foreground">No hay productos individuales registrados</p>
+                )}
+              </div>
+            )}
+          </div>
         </Card>
 
         {/* Precio y disponibilidad */}
@@ -428,20 +603,66 @@ const EditarComercio = () => {
 
         {/* Información de contacto */}
         <Card className="p-4">
-          <h2 className="font-semibold mb-3">Información de contacto</h2>
-          <div className="space-y-2 text-sm">
-            <div>
-              <span className="text-muted-foreground">Teléfono: </span>
-              <span className="font-medium">{storeData.phone}</span>
-            </div>
-            <div>
-              <span className="text-muted-foreground">Email: </span>
-              <span className="font-medium">{storeData.email}</span>
-            </div>
-            <p className="text-xs text-muted-foreground pt-2">
-              Para cambiar estos datos, por favor contactá con soporte
-            </p>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="font-semibold">Información de contacto</h2>
+            {editingField !== 'contact' && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setEditingField('contact')}
+              >
+                <Edit2 className="w-4 h-4 mr-1" />
+                Editar
+              </Button>
+            )}
           </div>
+
+          {editingField === 'contact' ? (
+            <div className="space-y-3">
+              <div>
+                <Label>Teléfono</Label>
+                <Input
+                  value={editedPhone}
+                  onChange={(e) => setEditedPhone(e.target.value)}
+                  placeholder="Número de teléfono"
+                />
+              </div>
+              <div>
+                <Label>Email</Label>
+                <Input
+                  type="email"
+                  value={editedEmail}
+                  onChange={(e) => setEditedEmail(e.target.value)}
+                  placeholder="Correo electrónico"
+                />
+              </div>
+              <div className="flex gap-2">
+                <Button size="sm" onClick={() => handleSaveField('contact')}>
+                  <Check className="w-4 h-4 mr-1" />
+                  Guardar
+                </Button>
+                <Button size="sm" variant="outline" onClick={handleCancelEdit}>
+                  <X className="w-4 h-4 mr-1" />
+                  Cancelar
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-2 text-sm">
+              <div>
+                <span className="text-muted-foreground">Teléfono: </span>
+                <span className="font-medium">{storeData.phone}</span>
+              </div>
+              <div>
+                <span className="text-muted-foreground">Email: </span>
+                <span className="font-medium">{storeData.email}</span>
+              </div>
+            </div>
+          )}
+          
+          <p className="text-xs text-muted-foreground pt-3 border-t border-border mt-3">
+            <strong>Nota:</strong> Esta información no se visualizará públicamente. Solo quedará en registro personal de SobraZero para resolver cualquier inconveniente.
+          </p>
         </Card>
       </div>
     </div>
