@@ -22,6 +22,8 @@ interface Product {
   name: string;
   stock: number;
   weight?: number;
+  originalPrice: number;
+  discountedPrice: number;
 }
 
 interface StoreData {
@@ -39,7 +41,7 @@ interface StoreData {
   products?: Product[];
 }
 
-type EditingField = 'info' | 'description' | 'pricing' | 'pickupTime' | 'available' | 'contact' | 'products' | null;
+type EditingField = 'info' | 'description' | 'pricing' | 'pickupTime' | 'contact' | 'products' | null;
 
 const EditarComercio = () => {
   const navigate = useNavigate();
@@ -57,7 +59,6 @@ const EditarComercio = () => {
   const [editedPickupEnd, setEditedPickupEnd] = useState("");
   const [editedOriginalPrice, setEditedOriginalPrice] = useState("");
   const [editedDiscountedPrice, setEditedDiscountedPrice] = useState("");
-  const [editedAvailable, setEditedAvailable] = useState("");
   const [editedPhone, setEditedPhone] = useState("");
   const [editedEmail, setEditedEmail] = useState("");
   const [editedProducts, setEditedProducts] = useState<Product[]>([]);
@@ -92,7 +93,6 @@ const EditarComercio = () => {
     setEditedPickupEnd(end || "20:00");
     setEditedOriginalPrice(store.originalPrice?.toString() || "3000");
     setEditedDiscountedPrice(store.discountedPrice?.toString() || "1000");
-    setEditedAvailable(store.available?.toString() || "5");
     setEditedPhone(store.phone || "");
     setEditedEmail(store.email || "");
     setEditedProducts(store.products || []);
@@ -124,6 +124,8 @@ const EditarComercio = () => {
       name: "",
       stock: 0,
       weight: undefined,
+      originalPrice: 0,
+      discountedPrice: 0,
     };
     setEditedProducts([...editedProducts, newProduct]);
   };
@@ -160,14 +162,17 @@ const EditarComercio = () => {
         updatedStore.originalPrice = parseFloat(editedOriginalPrice);
         updatedStore.discountedPrice = parseFloat(editedDiscountedPrice);
         break;
-      case 'available':
-        updatedStore.available = parseInt(editedAvailable);
-        break;
       case 'contact':
         updatedStore.phone = editedPhone;
         updatedStore.email = editedEmail;
         break;
       case 'products':
+        // Validar que todos los productos tengan nombre y stock
+        const invalidProducts = editedProducts.filter(p => !p.name.trim() || p.stock <= 0);
+        if (invalidProducts.length > 0) {
+          toast.error("Todos los productos deben tener un nombre y stock mayor a 0");
+          return;
+        }
         updatedStore.products = editedProducts;
         break;
     }
@@ -192,7 +197,6 @@ const EditarComercio = () => {
     setEditedPickupEnd(end || "20:00");
     setEditedOriginalPrice(storeData.originalPrice?.toString() || "");
     setEditedDiscountedPrice(storeData.discountedPrice?.toString() || "");
-    setEditedAvailable(storeData.available?.toString() || "");
     setEditedPhone(storeData.phone || "");
     setEditedEmail(storeData.email || "");
     setEditedProducts(storeData.products || []);
@@ -481,6 +485,7 @@ const EditarComercio = () => {
                           <Input
                             type="number"
                             step="0.01"
+                            min="0"
                             value={product.weight || ""}
                             onChange={(e) => handleUpdateProduct(product.id, 'weight', e.target.value ? parseFloat(e.target.value) : undefined)}
                             placeholder="0.0"
@@ -488,6 +493,31 @@ const EditarComercio = () => {
                           />
                         </div>
                       </div>
+                      <div className="grid grid-cols-2 gap-2 mt-2">
+                        <div>
+                          <Label className="text-xs">Precio original</Label>
+                          <Input
+                            type="number"
+                            value={product.originalPrice}
+                            onChange={(e) => handleUpdateProduct(product.id, 'originalPrice', parseInt(e.target.value) || 0)}
+                            placeholder="0"
+                            className="h-8"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-xs">Precio con descuento</Label>
+                          <Input
+                            type="number"
+                            value={product.discountedPrice}
+                            onChange={(e) => handleUpdateProduct(product.id, 'discountedPrice', parseInt(e.target.value) || 0)}
+                            placeholder="0"
+                            className="h-8"
+                          />
+                        </div>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Este es el precio que se cobrará al público
+                      </p>
                     </div>
                   </Card>
                 ))}
@@ -514,7 +544,7 @@ const EditarComercio = () => {
                   storeData.products.map((product, index) => (
                     <div key={product.id} className="text-sm text-muted-foreground">
                       <span className="font-medium">Producto {index + 1}:</span> {product.name} - Stock: {product.stock}
-                      {product.weight && ` - Peso: ${product.weight}kg`}
+                      {product.weight && ` - Peso: ${product.weight}kg`} - ${product.discountedPrice}
                     </div>
                   ))
                 ) : (
@@ -560,7 +590,7 @@ const EditarComercio = () => {
                   placeholder="1000"
                 />
                 <p className="text-xs text-muted-foreground mt-1">
-                  Este es el precio final que se mostrará al público
+                  Este es el precio que se cobrará al público
                 </p>
               </div>
               <div className="flex gap-2">
@@ -582,55 +612,6 @@ const EditarComercio = () => {
               </p>
             </div>
           )}
-
-          <div className="mt-4 pt-4 border-t border-border">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="font-semibold">Disponibilidad</h3>
-              {editingField !== 'available' && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setEditingField('available')}
-                >
-                  Editar
-                </Button>
-              )}
-            </div>
-
-            {editingField === 'available' ? (
-              <div className="space-y-3">
-                <div>
-                  <Label>Unidades disponibles</Label>
-                  <Input
-                    type="number"
-                    value={editedAvailable}
-                    onChange={(e) => setEditedAvailable(e.target.value)}
-                    placeholder="5"
-                  />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Cada unidad incluye todos los productos de la sección "Productos individuales"
-                  </p>
-                </div>
-                <div className="flex gap-2">
-                  <Button size="sm" onClick={() => handleSaveField('available')}>
-                    Guardar
-                  </Button>
-                  <Button size="sm" variant="outline" onClick={handleCancelEdit}>
-                    Cancelar
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <div>
-                <p className="text-sm text-muted-foreground">
-                  {storeData.available || 5} unidades disponibles
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Cada unidad incluye todos los productos individuales
-                </p>
-              </div>
-            )}
-          </div>
         </Card>
 
         {/* Información de contacto */}

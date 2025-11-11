@@ -9,8 +9,12 @@ import ReviewSection from "@/components/ReviewSection";
 import { toast } from "sonner";
 
 interface Product {
+  id: string;
   name: string;
-  quantity: string;
+  stock: number;
+  weight?: number;
+  originalPrice: number;
+  discountedPrice: number;
 }
 
 interface Store {
@@ -57,7 +61,7 @@ const StoreDetailContent = ({
   onClose 
 }: StoreDetailContentProps) => {
   const navigate = useNavigate();
-  const [quantity, setQuantity] = useState(1);
+  const [selectedProducts, setSelectedProducts] = useState<Record<string, number>>({});
   const [newReviewRating, setNewReviewRating] = useState(5);
   const [newReviewComment, setNewReviewComment] = useState("");
   const [localReviews, setLocalReviews] = useState<Review[]>([]);
@@ -71,9 +75,7 @@ const StoreDetailContent = ({
   });
 
   const storeData = stores.find(s => s.id === storeId);
-  const [available, setAvailable] = useState(storeData?.available || 0);
-  
-  const store = storeData ? { ...storeData, available } : undefined;
+  const store = storeData;
 
   // Verificar si el usuario ha reservado en este comercio
   const hasReserved = () => {
@@ -89,12 +91,44 @@ const StoreDetailContent = ({
   const baseReviews = allReviews[storeId] || [];
   const reviews = [...localReviews, ...baseReviews];
 
+  const handleUpdateProductQuantity = (productId: string, delta: number) => {
+    const product = store?.products.find(p => p.id === productId);
+    if (!product) return;
+
+    const currentQty = selectedProducts[productId] || 0;
+    const newQty = Math.max(0, Math.min(product.stock, currentQty + delta));
+    
+    setSelectedProducts(prev => {
+      if (newQty === 0) {
+        const { [productId]: _, ...rest } = prev;
+        return rest;
+      }
+      return { ...prev, [productId]: newQty };
+    });
+  };
+
+  const calculateTotal = () => {
+    if (!store) return 0;
+    return Object.entries(selectedProducts).reduce((total, [productId, qty]) => {
+      const product = store.products.find(p => p.id === productId);
+      return total + (product ? product.discountedPrice * qty : 0);
+    }, 0);
+  };
+
+  const getTotalItems = () => {
+    return Object.values(selectedProducts).reduce((sum, qty) => sum + qty, 0);
+  };
+
   const handleReserve = () => {
     if (!store) return;
 
-    // Decrementar unidades disponibles
-    const newAvailable = available - quantity;
-    setAvailable(newAvailable);
+    const totalAmount = calculateTotal();
+    const totalItems = getTotalItems();
+
+    if (totalItems === 0) {
+      toast.error("Seleccioná al menos un producto");
+      return;
+    }
 
     const newOrder = {
       id: Date.now().toString(),
@@ -102,8 +136,8 @@ const StoreDetailContent = ({
       status: "pending",
       pickupTime: store.pickupTime,
       address: store.address,
-      total: store.discountedPrice * quantity,
-      items: quantity,
+      total: totalAmount,
+      items: totalItems,
       date: "Hoy",
     };
 
@@ -112,16 +146,11 @@ const StoreDetailContent = ({
     orders.unshift(newOrder);
     localStorage.setItem("orders", JSON.stringify(orders));
 
-    // Disparar evento personalizado para actualizar otros componentes
-    window.dispatchEvent(new CustomEvent('storeReserved', { 
-      detail: { storeId, quantity, newAvailable } 
-    }));
-
     toast.success("Reserva confirmada!", {
       description: `Retirá tu pedido hoy entre ${store.pickupTime}`,
     });
 
-    setQuantity(1);
+    setSelectedProducts({});
   };
 
   const handleAddReview = () => {
@@ -170,13 +199,7 @@ const StoreDetailContent = ({
     } else {
       setIsFavorite(false);
     }
-    setQuantity(1);
-    
-    // Reset available cuando cambia el store
-    const newStore = stores.find(s => s.id === storeId);
-    if (newStore) {
-      setAvailable(newStore.available);
-    }
+    setSelectedProducts({});
   }, [storeId, stores]);
 
   if (!store) {
@@ -249,58 +272,97 @@ const StoreDetailContent = ({
           </p>
           
           <div className="border-t border-border pt-3">
-            <h3 className="font-medium text-sm mb-2">Productos incluidos:</h3>
-            <ul className="space-y-1.5">
-              {store.products.map((product, index) => (
-                <li key={index} className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">{product.name}</span>
-                  <span className="font-medium">{product.quantity}</span>
-                </li>
+            <h3 className="font-medium text-sm mb-3">Productos disponibles:</h3>
+            <div className="space-y-3">
+              {store.products.map((product) => (
+                <div key={product.id} className="flex items-center justify-between gap-3 p-3 border border-border rounded-lg">
+                  <div className="flex-1">
+                    <p className="font-medium text-sm">{product.name}</p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-xs text-muted-foreground line-through">
+                        ${product.originalPrice}
+                      </span>
+                      <span className="text-sm font-bold text-primary">
+                        ${product.discountedPrice}
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Stock: {product.stock} {product.weight && `· ${product.weight}kg`}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => handleUpdateProductQuantity(product.id, -1)}
+                      disabled={!selectedProducts[product.id]}
+                    >
+                      -
+                    </Button>
+                    <span className="font-semibold w-8 text-center text-sm">
+                      {selectedProducts[product.id] || 0}
+                    </span>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => handleUpdateProductQuantity(product.id, 1)}
+                      disabled={(selectedProducts[product.id] || 0) >= product.stock}
+                    >
+                      +
+                    </Button>
+                  </div>
+                </div>
               ))}
-            </ul>
+            </div>
           </div>
         </Card>
 
-        {/* Precio y cantidad */}
+        {/* Resumen y reserva */}
         <Card className="p-4 mb-4">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <p className="text-sm text-muted-foreground line-through">
-                ${store.originalPrice.toLocaleString()} aprox.
-              </p>
-              <p className="text-2xl font-bold text-primary">
-                ${store.discountedPrice.toLocaleString()}
-              </p>
-            </div>
-            
-            <div className="flex items-center gap-3">
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                disabled={quantity <= 1}
-              >
-                -
-              </Button>
-              <span className="font-semibold w-8 text-center">{quantity}</span>
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => setQuantity(Math.min(store.available, quantity + 1))}
-                disabled={quantity >= store.available}
-              >
-                +
-              </Button>
-            </div>
-          </div>
+          <h2 className="font-semibold mb-3">Resumen</h2>
+          
+          {getTotalItems() > 0 ? (
+            <>
+              <div className="space-y-2 mb-4">
+                {Object.entries(selectedProducts).map(([productId, qty]) => {
+                  const product = store.products.find(p => p.id === productId);
+                  if (!product) return null;
+                  return (
+                    <div key={productId} className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">
+                        {product.name} x {qty}
+                      </span>
+                      <span className="font-medium">
+                        ${(product.discountedPrice * qty).toLocaleString()}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+              
+              <div className="border-t border-border pt-3 mb-4">
+                <div className="flex justify-between items-center">
+                  <span className="font-semibold">Total</span>
+                  <span className="text-2xl font-bold text-primary">
+                    ${calculateTotal().toLocaleString()}
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground text-center mt-1">
+                  {getTotalItems()} producto{getTotalItems() > 1 ? 's' : ''} seleccionado{getTotalItems() > 1 ? 's' : ''}
+                </p>
+              </div>
 
-          <p className="text-xs text-muted-foreground text-center mb-3">
-            {store.available} unidades disponibles
-          </p>
-
-          <Button className="w-full" size="lg" onClick={handleReserve}>
-            Reservar por ${(store.discountedPrice * quantity).toLocaleString()}
-          </Button>
+              <Button className="w-full" size="lg" onClick={handleReserve}>
+                Reservar por ${calculateTotal().toLocaleString()}
+              </Button>
+            </>
+          ) : (
+            <p className="text-sm text-muted-foreground text-center py-4">
+              Seleccioná productos para continuar
+            </p>
+          )}
         </Card>
 
         {/* Reseñas */}
