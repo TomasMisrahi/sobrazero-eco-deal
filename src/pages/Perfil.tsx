@@ -51,14 +51,14 @@ const Perfil = () => {
       path: "/perfil/notificaciones",
     },
     {
-      icon: HelpCircle,
-      label: "Centro de ayuda",
-      path: "/perfil/centro-ayuda",
-    },
-    {
       icon: Store,
       label: "Registra tu tienda",
       path: "/perfil/registrar-tienda",
+    },
+    {
+      icon: HelpCircle,
+      label: "Centro de ayuda",
+      path: "/perfil/centro-ayuda",
     },
   ];
 
