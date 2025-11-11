@@ -51,7 +51,23 @@ const RegistrarTienda = () => {
   const hasPhysicalStore = watch("hasPhysicalStore");
 
   const onSubmit = (data: StoreFormData) => {
-    console.log("Store registration data:", data);
+    // Guardar los datos del comercio en localStorage
+    const storeData = {
+      storeName: data.storeName,
+      address: data.address,
+      phone: data.phone,
+      email: data.email,
+      hasLocalRegistry: data.hasLocalRegistry,
+      hasPhysicalStore: data.hasPhysicalStore,
+      description: "Bolsa sorpresa con productos variados del comercio",
+      pickupTime: "18:00 - 20:00",
+      originalPrice: 3000,
+      discountedPrice: 1000,
+      available: 5,
+    };
+    
+    localStorage.setItem("registeredStore", JSON.stringify(storeData));
+    
     toast.success("Solicitud enviada exitosamente. Te contactaremos pronto.");
     navigate("/perfil");
   };

@@ -6,7 +6,7 @@ import BottomNavigation from "@/components/BottomNavigation";
 import DecorativeShapes from "@/components/DecorativeShapes";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,12 +21,19 @@ import {
 const Perfil = () => {
   const navigate = useNavigate();
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
+  const [hasRegisteredStore, setHasRegisteredStore] = useState(false);
   
   // Estado local para datos del usuario
   const [user] = useState({
     name: "María González",
     completedOrders: 12,
   });
+
+  // Verificar si hay un comercio registrado
+  useEffect(() => {
+    const registeredStore = localStorage.getItem("registeredStore");
+    setHasRegisteredStore(!!registeredStore);
+  }, []);
 
   const handleLogout = () => {
     toast.success("Sesión cerrada correctamente");
@@ -54,6 +61,13 @@ const Perfil = () => {
       icon: Store,
       label: "Registrá tu comercio",
       path: "/perfil/registrar-comercio",
+      hideWhenStoreRegistered: true,
+    },
+    {
+      icon: Edit,
+      label: "Editar tu comercio",
+      path: "/perfil/editar-comercio",
+      showOnlyWhenStoreRegistered: true,
     },
     {
       icon: HelpCircle,
@@ -125,22 +139,28 @@ const Perfil = () => {
 
         {/* Menu Items */}
         <Card className="divide-y divide-border">
-          {menuItems.map((item, index) => {
-            const Icon = item.icon;
-            return (
-              <button
-                key={index}
-                onClick={() => navigate(item.path)}
-                className="w-full flex items-center justify-between p-4 hover:bg-muted/50 transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  <Icon className="w-5 h-5 text-muted-foreground" />
-                  <span className="font-medium">{item.label}</span>
-                </div>
-                <ChevronRight className="w-5 h-5 text-muted-foreground" />
-              </button>
-            );
-          })}
+          {menuItems
+            .filter(item => {
+              if (item.hideWhenStoreRegistered && hasRegisteredStore) return false;
+              if (item.showOnlyWhenStoreRegistered && !hasRegisteredStore) return false;
+              return true;
+            })
+            .map((item, index) => {
+              const Icon = item.icon;
+              return (
+                <button
+                  key={index}
+                  onClick={() => navigate(item.path)}
+                  className="w-full flex items-center justify-between p-4 hover:bg-muted/50 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <Icon className="w-5 h-5 text-muted-foreground" />
+                    <span className="font-medium">{item.label}</span>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-muted-foreground" />
+                </button>
+              );
+            })}
         </Card>
 
         {/* Logout Button */}
