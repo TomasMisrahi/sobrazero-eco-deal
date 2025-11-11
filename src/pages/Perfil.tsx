@@ -52,8 +52,8 @@ const Perfil = () => {
     },
     {
       icon: Store,
-      label: "Registrá tu tienda",
-      path: "/perfil/registrar-tienda",
+      label: "Registrá tu comercio",
+      path: "/perfil/registrar-comercio",
     },
     {
       icon: HelpCircle,

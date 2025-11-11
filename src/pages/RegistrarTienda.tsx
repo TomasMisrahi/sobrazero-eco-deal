@@ -12,9 +12,9 @@ import { toast } from "sonner";
 import DecorativeShapes from "@/components/DecorativeShapes";
 
 const storeSchema = z.object({
-  storeName: z.string().min(1, "El nombre de la tienda es requerido").max(100),
+  storeName: z.string().min(1, "El nombre del comercio es requerido").max(100),
   address: z.string().min(1, "La dirección es requerida").max(200),
-  phone: z.string().min(1, "El celular es requerido").max(20),
+  phone: z.string().min(1, "El celular es requerido").regex(/^[0-9+\-() ]+$/, "Solo se permiten números y caracteres como +, -, (), espacios").max(20),
   email: z.string().email("Email inválido"),
   hasLocalRegistry: z.boolean().refine((val) => val === true, {
     message: "Debes marcar esta opción para continuar"
@@ -69,7 +69,7 @@ const RegistrarTienda = () => {
           >
             <ArrowLeft className="w-6 h-6" />
           </button>
-          <h1 className="text-2xl font-bold">Registrá tu tienda</h1>
+          <h1 className="text-2xl font-bold">Registrá tu comercio</h1>
         </div>
       </header>
 
@@ -79,11 +79,11 @@ const RegistrarTienda = () => {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {/* Store Name */}
             <div className="space-y-2">
-              <Label htmlFor="storeName">Nombre de la tienda</Label>
+              <Label htmlFor="storeName">Nombre del comercio</Label>
               <Input
                 id="storeName"
                 type="text"
-                placeholder="Ingresa el nombre de tu tienda"
+                placeholder="Ingresa el nombre de tu comercio"
                 {...register("storeName")}
               />
               {errors.storeName && (
@@ -93,7 +93,7 @@ const RegistrarTienda = () => {
 
             {/* Address */}
             <div className="space-y-2">
-              <Label htmlFor="address">Dirección y número de la tienda</Label>
+              <Label htmlFor="address">Dirección y número del comercio</Label>
               <Input
                 id="address"
                 type="text"
@@ -183,7 +183,7 @@ const RegistrarTienda = () => {
 
             {/* Submit Button */}
             <Button type="submit" size="lg" className="w-full">
-              Registrar mi tienda
+              Registrar mi comercio
             </Button>
           </form>
         </Card>

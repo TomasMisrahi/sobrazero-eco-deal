@@ -49,7 +49,7 @@ const App = () => (
           <Route path="/perfil/notificaciones" element={<Notificaciones />} />
           <Route path="/perfil/centro-ayuda" element={<CentroAyuda />} />
           <Route path="/perfil/centro-ayuda/chat" element={<ChatEnVivo />} />
-          <Route path="/perfil/registrar-tienda" element={<RegistrarTienda />} />
+          <Route path="/perfil/registrar-comercio" element={<RegistrarTienda />} />
           <Route path="/autenticacion" element={<Auth />} />
           <Route path="/recuperar-password" element={<RecuperarPassword />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
