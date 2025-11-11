@@ -14,7 +14,7 @@ import DecorativeShapes from "@/components/DecorativeShapes";
 const storeSchema = z.object({
   storeName: z.string().min(1, "El nombre del comercio es requerido").max(100),
   address: z.string().min(1, "La dirección es requerida").max(200),
-  phone: z.string().min(1, "El celular es requerido").regex(/^[0-9+\-() ]+$/, "Solo se permiten números y caracteres especiales").max(20),
+  phone: z.string().min(1, "El celular es requerido").regex(/^[^a-zA-Z]+$/, "Solo se permiten números y caracteres especiales").max(20),
   email: z.string().email("Email inválido"),
   hasLocalRegistry: z.boolean().refine((val) => val === true, {
     message: "Debes marcar esta opción para continuar"
