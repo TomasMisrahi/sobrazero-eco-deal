@@ -454,8 +454,7 @@ const EditarComercio = () => {
 
         {/* Productos individuales */}
         <Card className="p-4">
-          <div className="mt-6 pt-6 border-t border-border">
-            <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center justify-between mb-3">
               <h3 className="font-semibold">Productos individuales</h3>
               {editingField !== 'products' && (
                 <Button
@@ -610,7 +609,6 @@ const EditarComercio = () => {
                 )}
               </div>
             )}
-          </div>
         </Card>
 
         {/* Información de contacto */}

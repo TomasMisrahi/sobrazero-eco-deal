@@ -306,7 +306,7 @@ const StoreDetailContent = ({
                       </span>
                     </div>
                     <p className="text-xs text-muted-foreground mt-1">
-                      Unidades disponibles: {product.stock}{product.weight && ` · Peso: ${product.weight}kilo/s`}
+                      Unidades disponibles: {product.stock}{product.weight && ` · Peso: ${product.weight} kilo/s`}
                     </p>
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
