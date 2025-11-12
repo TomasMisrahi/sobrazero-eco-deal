@@ -281,20 +281,19 @@ const StoreDetailContent = ({
           </div>
         </Card>
 
-        {/* Descripción y productos */}
+        {/* Productos */}
         <Card className="p-4 mb-4">
-          <h2 className="font-semibold mb-3">¿Qué incluye?</h2>
-          <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-            {store.description}
-          </p>
-          
-          <div className="border-t border-border pt-3">
+          <div>
             <h3 className="font-medium text-sm mb-3">Productos disponibles:</h3>
             <div className="space-y-3">
               {store.products.map((product) => (
                 <div key={product.id} className="flex items-center gap-3 p-3 border border-border rounded-lg">
-                  {product.imageUrl && (
+                  {product.imageUrl ? (
                     <img src={product.imageUrl} alt={product.name} className="w-16 h-16 object-cover rounded flex-shrink-0" />
+                  ) : (
+                    <div className="w-16 h-16 bg-muted rounded flex items-center justify-center flex-shrink-0">
+                      <ShoppingBag className="w-8 h-8 text-muted-foreground" />
+                    </div>
                   )}
                   <div className="flex-1">
                     <p className="font-medium text-sm">{product.name}</p>
@@ -307,7 +306,7 @@ const StoreDetailContent = ({
                       </span>
                     </div>
                     <p className="text-xs text-muted-foreground mt-1">
-                      Unidades disponibles: {product.stock}{product.weight && ` · peso: ${product.weight}kilos`}
+                      Unidades disponibles: {product.stock}{product.weight && ` · Peso: ${product.weight}kilo/s`}
                     </p>
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">

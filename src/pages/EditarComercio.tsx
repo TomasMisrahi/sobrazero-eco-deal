@@ -452,45 +452,8 @@ const EditarComercio = () => {
           )}
         </Card>
 
-        {/* Descripción */}
+        {/* Productos individuales */}
         <Card className="p-4">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="font-semibold">¿Qué incluye?</h2>
-            {editingField !== 'description' && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setEditingField('description')}
-              >
-                Editar
-              </Button>
-            )}
-          </div>
-
-          {editingField === 'description' ? (
-            <div className="space-y-3">
-              <Textarea
-                value={editedDescription}
-                onChange={(e) => setEditedDescription(e.target.value)}
-                placeholder="Descripción de lo que incluye la bolsa sorpresa"
-                className="min-h-[120px]"
-              />
-              <div className="flex gap-2">
-                <Button size="sm" onClick={() => handleSaveField('description')}>
-                  Guardar
-                </Button>
-                <Button size="sm" variant="outline" onClick={handleCancelEdit}>
-                  Cancelar
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              {storeData.description || "Bolsa sorpresa con productos variados del comercio"}
-            </p>
-          )}
-
-          {/* Productos individuales */}
           <div className="mt-6 pt-6 border-t border-border">
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-semibold">Productos individuales</h3>
@@ -525,7 +488,15 @@ const EditarComercio = () => {
                         <Label className="text-xs">Imagen del producto (opcional)</Label>
                         <div className="flex items-center gap-2">
                           {product.imageUrl && (
-                            <img src={product.imageUrl} alt={product.name} className="w-16 h-16 object-cover rounded" />
+                            <div className="relative">
+                              <img src={product.imageUrl} alt={product.name} className="w-16 h-16 object-cover rounded" />
+                              <button
+                                onClick={() => handleUpdateProduct(product.id, 'imageUrl', '')}
+                                className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold hover:bg-destructive/90"
+                              >
+                                ×
+                              </button>
+                            </div>
                           )}
                           <Input
                             type="file"
@@ -630,7 +601,7 @@ const EditarComercio = () => {
                 {storeData.products && storeData.products.length > 0 ? (
                   storeData.products.map((product, index) => (
                     <div key={product.id} className="text-sm text-muted-foreground">
-                      <strong>Nombre:</strong> {product.name} - <strong>Stock:</strong> {product.stock}
+                      <strong>Producto {index + 1}:</strong> <strong>Nombre:</strong> {product.name} - <strong>Stock:</strong> {product.stock}
                       {product.weight && <> - <strong>Peso:</strong> {product.weight}kilos</>} - <strong>Precio con descuento:</strong> ${product.discountedPrice}
                     </div>
                   ))
@@ -699,7 +670,7 @@ const EditarComercio = () => {
           )}
           
           <p className="text-xs text-muted-foreground pt-3 border-t border-border mt-3">
-            <strong>Nota:</strong> Esta información no se visualizará públicamente. Solo quedará en registro personal de SobraZero para resolver cualquier inconveniente.
+            <strong>Aclaración:</strong> Esta información no se visualizará públicamente. Solo quedará en registro personal de SobraZero para resolver cualquier inconveniente.
           </p>
         </Card>
       </div>
