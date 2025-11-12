@@ -247,7 +247,7 @@ const Pedidos = () => {
                 >
                   <div className="flex items-center gap-2">
                     <Package className="w-4 h-4 text-muted-foreground" />
-                    <CollapsibleTrigger className="text-green-600 underline cursor-pointer hover:text-green-700">
+                    <CollapsibleTrigger className="text-sm text-green-600 underline cursor-pointer hover:text-green-700">
                       {order.items} {order.items === 1 ? "producto" : "productos"}
                     </CollapsibleTrigger>
                   </div>
@@ -255,9 +255,14 @@ const Pedidos = () => {
                     <div className="p-3 bg-muted/50 rounded-md">
                       <ul className="space-y-1.5">
                         {order.products?.map((product: any, index: number) => (
-                          <li key={index} className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">{product.name}</span>
-                            <span className="font-medium">{product.quantity}</span>
+                          <li key={index} className="text-sm">
+                            <div className="flex justify-between mb-1">
+                              <span className="text-muted-foreground">{product.name}</span>
+                            </div>
+                            <div className="flex gap-3 text-xs text-muted-foreground">
+                              <span>Unidades: {product.quantity}</span>
+                              {product.weight && <span>Peso: {product.weight} kilo/s</span>}
+                            </div>
                           </li>
                         ))}
                       </ul>

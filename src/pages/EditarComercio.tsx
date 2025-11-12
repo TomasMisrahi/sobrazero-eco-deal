@@ -603,6 +603,16 @@ const EditarComercio = () => {
                               )}
                             </div>
                           </div>
+                          {product.discountedPrice > 0 && (
+                            <div className="mt-3 p-2 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-900 rounded">
+                              <p className="text-xs font-medium text-green-700 dark:text-green-400">
+                                Ganancia neta por producto vendido: ${(product.discountedPrice * 0.95).toFixed(2)}
+                              </p>
+                              <p className="text-xs text-green-600 dark:text-green-500 mt-0.5">
+                                (Precio con descuento - 5% comisión de SobraZero)
+                              </p>
+                            </div>
+                          )}
                         </div>
                       </CollapsibleContent>
                     </Collapsible>
