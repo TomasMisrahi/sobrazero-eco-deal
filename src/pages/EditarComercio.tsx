@@ -491,7 +491,7 @@ const EditarComercio = () => {
                       open={expandedProducts.includes(product.id)}
                       onOpenChange={() => toggleProductExpanded(product.id)}
                     >
-                      <div className="flex items-start justify-between mb-2">
+                      <div className="flex items-center justify-between mb-2">
                         <CollapsibleTrigger className="flex items-center gap-2 text-xs font-medium hover:underline cursor-pointer">
                           <ChevronDown 
                             className={`w-4 h-4 transition-transform ${
@@ -642,6 +642,7 @@ const EditarComercio = () => {
                     <div key={product.id} className="text-sm text-muted-foreground">
                       <strong>Producto {index + 1}:</strong> <strong>Nombre:</strong> {product.name} - <strong>Stock:</strong> {product.stock}
                       {product.weight && <> - <strong>Peso:</strong> {product.weight}kilos</>} - <strong>Precio con descuento:</strong> ${product.discountedPrice}
+                      {product.discountedPrice > 0 && <> - <strong>Ganancia neta:</strong> ${(product.discountedPrice * 0.95).toFixed(2)}</>}
                     </div>
                   ))
                 ) : (
