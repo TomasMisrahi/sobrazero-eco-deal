@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, MapPin, Clock, ShoppingBag, Camera } from "lucide-react";
+import { ArrowLeft, MapPin, Clock, ShoppingBag, Camera, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -16,6 +16,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 interface Product {
   id: string;
@@ -58,6 +63,7 @@ const EditarComercio = () => {
   const [storeData, setStoreData] = useState<StoreData | null>(null);
   const [showNoStoreDialog, setShowNoStoreDialog] = useState(false);
   const [editingField, setEditingField] = useState<EditingField>(null);
+  const [expandedProducts, setExpandedProducts] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   // Estados para edición
@@ -167,6 +173,14 @@ const EditarComercio = () => {
     setEditedProducts(editedProducts.filter(p => p.id !== id));
   };
 
+  const toggleProductExpanded = (productId: string) => {
+    setExpandedProducts(prev => 
+      prev.includes(productId) 
+        ? prev.filter(id => id !== productId)
+        : [...prev, productId]
+    );
+  };
+
   const handleSaveField = (field: EditingField) => {
     if (!storeData) return;
 
@@ -240,6 +254,7 @@ const EditarComercio = () => {
     localStorage.setItem("registeredStore", JSON.stringify(updatedStore));
     setStoreData(updatedStore);
     setEditingField(null);
+    setExpandedProducts([]);
     toast.success("Cambios guardados");
   };
 
@@ -261,6 +276,7 @@ const EditarComercio = () => {
     setEditedEmail(storeData.email || "");
     setEditedProducts(storeData.products || []);
     setProductErrors({});
+    setExpandedProducts([]);
     
     setEditingField(null);
   };
@@ -471,111 +487,125 @@ const EditarComercio = () => {
               <div className="space-y-4">
                 {editedProducts.map((product, index) => (
                   <Card key={product.id} className="p-3 bg-muted/50">
-                    <div className="flex items-start justify-between mb-2">
-                      <Label className="text-xs text-muted-foreground">Producto {index + 1}</Label>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleDeleteProduct(product.id)}
-                        className="h-6 w-6 p-0"
-                      >
-                        ×
-                      </Button>
-                    </div>
-                    <div className="space-y-2">
-                      <div>
-                        <Label className="text-xs">Imagen del producto (opcional)</Label>
-                        <div className="flex items-center gap-2">
-                          {product.imageUrl && (
-                            <div className="relative">
-                              <img src={product.imageUrl} alt={product.name} className="w-16 h-16 object-cover rounded" />
-                              <button
-                                onClick={() => handleUpdateProduct(product.id, 'imageUrl', '')}
-                                className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold hover:bg-destructive/90"
-                              >
-                                ×
-                              </button>
+                    <Collapsible
+                      open={expandedProducts.includes(product.id)}
+                      onOpenChange={() => toggleProductExpanded(product.id)}
+                    >
+                      <div className="flex items-start justify-between mb-2">
+                        <CollapsibleTrigger className="flex items-center gap-2 text-xs font-medium hover:underline cursor-pointer">
+                          <ChevronDown 
+                            className={`w-4 h-4 transition-transform ${
+                              expandedProducts.includes(product.id) ? 'rotate-180' : ''
+                            }`} 
+                          />
+                          <span>Producto {index + 1}</span>
+                        </CollapsibleTrigger>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDeleteProduct(product.id)}
+                          className="h-6 w-6 p-0"
+                        >
+                          ×
+                        </Button>
+                      </div>
+                      <CollapsibleContent>
+                        <div className="space-y-2 pt-2">
+                          <div>
+                            <Label className="text-xs">Imagen del producto (opcional)</Label>
+                            <div className="flex items-center gap-2">
+                              {product.imageUrl && (
+                                <div className="relative">
+                                  <img src={product.imageUrl} alt={product.name} className="w-16 h-16 object-cover rounded" />
+                                  <button
+                                    onClick={() => handleUpdateProduct(product.id, 'imageUrl', '')}
+                                    className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold hover:bg-destructive/90"
+                                  >
+                                    ×
+                                  </button>
+                                </div>
+                              )}
+                              <Input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => handleProductImageChange(product.id, e)}
+                                className="h-8"
+                              />
                             </div>
-                          )}
-                          <Input
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => handleProductImageChange(product.id, e)}
-                            className="h-8"
-                          />
+                          </div>
+                          <div>
+                            <Label className="text-xs">Nombre</Label>
+                            <Input
+                              value={product.name}
+                              onChange={(e) => handleUpdateProduct(product.id, 'name', e.target.value)}
+                              placeholder="Nombre del producto"
+                              className="h-8"
+                            />
+                            {productErrors[product.id]?.name && (
+                              <p className="text-xs text-destructive mt-1">{productErrors[product.id].name}</p>
+                            )}
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div>
+                              <Label className="text-xs">Stock</Label>
+                              <Input
+                                type="number"
+                                value={product.stock || ""}
+                                onChange={(e) => handleUpdateProduct(product.id, 'stock', parseInt(e.target.value) || 0)}
+                                placeholder=""
+                                className="h-8"
+                              />
+                              {productErrors[product.id]?.stock && (
+                                <p className="text-xs text-destructive mt-1">{productErrors[product.id].stock}</p>
+                              )}
+                            </div>
+                            <div>
+                              <Label className="text-xs">Peso en kilos (opcional)</Label>
+                              <Input
+                                type="number"
+                                step="0.01"
+                                min="0"
+                                value={product.weight !== undefined ? product.weight : ""}
+                                onChange={(e) => handleUpdateProduct(product.id, 'weight', e.target.value ? parseFloat(e.target.value) : undefined)}
+                                placeholder=""
+                                className="h-8"
+                              />
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2 mt-2">
+                            <div>
+                              <Label className="text-xs">Precio original</Label>
+                              <Input
+                                type="number"
+                                value={product.originalPrice || ""}
+                                onChange={(e) => handleUpdateProduct(product.id, 'originalPrice', parseInt(e.target.value) || 0)}
+                                placeholder=""
+                                className="h-8"
+                              />
+                              {productErrors[product.id]?.originalPrice && (
+                                <p className="text-xs text-destructive mt-1">{productErrors[product.id].originalPrice}</p>
+                              )}
+                            </div>
+                            <div>
+                              <Label className="text-xs">Precio con descuento</Label>
+                              <Input
+                                type="number"
+                                value={product.discountedPrice || ""}
+                                onChange={(e) => handleUpdateProduct(product.id, 'discountedPrice', parseInt(e.target.value) || 0)}
+                                placeholder=""
+                                className="h-8"
+                              />
+                              <p className="text-xs text-muted-foreground mt-1">
+                                Este es el precio que se cobrará al público
+                              </p>
+                              {productErrors[product.id]?.discountedPrice && (
+                                <p className="text-xs text-destructive mt-1">{productErrors[product.id].discountedPrice}</p>
+                              )}
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                      <div>
-                        <Label className="text-xs">Nombre</Label>
-                        <Input
-                          value={product.name}
-                          onChange={(e) => handleUpdateProduct(product.id, 'name', e.target.value)}
-                          placeholder="Nombre del producto"
-                          className="h-8"
-                        />
-                        {productErrors[product.id]?.name && (
-                          <p className="text-xs text-destructive mt-1">{productErrors[product.id].name}</p>
-                        )}
-                      </div>
-                      <div className="grid grid-cols-2 gap-2">
-                        <div>
-                          <Label className="text-xs">Stock</Label>
-                          <Input
-                            type="number"
-                            value={product.stock || ""}
-                            onChange={(e) => handleUpdateProduct(product.id, 'stock', parseInt(e.target.value) || 0)}
-                            placeholder=""
-                            className="h-8"
-                          />
-                          {productErrors[product.id]?.stock && (
-                            <p className="text-xs text-destructive mt-1">{productErrors[product.id].stock}</p>
-                          )}
-                        </div>
-                        <div>
-                          <Label className="text-xs">Peso en kilos (opcional)</Label>
-                          <Input
-                            type="number"
-                            step="0.01"
-                            min="0"
-                            value={product.weight !== undefined ? product.weight : ""}
-                            onChange={(e) => handleUpdateProduct(product.id, 'weight', e.target.value ? parseFloat(e.target.value) : undefined)}
-                            placeholder=""
-                            className="h-8"
-                          />
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-2 gap-2 mt-2">
-                        <div>
-                          <Label className="text-xs">Precio original</Label>
-                          <Input
-                            type="number"
-                            value={product.originalPrice || ""}
-                            onChange={(e) => handleUpdateProduct(product.id, 'originalPrice', parseInt(e.target.value) || 0)}
-                            placeholder=""
-                            className="h-8"
-                          />
-                          {productErrors[product.id]?.originalPrice && (
-                            <p className="text-xs text-destructive mt-1">{productErrors[product.id].originalPrice}</p>
-                          )}
-                        </div>
-                        <div>
-                          <Label className="text-xs">Precio con descuento</Label>
-                          <Input
-                            type="number"
-                            value={product.discountedPrice || ""}
-                            onChange={(e) => handleUpdateProduct(product.id, 'discountedPrice', parseInt(e.target.value) || 0)}
-                            placeholder=""
-                            className="h-8"
-                          />
-                          <p className="text-xs text-muted-foreground mt-1">
-                            Este es el precio que se cobrará al público
-                          </p>
-                          {productErrors[product.id]?.discountedPrice && (
-                            <p className="text-xs text-destructive mt-1">{productErrors[product.id].discountedPrice}</p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
+                      </CollapsibleContent>
+                    </Collapsible>
                   </Card>
                 ))}
                 <Button

@@ -238,30 +238,32 @@ const Pedidos = () => {
                     <Clock className="w-4 h-4" />
                     <span>Retiro: {order.pickupTime}</span>
                   </div>
+                </div>
+
+                <Collapsible
+                  open={expandedOrders.includes(order.id)}
+                  onOpenChange={() => toggleExpanded(order.id)}
+                  className="mt-2"
+                >
                   <div className="flex items-center gap-2">
                     <Package className="w-4 h-4 text-muted-foreground" />
-                    <Collapsible
-                      open={expandedOrders.includes(order.id)}
-                      onOpenChange={() => toggleExpanded(order.id)}
-                    >
-                      <CollapsibleTrigger className="text-green-600 underline cursor-pointer hover:text-green-700">
-                        {order.items} {order.items === 1 ? "producto" : "productos"}
-                      </CollapsibleTrigger>
-                      <CollapsibleContent className="mt-2">
-                        <div className="ml-6 p-3 bg-muted/50 rounded-md">
-                          <ul className="space-y-1.5">
-                            {order.products?.map((product: any, index: number) => (
-                              <li key={index} className="flex justify-between text-sm">
-                                <span className="text-muted-foreground">{product.name}</span>
-                                <span className="font-medium">{product.quantity}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      </CollapsibleContent>
-                    </Collapsible>
+                    <CollapsibleTrigger className="text-green-600 underline cursor-pointer hover:text-green-700">
+                      {order.items} {order.items === 1 ? "producto" : "productos"}
+                    </CollapsibleTrigger>
                   </div>
-                </div>
+                  <CollapsibleContent className="mt-2">
+                    <div className="p-3 bg-muted/50 rounded-md">
+                      <ul className="space-y-1.5">
+                        {order.products?.map((product: any, index: number) => (
+                          <li key={index} className="flex justify-between text-sm">
+                            <span className="text-muted-foreground">{product.name}</span>
+                            <span className="font-medium">{product.quantity}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </CollapsibleContent>
+                </Collapsible>
 
 
                 <div className="mt-4 pt-3 border-t border-border">
