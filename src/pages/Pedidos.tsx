@@ -256,12 +256,11 @@ const Pedidos = () => {
                       <ul className="space-y-1.5">
                         {order.products?.map((product: any, index: number) => (
                           <li key={index} className="text-sm">
-                            <div className="flex justify-between mb-1">
+                            <div className="flex justify-between items-center">
                               <span className="text-muted-foreground">{product.name}</span>
-                            </div>
-                            <div className="flex gap-3 text-xs text-muted-foreground">
-                              <span>Unidades: {product.quantity}</span>
-                              {product.weight && <span>Peso: {product.weight} kilo/s</span>}
+                              <span className="text-xs text-muted-foreground">
+                                Unidades: {product.quantity}{product.weight && ` · Peso: ${product.weight} kilo/s`}
+                              </span>
                             </div>
                           </li>
                         ))}

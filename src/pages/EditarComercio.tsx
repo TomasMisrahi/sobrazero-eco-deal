@@ -609,7 +609,7 @@ const EditarComercio = () => {
                                 Ganancia neta por producto vendido: ${(product.discountedPrice * 0.95).toFixed(2)}
                               </p>
                               <p className="text-xs text-green-600 dark:text-green-500 mt-0.5">
-                                (Precio con descuento - 5% comisión de SobraZero)
+                                SobraZero se lleva un 5% de comisión
                               </p>
                             </div>
                           )}
